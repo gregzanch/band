@@ -1,31 +1,43 @@
-import useStore from '@/helpers/store'
-import { useFrame } from '@react-three/fiber'
-import { useRef, useState } from 'react'
+import { useFrame } from "@react-three/fiber"
+import { TransformControls } from "@react-three/drei"
+import { useRef, useState } from "react"
+import { folder, useControls } from "@/components/dom/leva"
+import useEditor from "@/state/editor"
 
-const BoxComponent = ({ route }) => {
-  const router = useStore((s) => s.router)
+// const { showLighting, showStats } = useControls('My folder', {
+//   lighting: folder({
+//     showLighting: true,
+//   }),
+//   'Show stats': folder({
+//     showStats: false,
+//   }),
+// })
+
+const BoxComponent = () => {
+  const [{ yPos }, set] = useControls(() => ({
+    yPos: {
+      value: 0,
+      min: -Infinity,
+      max: Infinity,
+      step: 0.1,
+    },
+  }))
+
   // This reference will give us direct access to the THREE.Mesh object
   const mesh = useRef(null)
-  // Set up state for the hovered and active state
-  const [hovered, setHover] = useState(false)
-  // Subscribe this component to the render-loop, rotate the mesh every frame
-  useFrame((state, delta) =>
-    mesh.current
-      ? (mesh.current.rotation.y = mesh.current.rotation.x += 0.01)
-      : null
-  )
+
   // Return the view, these are regular Threejs elements expressed in JSX
   return (
     <>
       <mesh
         ref={mesh}
-        onClick={() => router.push(route)}
-        onPointerOver={() => setHover(true)}
-        onPointerOut={() => setHover(false)}
-        scale={hovered ? 1.1 : 1}
+        onClick={() => {
+          useEditor.setState({ selectedObject: mesh })
+        }}
+        position={[0, yPos, 0]}
       >
         <boxBufferGeometry args={[1, 1, 1]} />
-        <meshPhysicalMaterial color={route === '/' ? 'orange' : 'hotpink'} />
+        <meshPhysicalMaterial color={"orange"} />
       </mesh>
       <directionalLight position={[5, 5, 5]} />
       <ambientLight />

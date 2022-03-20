@@ -1,10 +1,22 @@
 import Head from 'next/head'
 
-const titleDefault = 'React Three Next Starter'
-const url = 'https://react-three-next.vercel.app/'
-const description =
-  'The easiest and fastest way to create a 3D website using React Three Fiber and NextJS'
-const author = 'Author'
+const titleDefault = 'Band'
+const url = 'https://github.com/gregzanch'
+const description = 'Simulate acoustic phenomena and generate impulse responses'
+const author = 'Greg Zanchelli'
+
+const keywords = [
+  'Simulation',
+  'FDTD',
+  'WebApp',
+  'Raytracer',
+  'Ray Tracing',
+  'Acoustics',
+  'Room Impulse Response',
+  'Image Source Model',
+  'Room Acoustics',
+  'Computational Acoustics',
+]
 
 const Header = ({ title = titleDefault }) => {
   return (
@@ -21,15 +33,10 @@ const Header = ({ title = titleDefault }) => {
         {/* Search Engine Optimization Meta Tags */}
         <title>{title}</title>
         <meta name='description' content={description} />
-        <meta
-          name='keywords'
-          content='Software Engineer,Product Manager,Project Manager,Data Scientist,Computer Scientist'
-        />
+        <meta name='keywords' content={keywords.join(',')} />
         <meta name='robots' content='index,follow' />
         <meta name='distribution' content='web' />
-        {/* 
-      Facebook Open Graph meta tags
-        documentation: https://developers.facebook.com/docs/sharing/opengraph */}
+        {/* Facebook Open Graph meta tags */}
         <meta name='og:title' content={title} />
         <meta name='og:type' content='site' />
         <meta name='og:url' content={url} />
@@ -37,22 +44,28 @@ const Header = ({ title = titleDefault }) => {
         <meta name='og:site_name' content={title} />
         <meta name='og:description' content={description} />
 
-        <link rel='apple-touch-icon' href='/icons/apple-touch-icon.png' />
-        <link
-          rel='apple-touch-icon'
-          sizes='16x16'
-          href='/icons/favicon-16x16.png'
-        />
-        <link
-          rel='apple-touch-icon'
-          sizes='32x32'
-          href='/icons/favicon-32x32.png'
-        />
         <link
           rel='apple-touch-icon'
           sizes='180x180'
           href='/icons/apple-touch-icon.png'
         />
+        <link
+          rel='icon'
+          type='image/png'
+          sizes='32x32'
+          href='/icons/favicon-32x32.png'
+        />
+        <link
+          rel='icon'
+          type='image/png'
+          sizes='16x16'
+          href='/icons/favicon-16x16.png'
+        />
+
+        <meta name='msapplication-config' content='/browserconfig.xml' />
+        <meta name='msapplication-TileColor' content='#000000' />
+        <meta name='theme-color' content='#000000' />
+
         <link rel='manifest' href='/manifest.json' />
         <link
           rel='mask-icon'
@@ -75,8 +88,8 @@ const Header = ({ title = titleDefault }) => {
       Twitter Summary card
         documentation: https://dev.twitter.com/cards/getting-started
         Be sure validate your Twitter card markup on the documentation site. */}
-        <meta name='twitter:card' content='summary' />
-        <meta name='twitter:site' content='@onirenaud' />
+        {/* <meta name='twitter:card' content='summary' /> */}
+        {/* <meta name='twitter:site' content='@gregzanch' /> */}
       </Head>
     </>
   )

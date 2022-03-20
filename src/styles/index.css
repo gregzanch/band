@@ -15,5 +15,17 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
+    background-color:#20252B;
   }
+}
+
+
+.btn {
+  @apply font-bold py-2 px-4 rounded rounded-full;
+}
+.btn-blue {
+  @apply bg-blue-500 text-white;
+}
+.btn-blue:hover {
+  @apply bg-blue-600;
 }

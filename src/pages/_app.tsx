@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import useStore from '@/helpers/store'
+import useStore from '@/state/store'
 import { useEffect } from 'react'
 import Header from '@/config'
 import Dom from '@/components/layout/dom'
@@ -29,16 +29,17 @@ function App({ Component, pageProps = { title: 'index' } }) {
     useStore.setState({ router })
   }, [router])
 
-  const child = Component(pageProps).props.children
+  // const child = Component(pageProps).props.children
 
   return (
     <>
       <Header title={pageProps.title} />
-      {child && child.length > 1 ? (
+      {/* {child && child.length > 1 ? (
         <Balance child={Component(pageProps).props.children} />
       ) : (
         <Component {...pageProps} />
-      )}
+      )} */}
+      <Component {...pageProps} />
     </>
   )
 }
