@@ -1,14 +1,15 @@
-import React, { useMemo, useState } from 'react'
-import { buildTree } from './tree'
-import { TreeWrapper } from '../Folder'
+/* eslint-disable react/display-name */
+import React, { useMemo, useState } from "react"
+import { buildTree } from "./tree"
+import { TreeWrapper } from "../Folder"
 
-import { useDeepMemo, useTransform, useVisiblePaths } from '../../hooks'
+import { useDeepMemo, useTransform, useVisiblePaths } from "../../hooks"
 
-import { StyledRoot } from './StyledRoot'
-import { mergeTheme, LevaCustomTheme, globalStyles } from '../../styles'
-import { ThemeContext, StoreContext, PanelSettingsContext } from '../../context'
-import { TitleWithFilter } from './Filter'
-import { StoreType } from '../../types'
+import { StyledRoot } from "./StyledRoot"
+import { mergeTheme, LevaCustomTheme, globalStyles } from "../../styles"
+import { ThemeContext, StoreContext, PanelSettingsContext } from "../../context"
+import { TitleWithFilter } from "./Filter"
+import { StoreType } from "../../types"
 
 export type LevaRootProps = {
   /**
@@ -80,11 +81,11 @@ export function LevaRoot({ store, hidden = false, theme, collapsed = false, ...p
   // collapsible
   const [toggled, setToggle] = useState(!collapsed)
 
-  const computedToggled = typeof collapsed === 'object' ? !collapsed.collapsed : toggled
+  const computedToggled = typeof collapsed === "object" ? !collapsed.collapsed : toggled
   const computedSetToggle = useMemo(() => {
-    if (typeof collapsed === 'object') {
+    if (typeof collapsed === "object") {
       return (value: React.SetStateAction<boolean>) => {
-        if (typeof value === 'function') {
+        if (typeof value === "function") {
           collapsed.onChange(!value(!collapsed.collapsed))
         } else {
           collapsed.onChange(!value)
@@ -109,7 +110,7 @@ export function LevaRoot({ store, hidden = false, theme, collapsed = false, ...p
   )
 }
 
-type LevaCoreProps = Omit<LevaRootProps, 'theme' | 'hidden' | 'collapsed'> & {
+type LevaCoreProps = Omit<LevaRootProps, "theme" | "hidden" | "collapsed"> & {
   store: StoreType
   rootClass: string
   toggled: boolean
@@ -134,7 +135,7 @@ const LevaCore = React.memo(
     setToggle,
   }: LevaCoreProps) => {
     const paths = useVisiblePaths(store)
-    const [filter, setFilter] = useState('')
+    const [filter, setFilter] = useState("")
     const tree = useMemo(() => buildTree(paths, filter), [paths, filter])
 
     // drag
@@ -142,9 +143,9 @@ const LevaCore = React.memo(
 
     // this generally happens on first render because the store is initialized in useEffect.
     const shouldShow = neverHide || paths.length > 0
-    const title = typeof titleBar === 'object' ? titleBar.title || undefined : undefined
-    const drag = typeof titleBar === 'object' ? titleBar.drag ?? true : true
-    const filterEnabled = typeof titleBar === 'object' ? titleBar.filter ?? true : true
+    const title = typeof titleBar === "object" ? titleBar.title || undefined : undefined
+    const drag = typeof titleBar === "object" ? titleBar.drag ?? true : true
+    const filterEnabled = typeof titleBar === "object" ? titleBar.filter ?? true : true
 
     globalStyles()
 
@@ -157,7 +158,8 @@ const LevaCore = React.memo(
           flat={flat}
           oneLineLabels={oneLineLabels}
           hideTitleBar={!titleBar}
-          style={{ display: shouldShow ? 'block' : 'none' }}>
+          style={{ display: shouldShow ? "block" : "none" }}
+        >
           {titleBar && (
             <TitleWithFilter
               onDrag={set}

@@ -1,5 +1,3 @@
-import { useControls } from "@/components/dom/leva"
-
 type FloorProps = {
   size?: number
   segments?: number
@@ -8,7 +6,5 @@ type FloorProps = {
 }
 
 export function Floor({ size = 10, segments = 10, primary = "white", secondary = "gray" }: FloorProps) {
-  const { sizeMultiplier } = useControls({ sizeMultiplier: 1 })
-
-  return <gridHelper args={[size * sizeMultiplier, segments, primary, secondary]} />
+  return <gridHelper args={[size, segments, primary, secondary]} />
 }

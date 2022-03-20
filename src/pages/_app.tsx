@@ -1,44 +1,54 @@
 import { useRouter } from 'next/router'
 import useStore from '@/state/store'
-import { useEffect } from 'react'
-import Header from '@/config'
-import Dom from '@/components/layout/dom'
-import partition from '@/helpers/partition'
-import '@/styles/index.css'
-import dynamic from 'next/dynamic'
+import useTheme from "@/state/theme"
+import { useEffect } from "react"
+import Header from "@/config"
+import "@/styles/index.css"
 
-const LCanvas = dynamic(() => import('@/components/layout/canvas'), {
-  ssr: false,
+import ProgressBar from "@badrap/bar-of-progress"
+
+import { createGlobalStyle } from "styled-components"
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+`
+
+const progress = new ProgressBar({
+  size: 2,
+  color: "#3b82f6",
+  className: "bar-of-progress",
+  delay: 100,
 })
 
-const Balance = ({ child }) => {
-  const [r3f, dom] = partition(child, (c) => c.props.r3f === true)
-
-  return (
-    <>
-      <Dom>{dom}</Dom>
-      <LCanvas>{r3f}</LCanvas>
-    </>
-  )
-}
-
-function App({ Component, pageProps = { title: 'index' } }) {
+function App({ Component, pageProps = { title: "index" } }) {
   const router = useRouter()
 
   useEffect(() => {
     useStore.setState({ router })
+    router.events.on("routeChangeStart", progress.start)
+    router.events.on("routeChangeComplete", progress.finish)
+    router.events.on("routeChangeError", progress.finish)
+
+    return () => {
+      router.events.off("routeChangeStart", progress.start)
+      router.events.off("routeChangeComplete", progress.finish)
+      router.events.off("routeChangeError", progress.finish)
+    }
   }, [router])
 
-  // const child = Component(pageProps).props.children
+  useEffect(() => {
+    const { matches } = window.matchMedia("(prefers-color-scheme: dark)")
+    useTheme.setState({ darkMode: matches })
+  }, [])
 
   return (
     <>
       <Header title={pageProps.title} />
-      {/* {child && child.length > 1 ? (
-        <Balance child={Component(pageProps).props.children} />
-      ) : (
-        <Component {...pageProps} />
-      )} */}
+      <GlobalStyle />
       <Component {...pageProps} />
     </>
   )

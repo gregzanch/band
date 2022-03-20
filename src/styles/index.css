@@ -15,7 +15,8 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color:#20252B;
+    /* background-color:#20252B; */
+    /* @apply bg-neutral-600; */
   }
 }
 
