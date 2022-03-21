@@ -1,6 +1,10 @@
 import create, { SetState, GetState, Mutate, StoreApi } from "zustand"
 import { persist, subscribeWithSelector } from "zustand/middleware"
-import { Source, Receiver, ObjectType } from "./types"
+import { Source, Receiver, ObjectType, BriefMesh, BriefAttribute } from "./types"
+import { openFilePicker } from "@/helpers/dom/openFilePicker"
+import { GLTFLoader } from "three-stdlib"
+import { BufferAttribute, Group, Mesh } from "three"
+import { nanoid } from "nanoid"
 
 type EditorState = {
   cameraMatrix: number[]
@@ -10,7 +14,12 @@ type EditorState = {
   scene: any
   sources: Record<string, Source>
   receivers: Record<string, Receiver>
+  meshes: Record<string, Mesh>
   // method: () => void
+}
+
+type EditorReducers = {
+  uploadFile: () => Promise<void>
 }
 
 const initialState: EditorState = {
@@ -43,19 +52,79 @@ const initialState: EditorState = {
       },
     },
   },
+  meshes: {},
+}
+
+function makeBriefAttribute(attribute: BufferAttribute, makeTyped = (x) => new Float32Array(x)): BriefAttribute {
+  return {
+    array: makeTyped(Array.from(attribute.array)),
+    count: attribute.count,
+    itemSize: attribute.itemSize,
+  }
+}
+
+function makeBriefIndex(attribute: BufferAttribute, makeTyped = (x) => new Uint16Array(x)): BriefAttribute {
+  return {
+    array: makeTyped(Array.from(attribute.array)),
+    count: attribute.count,
+    itemSize: attribute.itemSize,
+  }
+}
+
+function makeBriefMesh(mesh: Mesh): BriefMesh {
+  const briefAttributes = {}
+  for (const [key, attr] of Object.entries(mesh.geometry.attributes)) {
+    briefAttributes[key] = makeBriefAttribute(attr as BufferAttribute)
+  }
+  return {
+    userData: {
+      type: ObjectType.BRIEF_MESH,
+      name: mesh.name || "",
+      id: nanoid(10),
+    },
+    position: mesh.position.toArray(),
+    geometry: {
+      attributes: briefAttributes,
+      index: makeBriefIndex(mesh.geometry.index),
+    },
+  }
+}
+
+function scene2mesh(scene: Group): Record<string, Mesh> {
+  const meshes = scene.children.filter((x) => x.type === "Mesh")
+  return meshes.reduce((acc, curr) => ({ ...acc, [curr.uuid]: curr }), {})
 }
 
 export const useEditor = create<
-  EditorState,
-  SetState<EditorState>,
-  GetState<EditorState>,
-  Mutate<StoreApi<EditorState>, [["zustand/subscribeWithSelector", never]]> &
-    Mutate<StoreApi<EditorState>, [["zustand/persist", Partial<EditorState>]]>
+  EditorState & EditorReducers,
+  SetState<EditorState & EditorReducers>,
+  GetState<EditorState & EditorReducers>,
+  Mutate<StoreApi<EditorState & EditorReducers>, [["zustand/subscribeWithSelector", never]]> &
+    Mutate<StoreApi<EditorState & EditorReducers>, [["zustand/persist", Partial<EditorState & EditorReducers>]]>
 >(
   subscribeWithSelector(
     persist(
       (set, get) => ({
         ...initialState,
+        uploadFile: async () => {
+          const files = await openFilePicker({ multiple: true, accept: "*" })
+          const reader = new FileReader()
+          reader.readAsArrayBuffer(files[0])
+          reader.onloadend = async (e) => {
+            if (reader.readyState === reader.DONE) {
+              const parsed = await new GLTFLoader().parseAsync(reader.result, "")
+              console.log(parsed)
+              //@ts-ignore
+              const meshes = scene2mesh(parsed.scene)
+              set({
+                meshes: {
+                  ...get().meshes,
+                  ...meshes,
+                },
+              })
+            }
+          }
+        },
         // method: () => {},
       }),
 

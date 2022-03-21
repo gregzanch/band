@@ -110,6 +110,20 @@ function SourceProperties({ uuid, selectedObject }) {
         onChange: (value) => {
           if (initialRef.current !== false) {
             selectedObject.userData.name = value
+            useEditor.setState((state) => {
+              return {
+                sources: {
+                  ...state.sources,
+                  [selectedObject.userData.id]: {
+                    ...state.sources[selectedObject.userData.id],
+                    userData: {
+                      ...state.sources[selectedObject.userData.id].userData,
+                      name: value,
+                    },
+                  },
+                },
+              }
+            })
           } else {
             // console.log("skipping name", selectedObject?.userData?.name)
           }

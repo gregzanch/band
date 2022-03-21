@@ -1,5 +1,13 @@
 import { useRef, useEffect } from "react"
-import { GizmoHelper, GizmoViewcube, GizmoViewport, OrbitControls, TransformControls } from "@react-three/drei"
+import {
+  GizmoHelper,
+  GizmoViewcube,
+  GizmoViewport,
+  OrbitControls,
+  Stage,
+  TransformControls,
+  useGLTF,
+} from "@react-three/drei"
 import { Floor } from "@/components/canvas/Editor/Overlays"
 import SourceComponent from "@/components/canvas/Objects/Source"
 
@@ -7,12 +15,16 @@ import { PerspectiveCamera as PerspectiveCameraImpl } from "three"
 import { Canvas, useThree } from "@react-three/fiber"
 
 import useEditor from "@/state/editor"
-import { useControls } from "@/components/dom/leva"
+import { button, useControls } from "@/components/dom/leva"
 import { cameraPropertiesStore } from "@/components/dom/Properties/CameraProperties"
 import { objectPropertiesStore } from "@/components/dom/Properties/ObjectProperties"
+import Monke from "@/components/canvas/Objects/Monke"
 
 import { useHotkeys } from "react-hotkeys-hook"
 import ReceiverComponent from "../Objects/Receiver"
+
+import { Suspense } from "react"
+import MeshComponent from "../Objects/Mesh"
 
 function onEnd({ target }) {
   const camera = target.object as PerspectiveCameraImpl
@@ -35,6 +47,7 @@ const Controls = () => {
           // console.log(value)
         },
       },
+      // upload: button((get) => alert(`Number value is ${get('number').toFixed(2)}`))
     },
     { store: cameraPropertiesStore }
   )
@@ -128,10 +141,24 @@ function Editor(props) {
 
   const sources = useEditor((state) => state.sources)
   const receivers = useEditor((state) => state.receivers)
+  const meshes = useEditor((state) => state.meshes)
 
   return (
     <Canvas mode='concurrent' shadows dpr={[1, 2]} style={{ background: "#20252B" }}>
       <fog attach='fog' args={[0x20252b, 20, 60]} />
+      <ambientLight intensity={0.8} />
+      <directionalLight
+        castShadow
+        position={[2.5, 8, 5]}
+        intensity={1.5}
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        shadow-camera-far={50}
+        shadow-camera-left={-10}
+        shadow-camera-right={10}
+        shadow-camera-top={10}
+        shadow-camera-bottom={-10}
+      />
       <Controls />
       <Floor size={100} segments={100} primary={0xb2b2b2} secondary={0x252525} />
       {Object.entries(sources).map(([id, source]) => (
@@ -139,6 +166,9 @@ function Editor(props) {
       ))}
       {Object.entries(receivers).map(([id, receiver]) => (
         <ReceiverComponent key={id} name={receiver.userData.name} position={receiver.position} id={id} />
+      ))}
+      {Object.entries(meshes).map(([id, mesh]) => (
+        <MeshComponent key={id} mesh={mesh} />
       ))}
     </Canvas>
   )
