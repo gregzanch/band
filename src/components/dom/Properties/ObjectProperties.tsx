@@ -178,7 +178,7 @@ function SourceProperties({ uuid, selectedObject }) {
 function EmptySelection() {
   return (
     <Box backgroundColor='var(--leva-colors-elevation2)' py='0.5rem'>
-      <Text textAlign='center' fontSize='11px' opacity='0.25'>
+      <Text textAlign='center' fontSize='11px' opacity='0.25' color='var(--leva-colors-highlight2)'>
         Nothing Selected
       </Text>
     </Box>

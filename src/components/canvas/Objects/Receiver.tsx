@@ -2,7 +2,7 @@ import { Edges } from "@react-three/drei"
 import { useEffect, useRef } from "react"
 import useEditor from "@/state/editor"
 
-const ReceiverComponent = ({ name = "", position = [0, 0, 0] as [number, number, number] }) => {
+const ReceiverComponent = ({ name = "", id, position = [0, 0, 0] as [number, number, number] }) => {
   // This reference will give us direct access to the THREE.Mesh object
   const mesh = useRef(null)
   return (
@@ -17,6 +17,7 @@ const ReceiverComponent = ({ name = "", position = [0, 0, 0] as [number, number,
         userData={{
           type: "Receiver",
           name,
+          id,
         }}
         position={position}
       >

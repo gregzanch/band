@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react"
-import { OrbitControls, TransformControls } from "@react-three/drei"
+import { GizmoHelper, GizmoViewcube, GizmoViewport, OrbitControls, TransformControls } from "@react-three/drei"
 import { Floor } from "@/components/canvas/Editor/Overlays"
 import SourceComponent from "@/components/canvas/Objects/Source"
 
@@ -41,6 +41,7 @@ const Controls = () => {
 
   useEffect(() => {
     if (transformControls.current) {
+      useEditor.setState({ transformControls: transformControls.current })
       const { current: controls } = transformControls
       const callback = (event) => {
         control.current.enabled = !event.value
@@ -78,6 +79,7 @@ const Controls = () => {
   useEffect(() => {
     const controlValue = control?.current
     if (controlValue) {
+      useEditor.setState({ orbitControls: controlValue })
       // dom.current.style['touch-action'] = 'none'
       const camera = controlValue.object as PerspectiveCameraImpl
       const matrix = useEditor.getState().cameraMatrix
@@ -94,7 +96,24 @@ const Controls = () => {
       {selectedObject && (
         <TransformControls ref={transformControls} mode='translate' showX showY showZ object={selectedObject} />
       )}
-      <OrbitControls ref={control} enableDamping={false} />
+      <OrbitControls ref={control} enableDamping={false} makeDefault />
+      <GizmoHelper
+        alignment='bottom-left'
+        margin={[80, 80]}
+        onUpdate={() => {
+          control.current.object.up.set(0, 1, 0)
+        }}
+      >
+        {/* <GizmoViewcube
+          color='white'
+          faces={["Right", "Left", "Top", "Bottom", "Front", "Back"]}
+          hoverColor='lightgray'
+          opacity={1}
+          strokeColor='gray'
+          textColor='black'
+        /> */}
+        <GizmoViewport axisColors={["red", "green", "blue"]} labelColor='black' />
+      </GizmoHelper>
     </>
   )
 }
@@ -116,10 +135,10 @@ function Editor(props) {
       <Controls />
       <Floor size={100} segments={100} primary={0xb2b2b2} secondary={0x252525} />
       {Object.entries(sources).map(([id, source]) => (
-        <SourceComponent key={id} name={source.userData.name} position={source.position} />
+        <SourceComponent key={id} name={source.userData.name} position={source.position} id={id} />
       ))}
       {Object.entries(receivers).map(([id, receiver]) => (
-        <ReceiverComponent key={id} name={receiver.userData.name} position={receiver.position} />
+        <ReceiverComponent key={id} name={receiver.userData.name} position={receiver.position} id={id} />
       ))}
     </Canvas>
   )

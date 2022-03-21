@@ -1,15 +1,22 @@
+export enum ObjectType {
+  SOURCE = "Source",
+  RECEIVER = "Receiver",
+}
+
 export interface Source {
   userData: {
-    type: "Source"
+    type: ObjectType.SOURCE
     name: string
+    id: string
   }
   position: [number, number, number]
 }
 
 export interface Receiver {
   userData: {
-    type: "Receiver"
+    type: ObjectType.RECEIVER
     name: string
+    id: string
   }
   position: [number, number, number]
 }

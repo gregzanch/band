@@ -1,6 +1,6 @@
 import create, { SetState, GetState, Mutate, StoreApi } from "zustand"
 import { persist, subscribeWithSelector } from "zustand/middleware"
-import { Source, Receiver } from "./types"
+import { Source, Receiver, ObjectType } from "./types"
 
 type EditorState = {
   cameraMatrix: number[]
@@ -24,20 +24,22 @@ const initialState: EditorState = {
   selectedObject: null,
   scene: null,
   sources: {
-    "F07E2F4E-36A6-48D8-82FC-ABB7C795448B": {
+    XtCFxCk4QT: {
       position: [0.2, 0, 3],
       userData: {
-        type: "Source",
-        name: "source l",
+        type: ObjectType.SOURCE,
+        name: "Source Left",
+        id: "XtCFxCk4QT",
       },
     },
   },
   receivers: {
-    "81D2A46F-EF8F-4DA7-A82E-7BFCEE7E262C": {
+    zTvorIzlMj: {
       position: [0.2, 0, -1],
       userData: {
-        type: "Receiver",
-        name: "rec 1",
+        type: ObjectType.RECEIVER,
+        name: "Receiver",
+        id: "zTvorIzlMj",
       },
     },
   },

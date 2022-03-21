@@ -9,7 +9,7 @@ export const Text = styled.p.attrs((props) => {
   ${color}
   ${typography}
   font-family: var(--leva-fonts-mono);
-  color: var(--leva-colors-highlight2);
+  /* color: var(--leva-colors-highlight2); */
 `
 
 export default Text
