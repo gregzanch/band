@@ -1,28 +1,6 @@
-// example Box.js
-import styled from "styled-components"
-import {
-  space,
-  color,
-  layout,
-  flexbox,
-  grid,
-  SpaceProps,
-  ColorProps,
-  LayoutProps,
-  FlexProps,
-  GridProps,
-} from "styled-system"
+import { styled } from "@/styles/stitches.config"
 
-export const Box = styled.div.attrs((props) => {
-  return {
-    ...props,
-  } as SpaceProps & ColorProps & LayoutProps & FlexProps & GridProps
-})`
-  ${space}
-  ${color}
-  ${layout}
-  ${flexbox}
-  ${grid}
-`
-
-export default Box
+export const Box = styled("div", {
+  // Reset
+  boxSizing: "border-box",
+})

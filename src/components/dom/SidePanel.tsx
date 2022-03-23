@@ -199,41 +199,39 @@ export function SidePanel() {
   }, [])
 
   return (
-    <>
-      <StyledPanel id='side-panel'>
-        <ResizeBar />
-        {/* <Box p='4px'>
+    <StyledPanel id='side-panel'>
+      <ResizeBar />
+      {/* <Box p='4px'>
           <ResizeHandle />
         </Box> */}
-        <Divider />
-        <SidePanelSection
-          id='scene_graph'
-          title='Scene Graph'
-          expanded={expanded.includes("scene_graph")}
-          onExpand={onExpand}
-        >
-          <SceneGraph />
-        </SidePanelSection>
-        <Divider />
-        <SidePanelSection
-          id='camera_properties'
-          title='Camera Properties'
-          expanded={expanded.includes("camera_properties")}
-          onExpand={onExpand}
-        >
-          <CameraProperties />
-        </SidePanelSection>
-        <Divider />
-        <SidePanelSection
-          id='object_properties'
-          title='Object Properties'
-          expanded={expanded.includes("object_properties")}
-          onExpand={onExpand}
-        >
-          <ObjectProperties />
-        </SidePanelSection>
-        <Divider />
-      </StyledPanel>
-    </>
+      <Divider />
+      <SidePanelSection
+        id='scene_graph'
+        title='Scene Graph'
+        expanded={expanded.includes("scene_graph")}
+        onExpand={onExpand}
+      >
+        <SceneGraph />
+      </SidePanelSection>
+      <Divider />
+      <SidePanelSection
+        id='camera_properties'
+        title='Camera Properties'
+        expanded={expanded.includes("camera_properties")}
+        onExpand={onExpand}
+      >
+        <CameraProperties />
+      </SidePanelSection>
+      <Divider />
+      <SidePanelSection
+        id='object_properties'
+        title='Object Properties'
+        expanded={expanded.includes("object_properties")}
+        onExpand={onExpand}
+      >
+        <ObjectProperties />
+      </SidePanelSection>
+      <Divider />
+    </StyledPanel>
   )
 }
