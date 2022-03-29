@@ -1,11 +1,12 @@
 import { ReactElement, ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import styled from "styled-components"
-import Box from "@/components/shared/Box"
-import Text from "@/components/shared/Text"
+import { Box } from "@/components/shared/Box"
+import { Text } from "@/components/shared/Text"
 import CameraProperties from "@/components/dom/Properties/CameraProperties"
 import ObjectProperties from "@/components/dom/Properties/ObjectProperties"
 import SceneGraph from "@/components/dom/SceneGraph/SceneGraph"
 import { ResizeTopLeftIcon } from "../svg/Icons"
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/dom/Accordian"
 
 const Handle = styled.div`
   cursor: ew-resize;
@@ -158,11 +159,15 @@ const HeaderContainer = styled(Box)`
 
 function SidePanelSectionHeader({ title, expanded, onExpand, id }) {
   return (
+    //@ts-ignore
     <HeaderContainer width='100%' onClick={() => onExpand(id, !expanded)}>
+      {/* @ts-ignore */}
       <Box mx='8px' my='4px' display='flex' justifyContent='space-between' width='100%'>
+        {/* @ts-ignore */}
         <Text as='a' fontSize='12px' cursor='pointer' color='inherit'>
           {title}
         </Text>
+        {/* @ts-ignore */}
         <Text as='a' fontSize='12px' color='inherit'>
           {expanded ? "-" : "+"}
         </Text>
@@ -181,6 +186,7 @@ type SidePanelSectionProps = {
 
 export function SidePanelSection({ title, expanded, onExpand, children, id }: SidePanelSectionProps) {
   return (
+    //@ts-ignore
     <Box width='100%'>
       <SidePanelSectionHeader title={title} expanded={expanded} onExpand={onExpand} id={id} />
       {expanded && <Box>{children}</Box>}
@@ -201,10 +207,29 @@ export function SidePanel() {
   return (
     <StyledPanel id='side-panel'>
       <ResizeBar />
-      {/* <Box p='4px'>
-          <ResizeHandle />
-        </Box> */}
-      <Divider />
+      <Accordion type='multiple' defaultValue={expanded} value={expanded} onValueChange={setExpanded}>
+        <AccordionItem value='scene_graph'>
+          <AccordionTrigger>Scene Graph</AccordionTrigger>
+          <AccordionContent>
+            <SceneGraph />
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value='camera_properties'>
+          <AccordionTrigger>Camera Properties</AccordionTrigger>
+          <AccordionContent>
+            <CameraProperties />
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value='object_properties'>
+          <AccordionTrigger>Object Properties</AccordionTrigger>
+          <AccordionContent>
+            <ObjectProperties />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+      {/* <Divider />
       <SidePanelSection
         id='scene_graph'
         title='Scene Graph'
@@ -230,7 +255,7 @@ export function SidePanel() {
         onExpand={onExpand}
       >
         <ObjectProperties />
-      </SidePanelSection>
+      </SidePanelSection> */}
       <Divider />
     </StyledPanel>
   )

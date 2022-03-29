@@ -4,8 +4,8 @@ import { LevaPanel, useControls } from "@/components/dom/leva"
 import { Store } from "../leva/store"
 import { useEffect, useRef } from "react"
 import { SphereBufferGeometry } from "three"
-import Text from "@/components/shared/Text"
-import Box from "@/components/shared/Box"
+import { Text } from "@/components/shared/Text"
+import { Box } from "@/components/shared/Box"
 
 export const objectPropertiesStore = new Store()
 

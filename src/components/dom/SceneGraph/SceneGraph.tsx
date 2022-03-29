@@ -1,14 +1,19 @@
+//@ts-nocheck
 import useEditor from "@/state/editor"
 import useStore from "@/state/store"
 import { Leva } from "@/components/dom/leva"
 import { useEffect, useRef } from "react"
 import { Receiver, Source, ObjectType } from "@/state/types"
-import Box from "@/components/shared/Box"
-import Text from "@/components/shared/Text"
+import { Box } from "@/components/shared/Box"
+import { Text } from "@/components/shared/Text"
 import { SourceIcon, ReceiverIcon } from "@/components/svg/Icons"
 import styled from "styled-components"
 
-const SceneGraphItemContainer = styled(Box)`
+const SceneGraphItemContainer = styled(Box).attrs((props) => {
+  return {
+    selected: !!props.selected,
+  }
+})`
   background-color: ${(props) => (props.selected ? "#1A4884" : "var(--leva-colors-elevation2)")};
   color: ${(props) => (props.selected ? "#e0e0e0" : "var(--leva-colors-highlight2)")};
   &:hover {

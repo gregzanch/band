@@ -118,17 +118,7 @@ import {
 import type * as Stitches from '@stitches/react';
 export type { VariantProps } from '@stitches/react';
 
-export const {
-  styled,
-  css,
-  theme,
-  createTheme,
-  getCssText,
-  globalCss,
-  keyframes,
-  config,
-  reset,
-} = createStitches({
+export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes, config, reset } = createStitches({
   theme: {
     colors: {
       ...gray,
@@ -192,41 +182,58 @@ export const {
       ...whiteA,
       ...blackA,
 
+      elevation1: "hsl(210, 14%, 89%)", // bg color of the rows (main panel color)
+      elevation2: "hsl(225, 16%, 80%)", // bg color of the root panel (main title bar)
+      elevation3: "hsl(225, 15%, 75%)", // bg color of the inputs
+      accent1: "hsl(212, 100%, 57%)",
+      accent2: "hsl(211, 100%, 50%)",
+      accent3: "hsl(213, 100%, 38%)",
+      highlight1: "hsl(222, 7%, 65%)",
+      highlight2: "hsl(225, 12%, 60%)",
+      highlight3: "hsl(0, 0%, 0%)",
+      vivid1: "hsl(48, 100%, 50%)",
+      folderWidgetColor: "$highlight2",
+      folderTextColor: "$highlight3",
+      toolTipBackground: "$highlight3",
+      toolTipText: "$elevation2",
+
       // Semantic colors
-      hiContrast: '$slate12',
+      hiContrast: "$slate12",
       // loContrast: '$slate1',
-      loContrast: 'white',
-      canvas: 'hsl(0 0% 93%)',
-      panel: 'white',
-      transparentPanel: 'hsl(0 0% 0% / 97%)',
-      shadowLight: 'hsl(206 22% 7% / 35%)',
-      shadowDark: 'hsl(206 22% 7% / 20%)',
+      loContrast: "white",
+      canvas: "hsl(0 0% 93%)",
+      panel: "$elevation1",
+      panelHi: "$slate4",
+      panelLo: "$slate2",
+      transparentPanel: "hsl(0 0% 0% / 97%)",
+      shadowLight: "hsl(206 22% 7% / 35%)",
+      shadowDark: "hsl(206 22% 7% / 20%)",
     },
     fonts: {
-      untitled: 'Untitled Sans, -apple-system, system-ui, sans-serif',
-      mono: 'Söhne Mono, menlo, monospace',
+      untitled: "Untitled Sans, -apple-system, system-ui, sans-serif",
+      mono: "Söhne Mono, menlo, monospace",
     },
     space: {
-      1: '5px',
-      2: '10px',
-      3: '15px',
-      4: '20px',
-      5: '25px',
-      6: '35px',
-      7: '45px',
-      8: '65px',
-      9: '80px',
+      1: "5px",
+      2: "10px",
+      3: "15px",
+      4: "20px",
+      5: "25px",
+      6: "35px",
+      7: "45px",
+      8: "65px",
+      9: "80px",
     },
     sizes: {
-      1: '5px',
-      2: '10px',
-      3: '15px',
-      4: '20px',
-      5: '25px',
-      6: '35px',
-      7: '45px',
-      8: '65px',
-      9: '80px',
+      1: "5px",
+      2: "10px",
+      3: "15px",
+      4: "20px",
+      5: "25px",
+      6: "35px",
+      7: "45px",
+      8: "65px",
+      9: "80px",
     },
     // space: {
     //   1: '4px',
@@ -251,15 +258,15 @@ export const {
     //   9: '80px',
     // },
     fontSizes: {
-      1: '12px',
-      2: '13px',
-      3: '15px',
-      4: '17px',
-      5: '19px',
-      6: '21px',
-      7: '27px',
-      8: '35px',
-      9: '59px',
+      1: "12px",
+      2: "13px",
+      3: "15px",
+      4: "17px",
+      5: "19px",
+      6: "21px",
+      7: "27px",
+      8: "35px",
+      9: "59px",
     },
     // fontSizes: {
     //   1: '11px',
@@ -273,150 +280,150 @@ export const {
     //   9: '60px',
     // },
     radii: {
-      1: '4px',
-      2: '6px',
-      3: '8px',
-      4: '12px',
-      round: '50%',
-      pill: '9999px',
+      1: "4px",
+      2: "6px",
+      3: "8px",
+      4: "12px",
+      round: "50%",
+      pill: "9999px",
     },
     zIndices: {
-      1: '100',
-      2: '200',
-      3: '300',
-      4: '400',
-      max: '999',
+      1: "100",
+      2: "200",
+      3: "300",
+      4: "400",
+      max: "999",
     },
   },
   media: {
-    bp1: '(min-width: 520px)',
-    bp2: '(min-width: 900px)',
-    bp3: '(min-width: 1200px)',
-    bp4: '(min-width: 1800px)',
-    motion: '(prefers-reduced-motion)',
-    hover: '(any-hover: hover)',
-    dark: '(prefers-color-scheme: dark)',
-    light: '(prefers-color-scheme: light)',
+    bp1: "(min-width: 520px)",
+    bp2: "(min-width: 900px)",
+    bp3: "(min-width: 1200px)",
+    bp4: "(min-width: 1800px)",
+    motion: "(prefers-reduced-motion)",
+    hover: "(any-hover: hover)",
+    dark: "(prefers-color-scheme: dark)",
+    light: "(prefers-color-scheme: light)",
   },
   utils: {
-    p: (value: Stitches.PropertyValue<'padding'>) => ({
+    p: (value: Stitches.PropertyValue<"padding">) => ({
       padding: value,
     }),
-    pt: (value: Stitches.PropertyValue<'paddingTop'>) => ({
+    pt: (value: Stitches.PropertyValue<"paddingTop">) => ({
       paddingTop: value,
     }),
-    pr: (value: Stitches.PropertyValue<'paddingRight'>) => ({
+    pr: (value: Stitches.PropertyValue<"paddingRight">) => ({
       paddingRight: value,
     }),
-    pb: (value: Stitches.PropertyValue<'paddingBottom'>) => ({
+    pb: (value: Stitches.PropertyValue<"paddingBottom">) => ({
       paddingBottom: value,
     }),
-    pl: (value: Stitches.PropertyValue<'paddingLeft'>) => ({
+    pl: (value: Stitches.PropertyValue<"paddingLeft">) => ({
       paddingLeft: value,
     }),
-    px: (value: Stitches.PropertyValue<'paddingLeft'>) => ({
+    px: (value: Stitches.PropertyValue<"paddingLeft">) => ({
       paddingLeft: value,
       paddingRight: value,
     }),
-    py: (value: Stitches.PropertyValue<'paddingTop'>) => ({
+    py: (value: Stitches.PropertyValue<"paddingTop">) => ({
       paddingTop: value,
       paddingBottom: value,
     }),
 
-    m: (value: Stitches.PropertyValue<'margin'>) => ({
+    m: (value: Stitches.PropertyValue<"margin">) => ({
       margin: value,
     }),
-    mt: (value: Stitches.PropertyValue<'marginTop'>) => ({
+    mt: (value: Stitches.PropertyValue<"marginTop">) => ({
       marginTop: value,
     }),
-    mr: (value: Stitches.PropertyValue<'marginRight'>) => ({
+    mr: (value: Stitches.PropertyValue<"marginRight">) => ({
       marginRight: value,
     }),
-    mb: (value: Stitches.PropertyValue<'marginBottom'>) => ({
+    mb: (value: Stitches.PropertyValue<"marginBottom">) => ({
       marginBottom: value,
     }),
-    ml: (value: Stitches.PropertyValue<'marginLeft'>) => ({
+    ml: (value: Stitches.PropertyValue<"marginLeft">) => ({
       marginLeft: value,
     }),
-    mx: (value: Stitches.PropertyValue<'marginLeft'>) => ({
+    mx: (value: Stitches.PropertyValue<"marginLeft">) => ({
       marginLeft: value,
       marginRight: value,
     }),
-    my: (value: Stitches.PropertyValue<'marginTop'>) => ({
+    my: (value: Stitches.PropertyValue<"marginTop">) => ({
       marginTop: value,
       marginBottom: value,
     }),
 
-    ta: (value: Stitches.PropertyValue<'textAlign'>) => ({ textAlign: value }),
+    ta: (value: Stitches.PropertyValue<"textAlign">) => ({ textAlign: value }),
 
-    fd: (value: Stitches.PropertyValue<'flexDirection'>) => ({ flexDirection: value }),
-    fw: (value: Stitches.PropertyValue<'flexWrap'>) => ({ flexWrap: value }),
+    fd: (value: Stitches.PropertyValue<"flexDirection">) => ({ flexDirection: value }),
+    fw: (value: Stitches.PropertyValue<"flexWrap">) => ({ flexWrap: value }),
 
-    ai: (value: Stitches.PropertyValue<'alignItems'>) => ({ alignItems: value }),
-    ac: (value: Stitches.PropertyValue<'alignContent'>) => ({ alignContent: value }),
-    jc: (value: Stitches.PropertyValue<'justifyContent'>) => ({ justifyContent: value }),
-    as: (value: Stitches.PropertyValue<'alignSelf'>) => ({ alignSelf: value }),
-    fg: (value: Stitches.PropertyValue<'flexGrow'>) => ({ flexGrow: value }),
-    fs: (value: Stitches.PropertyValue<'flexShrink'>) => ({ flexShrink: value }),
-    fb: (value: Stitches.PropertyValue<'flexBasis'>) => ({ flexBasis: value }),
+    ai: (value: Stitches.PropertyValue<"alignItems">) => ({ alignItems: value }),
+    ac: (value: Stitches.PropertyValue<"alignContent">) => ({ alignContent: value }),
+    jc: (value: Stitches.PropertyValue<"justifyContent">) => ({ justifyContent: value }),
+    as: (value: Stitches.PropertyValue<"alignSelf">) => ({ alignSelf: value }),
+    fg: (value: Stitches.PropertyValue<"flexGrow">) => ({ flexGrow: value }),
+    fs: (value: Stitches.PropertyValue<"flexShrink">) => ({ flexShrink: value }),
+    fb: (value: Stitches.PropertyValue<"flexBasis">) => ({ flexBasis: value }),
 
-    bc: (value: Stitches.PropertyValue<'backgroundColor'>) => ({
+    bc: (value: Stitches.PropertyValue<"backgroundColor">) => ({
       backgroundColor: value,
     }),
 
-    br: (value: Stitches.PropertyValue<'borderRadius'>) => ({
+    br: (value: Stitches.PropertyValue<"borderRadius">) => ({
       borderRadius: value,
     }),
-    btrr: (value: Stitches.PropertyValue<'borderTopRightRadius'>) => ({
+    btrr: (value: Stitches.PropertyValue<"borderTopRightRadius">) => ({
       borderTopRightRadius: value,
     }),
-    bbrr: (value: Stitches.PropertyValue<'borderBottomRightRadius'>) => ({
+    bbrr: (value: Stitches.PropertyValue<"borderBottomRightRadius">) => ({
       borderBottomRightRadius: value,
     }),
-    bblr: (value: Stitches.PropertyValue<'borderBottomLeftRadius'>) => ({
+    bblr: (value: Stitches.PropertyValue<"borderBottomLeftRadius">) => ({
       borderBottomLeftRadius: value,
     }),
-    btlr: (value: Stitches.PropertyValue<'borderTopLeftRadius'>) => ({
+    btlr: (value: Stitches.PropertyValue<"borderTopLeftRadius">) => ({
       borderTopLeftRadius: value,
     }),
 
-    bs: (value: Stitches.PropertyValue<'boxShadow'>) => ({ boxShadow: value }),
+    bs: (value: Stitches.PropertyValue<"boxShadow">) => ({ boxShadow: value }),
 
-    lh: (value: Stitches.PropertyValue<'lineHeight'>) => ({ lineHeight: value }),
+    lh: (value: Stitches.PropertyValue<"lineHeight">) => ({ lineHeight: value }),
 
-    ox: (value: Stitches.PropertyValue<'overflowX'>) => ({ overflowX: value }),
-    oy: (value: Stitches.PropertyValue<'overflowY'>) => ({ overflowY: value }),
+    ox: (value: Stitches.PropertyValue<"overflowX">) => ({ overflowX: value }),
+    oy: (value: Stitches.PropertyValue<"overflowY">) => ({ overflowY: value }),
 
-    pe: (value: Stitches.PropertyValue<'pointerEvents'>) => ({ pointerEvents: value }),
-    us: (value: Stitches.PropertyValue<'userSelect'>) => ({
+    pe: (value: Stitches.PropertyValue<"pointerEvents">) => ({ pointerEvents: value }),
+    us: (value: Stitches.PropertyValue<"userSelect">) => ({
       WebkitUserSelect: value,
       userSelect: value,
     }),
 
-    userSelect: (value: Stitches.PropertyValue<'userSelect'>) => ({
+    userSelect: (value: Stitches.PropertyValue<"userSelect">) => ({
       WebkitUserSelect: value,
       userSelect: value,
     }),
 
-    size: (value: Stitches.PropertyValue<'width'>) => ({
+    size: (value: Stitches.PropertyValue<"width">) => ({
       width: value,
       height: value,
     }),
 
-    appearance: (value: Stitches.PropertyValue<'appearance'>) => ({
+    appearance: (value: Stitches.PropertyValue<"appearance">) => ({
       WebkitAppearance: value,
       appearance: value,
     }),
-    backgroundClip: (value: Stitches.PropertyValue<'backgroundClip'>) => ({
+    backgroundClip: (value: Stitches.PropertyValue<"backgroundClip">) => ({
       WebkitBackgroundClip: value,
       backgroundClip: value,
     }),
   },
-});
+})
 
-export type CSS = Stitches.CSS<typeof config>;
-
-export const darkTheme = createTheme('dark-theme', {
+export type CSS = Stitches.CSS<typeof config>
+export const darkThemeMode = "dark-theme"
+export const darkTheme = createTheme(darkThemeMode, {
   colors: {
     ...grayDark,
     ...mauveDark,
@@ -476,13 +483,30 @@ export const darkTheme = createTheme('dark-theme', {
     ...bronzeDarkA,
     ...goldDarkA,
 
+    elevation1: "hsl(210, 14%, 11%)", // bg color of the rows (main panel color)
+    elevation2: "hsl(225, 16%, 20%)", // bg color of the root panel (main title bar)
+    elevation3: "hsl(225, 15%, 25%)", // bg color of the inputs
+    accent1: "hsl(212, 100%, 43%)",
+    accent2: "hsl(211, 100%, 50%)",
+    accent3: "hsl(213, 100%, 62%)",
+    highlight1: "hsl(222, 7%, 35%)",
+    highlight2: "hsl(225, 12%, 60%)",
+    highlight3: "hsl(0, 0%, 100%)",
+    vivid1: "hsl(48, 100%, 50%)",
+    folderWidgetColor: "$highlight2",
+    folderTextColor: "$highlight3",
+    toolTipBackground: "$highlight3",
+    toolTipText: "$elevation2",
+
     // Semantic colors
-    hiContrast: '$slate12',
-    loContrast: '$slate1',
-    canvas: 'hsl(0 0% 15%)',
-    panel: '$slate3',
-    transparentPanel: 'hsl(0 100% 100% / 97%)',
-    shadowLight: 'hsl(206 22% 7% / 35%)',
-    shadowDark: 'hsl(206 22% 7% / 20%)',
+    hiContrast: "$slate12",
+    loContrast: "$slate1",
+    canvas: "hsl(0 0% 15%)",
+    panel: "$elevation1",
+    panelHi: "$slate4",
+    panelLo: "$slate2",
+    transparentPanel: "hsl(0 100% 100% / 97%)",
+    shadowLight: "hsl(206 22% 7% / 35%)",
+    shadowDark: "hsl(206 22% 7% / 20%)",
   },
-});
+})

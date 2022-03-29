@@ -1,6 +1,7 @@
+import useTheme from "@/state/theme"
 import { HamburgerMenuIcon, ChevronRightIcon } from "@radix-ui/react-icons"
 import { nanoid } from "nanoid"
-import { Fragment } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { Button } from "../shared/Button"
 import {
   DropdownMenu,
@@ -19,6 +20,7 @@ import {
 import { Flex } from "../shared/Flex"
 import { IconButton } from "../shared/IconButton"
 import { Text } from "../shared/Text"
+import { darkThemeMode } from "@/styles/stitches.config"
 
 enum MenuAction {
   NEW = "new",
@@ -35,6 +37,7 @@ enum MenuAction {
   ADD_RECEIVER = "add-receiver",
   TOGGLE_UI = "toggle-ui",
   DEBUG = "debug",
+  TOGGLE_THEME = "toggle-theme",
   OPEN_DOCUMENTATION = "open-documentation",
 }
 
@@ -66,6 +69,17 @@ type MenuCheckboxItem = {
   key?: string
   action: MenuAction
   id: string
+}
+type MenuCheckboxItemGenerator = {
+  get: () => MenuCheckboxItem
+  set: (checked: boolean) => void
+  // type: MenuType.MENU_CHECKBOX_ITEM
+  // title: string
+  // checked: boolean
+  // disabled?: boolean
+  // key?: string
+  // action: MenuAction
+  // id: string
 }
 
 type MenuRadioItem = {
@@ -157,6 +171,71 @@ function MenuComponent({ menu, hasItemState }: { menu: Menu; hasItemState: boole
   )
 }
 
+type ActionFunction = (item: GenericMenuItem | MenuCheckboxItem, checked?: boolean) => void
+
+const ActionMap: Record<MenuAction, ActionFunction> = {
+  [MenuAction.NEW]: (item: MenuItem) => {},
+  [MenuAction.OPEN]: (item: MenuItem) => {},
+  [MenuAction.SAVE]: (item: MenuItem) => {},
+  [MenuAction.IMPORT]: (item: MenuItem) => {},
+  [MenuAction.UNDO]: (item: MenuItem) => {},
+  [MenuAction.REDO]: (item: MenuItem) => {},
+  [MenuAction.DUPLICATE]: (item: MenuItem) => {},
+  [MenuAction.CUT]: (item: MenuItem) => {},
+  [MenuAction.COPY]: (item: MenuItem) => {},
+  [MenuAction.PASTE]: (item: MenuItem) => {},
+  [MenuAction.ADD_SOURCE]: (item: MenuItem) => {},
+  [MenuAction.ADD_RECEIVER]: (item: MenuItem) => {},
+
+  [MenuAction.TOGGLE_UI]: (item: MenuCheckboxItem, checked: boolean) => {},
+  [MenuAction.DEBUG]: (item: MenuCheckboxItem, checked: boolean) => {},
+  [MenuAction.TOGGLE_THEME]: (item: MenuCheckboxItem, checked: boolean) => {
+    const { mode, setMode } = useTheme.getState()
+    setMode(mode === "theme-default" ? darkThemeMode : "theme-default")
+  },
+
+  [MenuAction.OPEN_DOCUMENTATION]: (item: MenuItem) => {},
+}
+
+function ConnectedMenuCheckboxItemComponent({ item, hasItemState }: { item: MenuCheckboxItem; hasItemState: boolean }) {
+  const [checked, setChecked] = useState(item.checked)
+
+  useEffect(() => {
+    switch (item.id) {
+      case "view.dark_mode": {
+        const unsub = useTheme.subscribe(
+          (store) => store.mode,
+          (mode, prevMode) => {
+            setChecked(mode === "dark-theme")
+          },
+          {
+            fireImmediately: true,
+          }
+        )
+        return () => {
+          unsub()
+        }
+      }
+    }
+  }, [item.id])
+
+  return (
+    <DropdownMenuCheckboxItem
+      hasItemState={hasItemState}
+      disabled={item.disabled}
+      onClick={() => ActionMap[item.action](item, checked)}
+      checked={checked}
+    >
+      {item.title}
+      {item.key && (
+        <DropdownMenuRightSlot>
+          <Flex>{formatKeyboardShortcut(item.key)}</Flex>
+        </DropdownMenuRightSlot>
+      )}
+    </DropdownMenuCheckboxItem>
+  )
+}
+
 function MenuItemComponent({ item, hasItemState }: { item: GenericMenuItem; hasItemState: boolean }) {
   switch (item.type) {
     case MenuType.MENU: {
@@ -175,21 +254,22 @@ function MenuItemComponent({ item, hasItemState }: { item: GenericMenuItem; hasI
       )
     }
     case MenuType.MENU_CHECKBOX_ITEM: {
-      return (
-        <DropdownMenuCheckboxItem
-          hasItemState={hasItemState}
-          disabled={item.disabled}
-          onClick={() => console.log(item.action)}
-          checked={item.checked}
-        >
-          {item.title}
-          {item.key && (
-            <DropdownMenuRightSlot>
-              <Flex>{formatKeyboardShortcut(item.key)}</Flex>
-            </DropdownMenuRightSlot>
-          )}
-        </DropdownMenuCheckboxItem>
-      )
+      return <ConnectedMenuCheckboxItemComponent item={item} hasItemState={hasItemState} />
+      // return (
+      //   <DropdownMenuCheckboxItem
+      //     hasItemState={hasItemState}
+      //     disabled={item.disabled}
+      //     onClick={() => console.log(item.action)}
+      //     checked={item.checked}
+      //   >
+      //     {item.title}
+      //     {item.key && (
+      //       <DropdownMenuRightSlot>
+      //         <Flex>{formatKeyboardShortcut(item.key)}</Flex>
+      //       </DropdownMenuRightSlot>
+      //     )}
+      //   </DropdownMenuCheckboxItem>
+      // )
     }
     case MenuType.MENU_RADIO_GROUP: {
       return (
@@ -215,200 +295,69 @@ function MenuItemComponent({ item, hasItemState }: { item: GenericMenuItem; hasI
   }
 }
 
+const menu = (id: string, title: string, items: GenericMenuItem[], disabled = false): Menu => ({
+  id,
+  type: MenuType.MENU,
+  trigger: {
+    type: MenuType.MENU_ITEM_TRIGGER,
+    title,
+    disabled,
+    id: `${id}::TRIGGER`,
+  },
+  items,
+})
+
+const menuItem = (id: string, title: string, action: MenuAction, key?: string, disabled = false): MenuItem => ({
+  type: MenuType.MENU_ITEM,
+  title,
+  key,
+  disabled,
+  action,
+  id,
+})
+
+const menuCheckboxItem = (
+  id: string,
+  title: string,
+  action: MenuAction,
+  key?: string,
+  disabled = false,
+  checked = false
+): MenuCheckboxItem => ({
+  type: MenuType.MENU_CHECKBOX_ITEM,
+  title,
+  key,
+  disabled,
+  action,
+  id,
+  checked,
+})
+
 const MainMenuConfig: Array<GenericMenuItem> = [
-  {
-    id: nanoid(10),
-    type: MenuType.MENU,
-    trigger: {
-      type: MenuType.MENU_ITEM_TRIGGER,
-      title: "File",
-      disabled: false,
-      id: nanoid(10),
-    },
-    items: [
-      {
-        type: MenuType.MENU_ITEM,
-        title: "New",
-        key: "cmd+n",
-        disabled: false,
-        action: MenuAction.NEW,
-        id: nanoid(10),
-      },
-      {
-        type: MenuType.MENU_ITEM,
-        title: "Open",
-        key: "cmd+o",
-        disabled: false,
-        action: MenuAction.OPEN,
-        id: nanoid(10),
-      },
-      {
-        type: MenuType.MENU_ITEM,
-        title: "Save",
-        key: "cmd+s",
-        disabled: false,
-        action: MenuAction.SAVE,
-        id: nanoid(10),
-      },
-      {
-        type: MenuType.MENU_DIVIDER,
-        id: nanoid(10),
-      },
-      {
-        type: MenuType.MENU_ITEM,
-        title: "Import",
-        key: "cmd+i",
-        disabled: false,
-        action: MenuAction.IMPORT,
-        id: nanoid(10),
-      },
-    ],
-  },
-  {
-    id: nanoid(10),
-    type: MenuType.MENU,
-    trigger: {
-      type: MenuType.MENU_ITEM_TRIGGER,
-      title: "Edit",
-      disabled: false,
-      id: nanoid(10),
-    },
-    items: [
-      {
-        type: MenuType.MENU_ITEM,
-        title: "Undo",
-        key: "cmd+z",
-        disabled: false,
-        action: MenuAction.UNDO,
-        id: nanoid(10),
-      },
-      {
-        type: MenuType.MENU_ITEM,
-        title: "Redo",
-        key: "cmd+shift+z",
-        disabled: false,
-        action: MenuAction.REDO,
-        id: nanoid(10),
-      },
-      {
-        type: MenuType.MENU_DIVIDER,
-        id: nanoid(10),
-      },
-      {
-        type: MenuType.MENU_ITEM,
-        title: "Duplicate",
-        key: "cmd+d",
-        disabled: false,
-        action: MenuAction.DUPLICATE,
-        id: nanoid(10),
-      },
-      {
-        type: MenuType.MENU_DIVIDER,
-        id: nanoid(10),
-      },
-      {
-        type: MenuType.MENU_ITEM,
-        title: "Cut",
-        key: "cmd+x",
-        disabled: false,
-        action: MenuAction.CUT,
-        id: nanoid(10),
-      },
-      {
-        type: MenuType.MENU_ITEM,
-        title: "Copy",
-        key: "cmd+c",
-        disabled: false,
-        action: MenuAction.COPY,
-        id: nanoid(10),
-      },
-      {
-        type: MenuType.MENU_ITEM,
-        title: "Paste",
-        key: "cmd+v",
-        disabled: false,
-        action: MenuAction.PASTE,
-        id: nanoid(10),
-      },
-    ],
-  },
-  {
-    id: nanoid(10),
-    type: MenuType.MENU,
-    trigger: {
-      type: MenuType.MENU_ITEM_TRIGGER,
-      title: "Add",
-      disabled: false,
-      id: nanoid(10),
-    },
-    items: [
-      {
-        type: MenuType.MENU_ITEM,
-        title: "Source",
-        // key: "cmd+z",
-        disabled: false,
-        action: MenuAction.ADD_SOURCE,
-        id: nanoid(10),
-      },
-      {
-        type: MenuType.MENU_ITEM,
-        title: "Receiver",
-        // key: "cmd+z",
-        disabled: false,
-        action: MenuAction.ADD_RECEIVER,
-        id: nanoid(10),
-      },
-    ],
-  },
-  {
-    id: nanoid(10),
-    type: MenuType.MENU,
-    trigger: {
-      type: MenuType.MENU_ITEM_TRIGGER,
-      title: "View",
-      disabled: false,
-      id: nanoid(10),
-    },
-    items: [
-      {
-        type: MenuType.MENU_CHECKBOX_ITEM,
-        title: "Show UI",
-        checked: true,
-        key: "cmd+\\",
-        disabled: false,
-        action: MenuAction.TOGGLE_UI,
-        id: nanoid(10),
-      },
-      {
-        type: MenuType.MENU_ITEM,
-        title: "Debug",
-        // key: "cmd+z",
-        disabled: false,
-        action: MenuAction.DEBUG,
-        id: nanoid(10),
-      },
-    ],
-  },
-  {
-    id: nanoid(10),
-    type: MenuType.MENU,
-    trigger: {
-      type: MenuType.MENU_ITEM_TRIGGER,
-      title: "Help",
-      disabled: false,
-      id: nanoid(10),
-    },
-    items: [
-      {
-        type: MenuType.MENU_ITEM,
-        title: "Documentation",
-        // key: "cmd+z",
-        disabled: false,
-        action: MenuAction.OPEN_DOCUMENTATION,
-        id: nanoid(10),
-      },
-    ],
-  },
+  menu("file", "File", [
+    menuItem("file.new", "New", MenuAction.NEW, "cmd+n"),
+    menuItem("file.open", "Open", MenuAction.OPEN, "cmd+o"),
+    menuItem("file.save", "Save", MenuAction.SAVE, "cmd+s"),
+    menuItem("file.import", "Import", MenuAction.IMPORT, "cmd+i"),
+  ]),
+
+  menu("edit", "Edit", [
+    menuItem("edit.undo", "Undo", MenuAction.UNDO, "cmd+z"),
+    menuItem("edit.redo", "Redo", MenuAction.REDO, "cmd+shift+z"),
+    menuItem("edit.duplicate", "Duplicate", MenuAction.DUPLICATE, "cmd+d"),
+    menuItem("edit.cut", "Cut", MenuAction.CUT, "cmd+x"),
+    menuItem("edit.copy", "Copy", MenuAction.COPY, "cmd+c"),
+    menuItem("edit.paste", "Paste", MenuAction.PASTE, "cmd+v"),
+  ]),
+
+  menu("add", "Add", [
+    menuItem("add.source", "Source", MenuAction.ADD_SOURCE),
+    menuItem("add.receiver", "Receiver", MenuAction.ADD_RECEIVER),
+  ]),
+
+  menu("view", "View", [menuCheckboxItem("view.dark_mode", "Dark Mode", MenuAction.TOGGLE_THEME)]),
+
+  menu("help", "Help", [menuItem("help.documentation", "Documentation", MenuAction.OPEN_DOCUMENTATION)]),
 ]
 
 export function MainMenu() {

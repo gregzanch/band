@@ -40,10 +40,6 @@ function App({ Component, pageProps = { title: "index" } }) {
     }
   }, [router])
 
-  useEffect(() => {
-    const { matches } = window.matchMedia("(prefers-color-scheme: dark)")
-    useTheme.setState({ darkMode: matches })
-  }, [])
 
   return (
     <>
