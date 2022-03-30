@@ -70,17 +70,6 @@ type MenuCheckboxItem = {
   action: MenuAction
   id: string
 }
-type MenuCheckboxItemGenerator = {
-  get: () => MenuCheckboxItem
-  set: (checked: boolean) => void
-  // type: MenuType.MENU_CHECKBOX_ITEM
-  // title: string
-  // checked: boolean
-  // disabled?: boolean
-  // key?: string
-  // action: MenuAction
-  // id: string
-}
 
 type MenuRadioItem = {
   type: MenuType.MENU_RADIO_ITEM
@@ -333,18 +322,26 @@ const menuCheckboxItem = (
   checked,
 })
 
+const menuDivider = (id: string): MenuDivider => ({
+  type: MenuType.MENU_DIVIDER,
+  id: "edit.divider.1",
+})
+
 const MainMenuConfig: Array<GenericMenuItem> = [
   menu("file", "File", [
     menuItem("file.new", "New", MenuAction.NEW, "cmd+n"),
     menuItem("file.open", "Open", MenuAction.OPEN, "cmd+o"),
     menuItem("file.save", "Save", MenuAction.SAVE, "cmd+s"),
+    menuDivider("file.divider.1"),
     menuItem("file.import", "Import", MenuAction.IMPORT, "cmd+i"),
   ]),
 
   menu("edit", "Edit", [
     menuItem("edit.undo", "Undo", MenuAction.UNDO, "cmd+z"),
     menuItem("edit.redo", "Redo", MenuAction.REDO, "cmd+shift+z"),
+    menuDivider("edit.divider.1"),
     menuItem("edit.duplicate", "Duplicate", MenuAction.DUPLICATE, "cmd+d"),
+    menuDivider("edit.divider.2"),
     menuItem("edit.cut", "Cut", MenuAction.CUT, "cmd+x"),
     menuItem("edit.copy", "Copy", MenuAction.COPY, "cmd+c"),
     menuItem("edit.paste", "Paste", MenuAction.PASTE, "cmd+v"),

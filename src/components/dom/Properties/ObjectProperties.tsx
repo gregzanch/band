@@ -191,7 +191,9 @@ function SourceProperties({ uuid, selectedObject }) {
 
 function EmptySelection() {
   return (
+    //@ts-ignore
     <Box backgroundColor='var(--leva-colors-elevation2)' py='0.5rem'>
+      {/* @ts-ignore */}
       <Text textAlign='center' fontSize='11px' opacity='0.25' color='var(--leva-colors-highlight2)'>
         Nothing Selected
       </Text>
@@ -220,7 +222,7 @@ export default function ObjectProperties() {
     Object.assign(window, { objectPropertiesStore })
   }, [])
   return (
-    <div className='h-full'>
+    <div className='h-full' id='object-properties'>
       <SelectedObjectSwitcher />
       <LevaPanel store={objectPropertiesStore} fill flat titleBar={false} hideCopyButton />
     </div>

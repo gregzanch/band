@@ -63,7 +63,7 @@ export default function SceneGraph() {
   const sources = useEditor((state) => state.sources)
   const receivers = useEditor((state) => state.receivers)
   const selectedObject = useEditor((state) => state.selectedObject)
-  console.log(selectedObject)
+  // console.log(selectedObject)
   return (
     <div className='h-full'>
       {Object.entries(sources).map(([id, source]) => (

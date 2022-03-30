@@ -7,6 +7,8 @@ import ObjectProperties from "@/components/dom/Properties/ObjectProperties"
 import SceneGraph from "@/components/dom/SceneGraph/SceneGraph"
 import { ResizeTopLeftIcon } from "../svg/Icons"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/dom/Accordian"
+import useEditor from "@/state/editor"
+import CollapsibleDemo from "./CollapsibleDemo"
 
 const Handle = styled.div`
   cursor: ew-resize;
@@ -200,14 +202,24 @@ const Divider = styled.hr`
 
 export function SidePanel() {
   const [expanded, setExpanded] = useState(["scene_graph", "camera_properties", "object_properties"])
-  const onExpand = useCallback((id, expanded) => {
-    setExpanded((prev) => (expanded ? [...prev, id] : prev.filter((x) => x !== id)))
-  }, [])
+  const selectedObject = useEditor((state) => state.selectedObject)
+
+  // const objPropRef = useRef(null)
+  // const objectPropertiesStyle = {}
+  // if (objPropRef.current) {
+  //   const content = objPropRef.current.querySelector("#object-properties")
+  //   if (content) {
+  //     const contentRect = content.getBoundingClientRect()
+  //     const height = contentRect.height
+  //     objectPropertiesStyle["--radix-collapsible-content-height"] = `${height}px !important`
+  //     console.log(objectPropertiesStyle)
+  //   }
+  // }
 
   return (
     <StyledPanel id='side-panel'>
       <ResizeBar />
-      <Accordion type='multiple' defaultValue={expanded} value={expanded} onValueChange={setExpanded}>
+      <Accordion type='multiple' value={expanded} onValueChange={setExpanded}>
         <AccordionItem value='scene_graph'>
           <AccordionTrigger>Scene Graph</AccordionTrigger>
           <AccordionContent>
@@ -221,42 +233,16 @@ export function SidePanel() {
             <CameraProperties />
           </AccordionContent>
         </AccordionItem>
-
+      </Accordion>
+      <Accordion type='single' collapsible={false} defaultValue='object_properties'>
         <AccordionItem value='object_properties'>
-          <AccordionTrigger>Object Properties</AccordionTrigger>
+          <AccordionTrigger hideChevron>Object Properties</AccordionTrigger>
           <AccordionContent>
+            {/* <RandContent /> */}
             <ObjectProperties />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-      {/* <Divider />
-      <SidePanelSection
-        id='scene_graph'
-        title='Scene Graph'
-        expanded={expanded.includes("scene_graph")}
-        onExpand={onExpand}
-      >
-        <SceneGraph />
-      </SidePanelSection>
-      <Divider />
-      <SidePanelSection
-        id='camera_properties'
-        title='Camera Properties'
-        expanded={expanded.includes("camera_properties")}
-        onExpand={onExpand}
-      >
-        <CameraProperties />
-      </SidePanelSection>
-      <Divider />
-      <SidePanelSection
-        id='object_properties'
-        title='Object Properties'
-        expanded={expanded.includes("object_properties")}
-        onExpand={onExpand}
-      >
-        <ObjectProperties />
-      </SidePanelSection> */}
-      <Divider />
     </StyledPanel>
   )
 }

@@ -73,17 +73,18 @@ const StyledContent = styled(AccordionPrimitive.Content, {
   fontSize: 15,
   color: "$hiContrast",
   backgroundColor: "$slate2",
-
   '&[data-state="open"]': {
     animation: `${slideDown} 300ms cubic-bezier(0.87, 0, 0.13, 1) forwards`,
+    animationDelay: 0,
   },
   '&[data-state="closed"]': {
     animation: `${slideUp} 300ms cubic-bezier(0.87, 0, 0.13, 1) forwards`,
+    animationDelay: 0,
   },
 })
 
 const StyledContentText = styled("div", {
-  padding: "15px 20px",
+  // padding: "15px 20px",
 })
 
 const StyledChevron = styled(ChevronDownIcon, {
@@ -97,12 +98,12 @@ export const Accordion = StyledAccordion
 export const AccordionItem = StyledItem
 export const AccordionTrigger = React.forwardRef<
   React.ElementRef<typeof StyledTrigger>,
-  React.ComponentProps<typeof StyledTrigger>
->(({ children, ...props }, forwardedRef) => (
+  React.ComponentProps<typeof StyledTrigger> & { hideChevron?: boolean }
+>(({ children, hideChevron, ...props }, forwardedRef) => (
   <StyledHeader>
     <StyledTrigger {...props} ref={forwardedRef}>
       {children}
-      <StyledChevron aria-hidden />
+      {!hideChevron && <StyledChevron aria-hidden />}
     </StyledTrigger>
   </StyledHeader>
 ))
@@ -112,6 +113,6 @@ export const AccordionContent = React.forwardRef<
   React.ComponentProps<typeof StyledContent>
 >(({ children, ...props }, forwardedRef) => (
   <StyledContent {...props} ref={forwardedRef}>
-    <StyledContentText>{children}</StyledContentText>
+    {children}
   </StyledContent>
 ))
