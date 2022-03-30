@@ -35,7 +35,7 @@ const initialState: EditorState = {
   scene: null,
   sources: {
     "57C19E93-33CC-4AC5-A435-E284C0F1CDA1": {
-      position: [0.2, 0, 3],
+      position: [0.2, 1, 3],
       userData: {
         type: ObjectType.SOURCE,
         name: "Source Left 1",
@@ -45,7 +45,7 @@ const initialState: EditorState = {
   },
   receivers: {
     "DC78D831-BAE7-49F9-9337-514186917A7B": {
-      position: [0.2, 0, -1],
+      position: [1, 1.5, 4],
       userData: {
         type: ObjectType.RECEIVER,
         name: "Receiver",

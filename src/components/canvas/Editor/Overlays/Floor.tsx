@@ -5,6 +5,6 @@ type FloorProps = {
   secondary?: string | number
 }
 
-export function Floor({ size = 10, segments = 10, primary = "white", secondary = "gray" }: FloorProps) {
+export function Floor({ size = 100, segments = 100, primary = 0xb2b2b2, secondary = 0x252525 }: FloorProps) {
   return <gridHelper args={[size, segments, primary, secondary]} />
 }

@@ -397,7 +397,7 @@ export function MainMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <IconButton>
+        <IconButton variant='raised'>
           <HamburgerMenuIcon />
         </IconButton>
       </DropdownMenuTrigger>

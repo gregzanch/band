@@ -1,35 +1,125 @@
-import hotkeys, { HotkeysEvent, KeyHandler } from "hotkeys-js"
-import { useRef, useEffect } from "react"
+import hotkeys from "hotkeys-js"
+import { useRef, useEffect, Suspense, MutableRefObject, Ref, RefAttributes, Fragment, useMemo } from "react"
 import {
-  GizmoHelper,
-  GizmoViewcube,
-  GizmoViewport,
   OrbitControls,
-  Stage,
+  PerspectiveCamera,
   TransformControls,
-  useGLTF,
+  useFBO,
+  Box,
+  TorusKnot,
+  softShadows,
+  BakeShadows,
 } from "@react-three/drei"
-import { Floor } from "@/components/canvas/Editor/Overlays"
+import { Floor, Lights, Ground, Shadows } from "@/components/canvas/Editor/Overlays"
 import SourceComponent from "@/components/canvas/Objects/Source"
 
-import { PerspectiveCamera as PerspectiveCameraImpl } from "three"
-import { Canvas, useThree } from "@react-three/fiber"
+import {
+  PerspectiveCamera as PerspectiveCameraImpl,
+  Camera as THREECamera,
+  Vector3,
+  Scene as THREEScene,
+  Color as THREEColor,
+} from "three"
+import { Canvas, useThree, useFrame, createPortal } from "@react-three/fiber"
 
 import useEditor from "@/state/editor"
-import { button, useControls } from "@/components/dom/leva"
+import { useControls } from "@/components/dom/leva"
 import { cameraPropertiesStore } from "@/components/dom/Properties/CameraProperties"
 import { objectPropertiesStore } from "@/components/dom/Properties/ObjectProperties"
-import Monke from "@/components/canvas/Objects/Monke"
 
 import { useHotkeys } from "react-hotkeys-hook"
 import ReceiverComponent from "../Objects/Receiver"
 
-import { Suspense } from "react"
 import MeshComponent from "../Objects/Mesh"
 
 import { MenuHotkeys, ActionMap } from "@/components/custom/MainMenu"
 import { Group, Mesh, ObjectType } from "@/state/types"
 import GroupComponent from "../Objects/Group"
+
+// import { Outline, OutlineEffectOptions, OutlineProvider } from "@/components/canvas/Effects/useOutline"
+
+import { EffectComposer, Bloom, Outline, Noise, SMAA, SSAO } from "@react-three/postprocessing"
+import {
+  OutlineEffect,
+  BlurPass,
+  Resolution,
+  KernelSize,
+  BlendFunction,
+  EffectComposer as EffectComposerImpl,
+} from "postprocessing"
+
+import BoxComponent from "../Objects/Box"
+import { GizmoHelper } from "@/components/canvas/Gizmos/GizmoHelper"
+import { GizmoViewport } from "@/components/canvas/Gizmos/GizmoViewport"
+
+function FrameBufferThing() {
+  const target = useFBO({ multisample: true, samples: 8, stencilBuffer: false })
+  const boxRef = useRef()
+  const { scene, camera } = useThree()
+  useFrame((state) => {
+    if (boxRef.current) {
+      //@ts-ignore
+      boxRef.current.visible = false
+    }
+    state.gl.setRenderTarget(target)
+    state.gl.clear()
+    // state.gl.clearTarget(target, 0x000000, false, false)
+    state.gl.render(scene, camera)
+    state.gl.setRenderTarget(null)
+    if (boxRef.current) {
+      //@ts-ignore
+      boxRef.current.visible = true
+    }
+  })
+  return (
+    <Box args={[3, 3, 3]} ref={boxRef}>
+      <meshStandardMaterial attach='material' map={target.texture} />
+    </Box>
+  )
+}
+
+function Effects() {
+  const outlineRef = useRef<OutlineEffect>()
+  const composerRef = useRef<EffectComposerImpl>()
+  const { gl, camera, scene } = useThree()
+  const selectedObject = useEditor((state) => state.selectedObject)
+  console.log(selectedObject)
+
+  return (
+    <Suspense fallback={null}>
+      <EffectComposer ref={composerRef} autoClear={false} enabled camera={camera} scene={scene} multisampling={8}>
+        <Outline
+          edgeStrength={5}
+          blendFunction={BlendFunction.ALPHA}
+          pulseSpeed={0.0}
+          visibleEdgeColor={0xffcc00}
+          hiddenEdgeColor={0xffcc00}
+          // width={Resolution.AUTO_SIZE}
+          // height={Resolution.AUTO_SIZE}
+          selection={
+            selectedObject
+              ? selectedObject.current.userData.type === ObjectType.GROUP
+                ? [...selectedObject.current.children]
+                : [selectedObject.current]
+              : undefined
+          }
+          blur
+          //@ts-ignore
+          ref={outlineRef}
+        />
+        {/* <Noise opacity={0.1} /> */}
+        <Bloom
+          intensity={1.0}
+          // width={Resolution.AUTO_SIZE}
+          // height={Resolution.AUTO_SIZE}
+          kernelSize={KernelSize.LARGE}
+          luminanceThreshold={0.9}
+          luminanceSmoothing={0.025}
+        />
+      </EffectComposer>
+    </Suspense>
+  )
+}
 
 function onEnd({ target }) {
   const camera = target.object as PerspectiveCameraImpl
@@ -65,6 +155,8 @@ const Controls = () => {
 
   useEffect(() => {
     if (transformControls.current) {
+      transformControls.current.enabled = false
+      transformControls.current.visible = false
       useEditor.setState({ transformControls: transformControls.current })
       const { current: controls } = transformControls
       const callback = (event) => {
@@ -120,25 +212,63 @@ const Controls = () => {
   return (
     <>
       {selectedObject && (
-        <TransformControls ref={transformControls} mode='translate' showX showY showZ object={selectedObject} />
+        <TransformControls
+          ref={transformControls}
+          castShadow={false}
+          receiveShadow={false}
+          mode='translate'
+          renderOrder={1}
+          showX
+          showY
+          showZ
+          object={selectedObject}
+        />
       )}
       <OrbitControls ref={control} enableDamping={false} makeDefault />
-      <GizmoHelper
-        alignment='bottom-left'
-        margin={[80, 80]}
-        onUpdate={() => {
-          control.current.object.up.set(0, 1, 0)
-        }}
-      >
-        <GizmoViewport axisColors={["#ED3D59", "#80AF00", "#488FEA"]} labelColor='black' />
-      </GizmoHelper>
+      {/* <OrientationGizmo /> */}
     </>
   )
 }
 
+function OrientationGizmo() {
+  const { camera } = useThree()
+  return (
+    <GizmoHelper
+      // autoClear={false}
+      alignment='bottom-left'
+      margin={[80, 80]}
+      renderPriority={2}
+      castShadow={false}
+      onUpdate={() => {
+        camera.up.set(0, 1, 0)
+      }}
+    >
+      <GizmoViewport axisColors={["#ED3D59", "#80AF00", "#488FEA"]} labelColor='black' />
+    </GizmoHelper>
+  )
+}
+
+// Soft shadows are expensive, uncomment and refresh when it's too slow
+softShadows()
+
 function Editor(props) {
   useHotkeys("esc", () => {
-    useEditor.setState({ selectedObject: null })
+    const { transformControls } = useEditor.getState()
+    if (transformControls && transformControls.enabled) {
+      transformControls.enabled = false
+      transformControls.visible = false
+    } else {
+      useEditor.setState({ selectedObject: null })
+    }
+  })
+
+  useHotkeys("m", (keyboardEvent, hotkeysEvent) => {
+    // console.log(keyboardEvent, hotkeysEvent)
+    const { transformControls } = useEditor.getState()
+    if (transformControls) {
+      transformControls.enabled = true
+      transformControls.visible = true
+    }
   })
 
   useEffect(() => {
@@ -167,28 +297,32 @@ function Editor(props) {
   const sources = useEditor((state) => state.sources)
   const receivers = useEditor((state) => state.receivers)
   const meshes = useEditor((state) => state.meshes)
+  const selectObject = useEditor((state) => state.selectedObject)
+  const controls = useEditor((state) => state.orbitControls)
 
   return (
-    <Canvas mode='concurrent' shadows dpr={[1, 2]} style={{ background: "#20252B" }}>
-      <fog attach='fog' args={[0x20252b, 20, 60]} />
-      <ambientLight intensity={0.8} />
-      <directionalLight
-        castShadow
-        position={[2.5, 8, 5]}
-        intensity={1.5}
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
-        shadow-camera-far={50}
-        shadow-camera-left={-10}
-        shadow-camera-right={10}
-        shadow-camera-top={10}
-        shadow-camera-bottom={-10}
-      />
+    <Canvas
+      mode='concurrent'
+      dpr={[1, 2]}
+      shadows
+      gl={{
+        antialias: true,
+        stencil: true,
+      }}
+      // style={{ backgroundColor: "#20252b" }}
+    >
+      <OrientationGizmo />
       <Controls />
-      <Floor size={100} segments={100} primary={0xb2b2b2} secondary={0x252525} />
+      <Suspense fallback={null}>
+        <Lights />
+        <fog attach='fog' args={["white", 0, 60]} />
+      </Suspense>
+      <Floor size={100} segments={100} primary={0x999999} secondary={0x999999} />
+      <Ground color={0xb3b3b3} size={100} segments={100} />
       {Object.entries(sources).map(([id, source]) => (
         <SourceComponent key={id} name={source.userData.name} position={source.position} id={id} />
       ))}
+
       {Object.entries(receivers).map(([id, receiver]) => (
         <ReceiverComponent key={id} name={receiver.userData.name} position={receiver.position} id={id} />
       ))}
@@ -199,6 +333,8 @@ function Editor(props) {
           <MeshComponent key={id} mesh={mesh as Mesh} />
         )
       )}
+
+      <Effects />
     </Canvas>
   )
 }
