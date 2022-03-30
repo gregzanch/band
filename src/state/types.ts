@@ -1,7 +1,12 @@
+import { Mesh as ThreeMesh, Group as ThreeGroup } from "three"
+import type { BufferGeometry, Material } from "three"
+
 export enum ObjectType {
   SOURCE = "Source",
   RECEIVER = "Receiver",
   BRIEF_MESH = "BriefMesh",
+  MESH = "Mesh",
+  GROUP = "Group",
 }
 
 export interface Source {
@@ -38,5 +43,21 @@ export interface BriefMesh {
   geometry: {
     attributes: Record<string, BriefAttribute>
     index: BriefAttribute
+  }
+}
+
+export type Mesh = ThreeMesh<BufferGeometry, Material | Material[]> & {
+  userData: {
+    type: ObjectType.MESH
+    name: string
+    id: string
+  }
+}
+
+export type Group = ThreeGroup & {
+  userData: {
+    type: ObjectType.GROUP
+    name: string
+    id: string
   }
 }

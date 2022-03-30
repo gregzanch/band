@@ -17,9 +17,10 @@ const ReceiverComponent = ({ name = "", id, position = [0, 0, 0] as [number, num
         userData={{
           type: "Receiver",
           name,
-          id,
+          id: mesh.current?.uuid || id,
         }}
         position={position}
+        uuid={id}
       >
         <sphereBufferGeometry args={[1, 16, 16]} />
         <meshBasicMaterial color={0xe5732a} />

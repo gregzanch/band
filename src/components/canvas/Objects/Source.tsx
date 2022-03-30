@@ -17,9 +17,10 @@ const SourceComponent = ({ name = "", id, position = [0, 0, 0] as [number, numbe
         userData={{
           type: "Source",
           name,
-          id,
+          id: mesh.current?.uuid || id,
         }}
         position={position}
+        uuid={id}
       >
         <sphereBufferGeometry args={[1, 16, 16]} />
         <meshBasicMaterial color={0x44a273} />

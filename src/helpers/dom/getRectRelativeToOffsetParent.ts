@@ -5,7 +5,7 @@ import {getNodeName} from './getNodeName';
 import {getNodeScroll} from './getNodeScroll';
 import getWindowScrollBarX from './getWindowScrollBarX';
 import {isHTMLElement, isOverflowElement} from './is';
-import {round} from './math';
+import { round } from "../math"
 
 function isScaled(element: HTMLElement): boolean {
   const rect = getBoundingClientRect(element);

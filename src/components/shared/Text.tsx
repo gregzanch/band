@@ -1,12 +1,18 @@
 import { styled } from "@/styles/stitches.config"
 
-export const Text = styled("span", {
+export const Text = styled("p", {
   // Reset
-  lineHeight: "1",
   margin: "0",
   fontWeight: 400,
+  display: "inherit",
+
+  alignItems: "center",
+  justifyContent: "space-between",
+  fontFamily: "$untitled",
+  fontSize: "$1",
   fontVariantNumeric: "tabular-nums",
-  display: "block",
+  cursor: "default",
+  whiteSpace: "nowrap",
 
   variants: {
     size: {

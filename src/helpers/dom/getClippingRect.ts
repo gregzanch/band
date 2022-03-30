@@ -16,7 +16,7 @@ import {isElement, isHTMLElement} from './is';
 import {getBoundingClientRect} from './getBoundingClientRect';
 import {contains} from './contains';
 import {getNodeName} from './getNodeName';
-import {max, min} from './math';
+import { max, min } from "../math"
 
 function getInnerBoundingClientRect(
   element: Element,

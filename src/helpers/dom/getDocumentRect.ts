@@ -3,7 +3,7 @@ import {getDocumentElement} from './getDocumentElement';
 import {getComputedStyle} from './getComputedStyle';
 import getWindowScrollBarX from './getWindowScrollBarX';
 import {getNodeScroll} from './getNodeScroll';
-import {max} from './math';
+import { max } from "../math"
 
 // Gets the entire size of the scrollable document area, even extending outside
 // of the `<html>` and `<body>` rect bounds if horizontally scrollable

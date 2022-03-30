@@ -26,3 +26,28 @@ export const ResizeTopLeftIcon = ({ color, size = 8 }: IconProps) => (
     <path d='M7.5 1L1 7.5M1.5 1L1 1.5M1 4.5L4.5 1' stroke={color || "currentColor"} strokeLinecap='round' />
   </svg>
 )
+
+export const MeshIcon = ({ color, size = 24 }: IconProps) => (
+  <svg width={size} height={size} viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <path
+      d='M4 7.5V10L6 6.4L4 7.5ZM4 7.5L6 8.6M20 7.5L18 6.4L20 10V7.5ZM20 7.5L18 8.6M12 21L14 19.9H10L12 21ZM12 21V18.5M12 12L16 10M12 12V16.5M12 12L8.5 10M6 17.6L4 16.5V14L6 17.6ZM10 4.1L12 3L14 4.1H10ZM20 14V16.5L18 17.62L20 14Z'
+      stroke={color || "currentColor"}
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+  </svg>
+)
+
+export const GroupIcon = ({ color, size = 24 }: IconProps) => (
+  <svg width={size} height={size} viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <rect
+      x='4.5'
+      y='4.5'
+      width='15'
+      height='15'
+      stroke={color || "currentColor"}
+      strokeLinecap='square'
+      strokeDasharray='4 4'
+    />
+  </svg>
+)

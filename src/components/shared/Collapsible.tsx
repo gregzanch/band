@@ -1,12 +1,9 @@
-import React from "react"
 import { styled, keyframes } from "@/styles/stitches.config"
 import { violet, blackA } from "@radix-ui/colors"
-import { RowSpacingIcon, Cross2Icon } from "@radix-ui/react-icons"
 import * as CollapsiblePrimitive from "@radix-ui/react-collapsible"
-import ObjectProperties from "@/components/dom/Properties/ObjectProperties"
 
 const StyledCollapsible = styled(CollapsiblePrimitive.Root, {
-  width: 300,
+  width: "100%",
 })
 
 // Exports
@@ -22,7 +19,7 @@ const close = keyframes({
   to: { height: 0 },
 })
 
-const CollapsibleContent = styled(CollapsiblePrimitive.Content, {
+export const CollapsibleContent = styled(CollapsiblePrimitive.Content, {
   overflow: "hidden",
   '&[data-state="open"]': { animation: `${open} 300ms ease-out forwards` },
   '&[data-state="closed"]': { animation: `${close} 300ms ease-out forwards` },
@@ -53,28 +50,20 @@ const IconButton = styled("button", {
   "&:focus": { boxShadow: `0 0 0 2px black` },
 })
 
-const Repository = styled("div", {
-  backgroundColor: "white",
-  borderRadius: 4,
-  margin: "10px 0",
-  padding: 10,
-  boxShadow: `0 2px 10px ${blackA.blackA7}`,
-})
+// export const CollapsibleDemo = () => {
+//   const [open, setOpen] = React.useState(true)
+//   return (
+//     <Collapsible open={open} onOpenChange={setOpen}>
+//       <CollapsibleTrigger asChild>
+//         <Flex css={{ alignItems: "center", justifyContent: "space-between" }}>
+//           <Text css={{ color: "white" }}>Object Properties</Text>
+//         </Flex>
+//       </CollapsibleTrigger>
+//       <CollapsibleContent>
+//         <ObjectProperties />
+//       </CollapsibleContent>
+//     </Collapsible>
+//   )
+// }
 
-export const CollapsibleDemo = () => {
-  const [open, setOpen] = React.useState(true)
-  return (
-    <Collapsible open={open} onOpenChange={setOpen}>
-      <CollapsibleTrigger asChild>
-        <Flex css={{ alignItems: "center", justifyContent: "space-between" }}>
-          <Text css={{ color: "white" }}>Object Properties</Text>
-        </Flex>
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <ObjectProperties />
-      </CollapsibleContent>
-    </Collapsible>
-  )
-}
-
-export default CollapsibleDemo
+// export default CollapsibleDemo

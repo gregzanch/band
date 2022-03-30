@@ -1,3 +1,4 @@
+import hotkeys, { HotkeysEvent, KeyHandler } from "hotkeys-js"
 import { useRef, useEffect } from "react"
 import {
   GizmoHelper,
@@ -26,6 +27,10 @@ import ReceiverComponent from "../Objects/Receiver"
 import { Suspense } from "react"
 import MeshComponent from "../Objects/Mesh"
 
+import { MenuHotkeys, ActionMap } from "@/components/custom/MainMenu"
+import { Group, Mesh, ObjectType } from "@/state/types"
+import GroupComponent from "../Objects/Group"
+
 function onEnd({ target }) {
   const camera = target.object as PerspectiveCameraImpl
   useEditor.setState({ cameraMatrix: camera.matrix.toArray() })
@@ -35,6 +40,12 @@ const Controls = () => {
   const control = useRef(null)
   const transformControls = useRef(null)
   const selectedObject = useEditor((state) => state.selectedObject)
+
+  const three = useThree()
+
+  useEffect(() => {
+    useEditor.setState({ scene: three.scene })
+  }, [three.scene])
 
   useControls(
     {
@@ -60,24 +71,26 @@ const Controls = () => {
         control.current.enabled = !event.value
       }
       const changeCallback = (event) => {
-        const { x, y, z } = objectPropertiesStore.get("position")
-        if (!selectedObject.current) {
-          return
-        }
-        if (
-          selectedObject.current.position.x !== x ||
-          selectedObject.current.position.y !== y ||
-          selectedObject.current.position.z !== z
-        ) {
-          objectPropertiesStore.setValueAtPath(
-            "position",
-            {
-              x: selectedObject.current.position.x,
-              y: selectedObject.current.position.y,
-              z: selectedObject.current.position.z,
-            },
-            false
-          )
+        if (objectPropertiesStore.getData()["position"]) {
+          const { x, y, z } = objectPropertiesStore.get("position")
+          if (!selectedObject.current) {
+            return
+          }
+          if (
+            selectedObject.current.position.x !== x ||
+            selectedObject.current.position.y !== y ||
+            selectedObject.current.position.z !== z
+          ) {
+            objectPropertiesStore.setValueAtPath(
+              "position",
+              {
+                x: selectedObject.current.position.x,
+                y: selectedObject.current.position.y,
+                z: selectedObject.current.position.z,
+              },
+              false
+            )
+          }
         }
       }
       controls.addEventListener("objectChange", changeCallback)
@@ -117,15 +130,7 @@ const Controls = () => {
           control.current.object.up.set(0, 1, 0)
         }}
       >
-        {/* <GizmoViewcube
-          color='white'
-          faces={["Right", "Left", "Top", "Bottom", "Front", "Back"]}
-          hoverColor='lightgray'
-          opacity={1}
-          strokeColor='gray'
-          textColor='black'
-        /> */}
-        <GizmoViewport axisColors={["red", "green", "blue"]} labelColor='black' />
+        <GizmoViewport axisColors={["#ED3D59", "#80AF00", "#488FEA"]} labelColor='black' />
       </GizmoHelper>
     </>
   )
@@ -135,6 +140,26 @@ function Editor(props) {
   useHotkeys("esc", () => {
     useEditor.setState({ selectedObject: null })
   })
+
+  useEffect(() => {
+    Object.entries(MenuHotkeys).forEach(([action, hotkey]) => {
+      hotkeys(hotkey, () => {
+        if (ActionMap[action]) {
+          ActionMap[action]()
+          return false
+        }
+      })
+    })
+
+    return () => {
+      Object.entries(MenuHotkeys).forEach(([action, hotkey]) => {
+        if (ActionMap[action]) {
+          hotkeys.unbind(hotkey, ActionMap[action])
+        }
+      })
+    }
+  }, [])
+
   useEffect(() => {
     Object.assign(window, { useEditor })
   }, [])
@@ -167,9 +192,13 @@ function Editor(props) {
       {Object.entries(receivers).map(([id, receiver]) => (
         <ReceiverComponent key={id} name={receiver.userData.name} position={receiver.position} id={id} />
       ))}
-      {Object.entries(meshes).map(([id, mesh]) => (
-        <MeshComponent key={id} mesh={mesh} />
-      ))}
+      {Object.entries(meshes).map(([id, mesh]) =>
+        mesh.userData.type === ObjectType.GROUP ? (
+          <GroupComponent key={id} group={mesh as Group} />
+        ) : (
+          <MeshComponent key={id} mesh={mesh as Mesh} />
+        )
+      )}
     </Canvas>
   )
 }

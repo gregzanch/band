@@ -23,6 +23,7 @@ export default function EditorPage() {
         css={{
           position: "absolute",
           zIndex: 500,
+          margin: "$1",
         }}
       >
         <MainMenu />

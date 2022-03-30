@@ -1,10 +1,11 @@
 import create, { SetState, GetState, Mutate, StoreApi } from "zustand"
 import { persist, subscribeWithSelector } from "zustand/middleware"
-import { Source, Receiver, ObjectType, BriefMesh, BriefAttribute } from "./types"
+import { Source, Receiver, ObjectType, BriefMesh, BriefAttribute, Mesh, Group } from "./types"
 import { openFilePicker } from "@/helpers/dom/openFilePicker"
 import { GLTFLoader } from "three-stdlib"
-import { BufferAttribute, Group, Mesh } from "three"
+import { BufferAttribute, Group as ThreeGroup, Mesh as ThreeMesh } from "three"
 import { nanoid } from "nanoid"
+import { stripExtension } from "@/helpers/string"
 
 type EditorState = {
   cameraMatrix: number[]
@@ -14,7 +15,7 @@ type EditorState = {
   scene: any
   sources: Record<string, Source>
   receivers: Record<string, Receiver>
-  meshes: Record<string, Mesh>
+  meshes: Record<string, Mesh | Group>
   // method: () => void
 }
 
@@ -33,22 +34,22 @@ const initialState: EditorState = {
   selectedObject: null,
   scene: null,
   sources: {
-    XtCFxCk4QT: {
+    "57C19E93-33CC-4AC5-A435-E284C0F1CDA1": {
       position: [0.2, 0, 3],
       userData: {
         type: ObjectType.SOURCE,
-        name: "Source Left",
-        id: "XtCFxCk4QT",
+        name: "Source Left 1",
+        id: "57C19E93-33CC-4AC5-A435-E284C0F1CDA1",
       },
     },
   },
   receivers: {
-    zTvorIzlMj: {
+    "DC78D831-BAE7-49F9-9337-514186917A7B": {
       position: [0.2, 0, -1],
       userData: {
         type: ObjectType.RECEIVER,
         name: "Receiver",
-        id: "zTvorIzlMj",
+        id: "DC78D831-BAE7-49F9-9337-514186917A7B",
       },
     },
   },
@@ -92,7 +93,20 @@ function makeBriefMesh(mesh: Mesh): BriefMesh {
 
 function scene2mesh(scene: Group): Record<string, Mesh> {
   const meshes = scene.children.filter((x) => x.type === "Mesh")
-  return meshes.reduce((acc, curr) => ({ ...acc, [curr.uuid]: curr }), {})
+  return meshes.reduce(
+    (acc, curr) => ({
+      ...acc,
+      [curr.uuid]: {
+        ...curr,
+        userData: {
+          type: ObjectType.MESH,
+          name: curr.name || "",
+          id: curr.uuid,
+        },
+      },
+    }),
+    {}
+  )
 }
 
 export const useEditor = create<
@@ -107,21 +121,46 @@ export const useEditor = create<
       (set, get) => ({
         ...initialState,
         uploadFile: async () => {
-          const files = await openFilePicker({ multiple: true, accept: "*" })
-          const reader = new FileReader()
-          reader.readAsArrayBuffer(files[0])
-          reader.onloadend = async (e) => {
-            if (reader.readyState === reader.DONE) {
-              const parsed = await new GLTFLoader().parseAsync(reader.result, "")
-              console.log(parsed)
-              //@ts-ignore
-              const meshes = scene2mesh(parsed.scene)
-              set({
-                meshes: {
-                  ...get().meshes,
-                  ...meshes,
-                },
-              })
+          const files = await openFilePicker({ multiple: true, accept: ".gltf" })
+          for (const file of files) {
+            const reader = new FileReader()
+            reader.readAsArrayBuffer(file)
+            reader.onloadend = async (e) => {
+              if (reader.readyState === reader.DONE) {
+                const parsed = await new GLTFLoader().parseAsync(reader.result, "")
+                //@ts-ignore
+                const meshes = parsed.scene.children
+                  .filter((x) => x.type === "Mesh")
+                  .map((x) => {
+                    x.userData = {
+                      id: x.uuid,
+                      name: x.name || "",
+                      type: ObjectType.MESH,
+                    }
+                    return x
+                  }) as Mesh[]
+
+                const group = new ThreeGroup()
+                group.name = stripExtension(file.name)
+                group.userData = {
+                  id: group.uuid,
+                  name: group.name,
+                  type: ObjectType.GROUP,
+                }
+                for (const mesh of meshes) {
+                  group.add(mesh)
+                }
+
+                set({
+                  meshes: {
+                    ...get().meshes,
+                    // ...meshes,
+                    ...{
+                      [group.uuid]: group as Group,
+                    },
+                  },
+                })
+              }
             }
           }
         },

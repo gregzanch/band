@@ -209,9 +209,14 @@ export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes
       shadowLight: "hsl(206 22% 7% / 35%)",
       shadowDark: "hsl(206 22% 7% / 20%)",
     },
+    shadows: {
+      level1: "0 0 9px 0 #00000088",
+      level2: "0 4px 14px #00000033",
+    },
     fonts: {
       untitled: "Untitled Sans, -apple-system, system-ui, sans-serif",
-      mono: "Söhne Mono, menlo, monospace",
+      // mono1: "Söhne Mono, menlo, monospace",
+      mono: "ui-monospace, SFMono-Regular, Menlo, monospace",
     },
     space: {
       1: "5px",
@@ -258,8 +263,8 @@ export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes
     //   9: '80px',
     // },
     fontSizes: {
-      1: "12px",
-      2: "13px",
+      1: "11px",
+      2: "12px",
       3: "15px",
       4: "17px",
       5: "19px",

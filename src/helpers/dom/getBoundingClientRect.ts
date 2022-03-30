@@ -1,6 +1,6 @@
 import type {ClientRectObject, VirtualElement} from '@floating-ui/core';
 import {isElement, isHTMLElement, isLayoutViewport} from './is';
-import {round} from './math';
+import { round } from "../math"
 import {getWindow} from './window';
 
 export function getBoundingClientRect(

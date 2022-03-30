@@ -3,7 +3,28 @@ type OpenFilePickerSettings = {
   accept?: string
 }
 
+type OpenFilePickerSettingsMultiple = {
+  multiple: true
+  accept?: string
+}
+
+type OpenFilePickerSettingsSingle = {
+  multiple: false
+  accept?: string
+}
+
+const defaultPickerSettings: OpenFilePickerSettings = {
+  multiple: false,
+  accept: "*",
+}
+
+export async function openFilePicker(settings: OpenFilePickerSettingsMultiple): Promise<File[]>
+export async function openFilePicker(settings: OpenFilePickerSettingsSingle): Promise<File>
 export async function openFilePicker(settings: OpenFilePickerSettings) {
+  settings = {
+    ...defaultPickerSettings,
+    ...settings,
+  }
   return new Promise((resolve, reject) => {
     const fileinput: HTMLInputElement = document.createElement("input")
     fileinput.setAttribute("type", "file")
@@ -15,7 +36,7 @@ export async function openFilePicker(settings: OpenFilePickerSettings) {
       //@ts-ignore
       const files = [...e.target.files] as File[]
 
-      resolve(files)
+      resolve(settings.multiple ? files : files[0])
       fileinput.remove()
     })
     document.body.appendChild(fileinput)

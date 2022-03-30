@@ -21,6 +21,7 @@ import { Flex } from "../shared/Flex"
 import { IconButton } from "../shared/IconButton"
 import { Text } from "../shared/Text"
 import { darkThemeMode } from "@/styles/stitches.config"
+import useEditor from "@/state/editor"
 
 enum MenuAction {
   NEW = "new",
@@ -39,6 +40,19 @@ enum MenuAction {
   DEBUG = "debug",
   TOGGLE_THEME = "toggle-theme",
   OPEN_DOCUMENTATION = "open-documentation",
+}
+
+export const MenuHotkeys = {
+  [MenuAction.NEW]: "command+n",
+  [MenuAction.OPEN]: "command+o",
+  [MenuAction.SAVE]: "command+s",
+  [MenuAction.IMPORT]: "command+i",
+  [MenuAction.UNDO]: "command+z",
+  [MenuAction.REDO]: "command+shift+z",
+  [MenuAction.DUPLICATE]: "command+d",
+  [MenuAction.CUT]: "command+x",
+  [MenuAction.COPY]: "command+c",
+  [MenuAction.PASTE]: "command+v",
 }
 
 enum MenuType {
@@ -117,7 +131,7 @@ type Menu = {
 }
 
 enum ControlKeys {
-  COMMAND = "cmd",
+  COMMAND = "command",
   SHIFT = "shift",
   ALT = "alt",
   CONTROL = "ctrl",
@@ -160,30 +174,63 @@ function MenuComponent({ menu, hasItemState }: { menu: Menu; hasItemState: boole
   )
 }
 
-type ActionFunction = (item: GenericMenuItem | MenuCheckboxItem, checked?: boolean) => void
+type ActionFunction = (item?: GenericMenuItem | MenuCheckboxItem, checked?: boolean) => Promise<boolean>
 
-const ActionMap: Record<MenuAction, ActionFunction> = {
-  [MenuAction.NEW]: (item: MenuItem) => {},
-  [MenuAction.OPEN]: (item: MenuItem) => {},
-  [MenuAction.SAVE]: (item: MenuItem) => {},
-  [MenuAction.IMPORT]: (item: MenuItem) => {},
-  [MenuAction.UNDO]: (item: MenuItem) => {},
-  [MenuAction.REDO]: (item: MenuItem) => {},
-  [MenuAction.DUPLICATE]: (item: MenuItem) => {},
-  [MenuAction.CUT]: (item: MenuItem) => {},
-  [MenuAction.COPY]: (item: MenuItem) => {},
-  [MenuAction.PASTE]: (item: MenuItem) => {},
-  [MenuAction.ADD_SOURCE]: (item: MenuItem) => {},
-  [MenuAction.ADD_RECEIVER]: (item: MenuItem) => {},
-
-  [MenuAction.TOGGLE_UI]: (item: MenuCheckboxItem, checked: boolean) => {},
-  [MenuAction.DEBUG]: (item: MenuCheckboxItem, checked: boolean) => {},
-  [MenuAction.TOGGLE_THEME]: (item: MenuCheckboxItem, checked: boolean) => {
-    const { mode, setMode } = useTheme.getState()
-    setMode(mode === "theme-default" ? darkThemeMode : "theme-default")
+export const ActionMap: Record<MenuAction, ActionFunction> = {
+  [MenuAction.NEW]: async (item?: MenuItem) => {
+    return Promise.resolve(true)
+  },
+  [MenuAction.OPEN]: async (item?: MenuItem) => {
+    return Promise.resolve(true)
+  },
+  [MenuAction.SAVE]: async (item?: MenuItem) => {
+    return Promise.resolve(true)
+  },
+  [MenuAction.IMPORT]: async (item?: MenuItem) => {
+    const { uploadFile } = useEditor.getState()
+    await uploadFile()
+    return Promise.resolve(true)
+  },
+  [MenuAction.UNDO]: async (item?: MenuItem) => {
+    return Promise.resolve(true)
+  },
+  [MenuAction.REDO]: async (item?: MenuItem) => {
+    return Promise.resolve(true)
+  },
+  [MenuAction.DUPLICATE]: async (item?: MenuItem) => {
+    return Promise.resolve(true)
+  },
+  [MenuAction.CUT]: async (item?: MenuItem) => {
+    return Promise.resolve(true)
+  },
+  [MenuAction.COPY]: async (item?: MenuItem) => {
+    return Promise.resolve(true)
+  },
+  [MenuAction.PASTE]: async (item?: MenuItem) => {
+    return Promise.resolve(true)
+  },
+  [MenuAction.ADD_SOURCE]: async (item?: MenuItem) => {
+    return Promise.resolve(true)
+  },
+  [MenuAction.ADD_RECEIVER]: async (item?: MenuItem) => {
+    return Promise.resolve(true)
   },
 
-  [MenuAction.OPEN_DOCUMENTATION]: (item: MenuItem) => {},
+  [MenuAction.TOGGLE_UI]: async (item?: MenuCheckboxItem, checked?: boolean) => {
+    return Promise.resolve(true)
+  },
+  [MenuAction.DEBUG]: async (item?: MenuCheckboxItem, checked?: boolean) => {
+    return Promise.resolve(true)
+  },
+  [MenuAction.TOGGLE_THEME]: async (item?: MenuCheckboxItem, checked?: boolean) => {
+    const { mode, setMode } = useTheme.getState()
+    setMode(mode === "theme-default" ? darkThemeMode : "theme-default")
+    return Promise.resolve(true)
+  },
+
+  [MenuAction.OPEN_DOCUMENTATION]: async (item?: MenuItem) => {
+    return Promise.resolve(true)
+  },
 }
 
 function ConnectedMenuCheckboxItemComponent({ item, hasItemState }: { item: MenuCheckboxItem; hasItemState: boolean }) {
@@ -232,7 +279,11 @@ function MenuItemComponent({ item, hasItemState }: { item: GenericMenuItem; hasI
     }
     case MenuType.MENU_ITEM: {
       return (
-        <DropdownMenuItem disabled={item.disabled} onClick={() => console.log(item.action)} hasItemState={hasItemState}>
+        <DropdownMenuItem
+          disabled={item.disabled}
+          onClick={() => ActionMap[item.action](item)}
+          hasItemState={hasItemState}
+        >
           {item.title}
           {item.key && (
             <DropdownMenuRightSlot>
@@ -244,21 +295,6 @@ function MenuItemComponent({ item, hasItemState }: { item: GenericMenuItem; hasI
     }
     case MenuType.MENU_CHECKBOX_ITEM: {
       return <ConnectedMenuCheckboxItemComponent item={item} hasItemState={hasItemState} />
-      // return (
-      //   <DropdownMenuCheckboxItem
-      //     hasItemState={hasItemState}
-      //     disabled={item.disabled}
-      //     onClick={() => console.log(item.action)}
-      //     checked={item.checked}
-      //   >
-      //     {item.title}
-      //     {item.key && (
-      //       <DropdownMenuRightSlot>
-      //         <Flex>{formatKeyboardShortcut(item.key)}</Flex>
-      //       </DropdownMenuRightSlot>
-      //     )}
-      //   </DropdownMenuCheckboxItem>
-      // )
     }
     case MenuType.MENU_RADIO_GROUP: {
       return (
@@ -324,27 +360,27 @@ const menuCheckboxItem = (
 
 const menuDivider = (id: string): MenuDivider => ({
   type: MenuType.MENU_DIVIDER,
-  id: "edit.divider.1",
+  id,
 })
 
 const MainMenuConfig: Array<GenericMenuItem> = [
   menu("file", "File", [
-    menuItem("file.new", "New", MenuAction.NEW, "cmd+n"),
-    menuItem("file.open", "Open", MenuAction.OPEN, "cmd+o"),
-    menuItem("file.save", "Save", MenuAction.SAVE, "cmd+s"),
+    menuItem("file.new", "New", MenuAction.NEW, MenuHotkeys[MenuAction.NEW]),
+    menuItem("file.open", "Open", MenuAction.OPEN, MenuHotkeys[MenuAction.OPEN]),
+    menuItem("file.save", "Save", MenuAction.SAVE, MenuHotkeys[MenuAction.SAVE]),
     menuDivider("file.divider.1"),
-    menuItem("file.import", "Import", MenuAction.IMPORT, "cmd+i"),
+    menuItem("file.import", "Import", MenuAction.IMPORT, MenuHotkeys[MenuAction.IMPORT]),
   ]),
 
   menu("edit", "Edit", [
-    menuItem("edit.undo", "Undo", MenuAction.UNDO, "cmd+z"),
-    menuItem("edit.redo", "Redo", MenuAction.REDO, "cmd+shift+z"),
+    menuItem("edit.undo", "Undo", MenuAction.UNDO, MenuHotkeys[MenuAction.UNDO]),
+    menuItem("edit.redo", "Redo", MenuAction.REDO, MenuHotkeys[MenuAction.REDO]),
     menuDivider("edit.divider.1"),
-    menuItem("edit.duplicate", "Duplicate", MenuAction.DUPLICATE, "cmd+d"),
+    menuItem("edit.duplicate", "Duplicate", MenuAction.DUPLICATE, MenuHotkeys[MenuAction.DUPLICATE]),
     menuDivider("edit.divider.2"),
-    menuItem("edit.cut", "Cut", MenuAction.CUT, "cmd+x"),
-    menuItem("edit.copy", "Copy", MenuAction.COPY, "cmd+c"),
-    menuItem("edit.paste", "Paste", MenuAction.PASTE, "cmd+v"),
+    menuItem("edit.cut", "Cut", MenuAction.CUT, MenuHotkeys[MenuAction.CUT]),
+    menuItem("edit.copy", "Copy", MenuAction.COPY, MenuHotkeys[MenuAction.COPY]),
+    menuItem("edit.paste", "Paste", MenuAction.PASTE, MenuHotkeys[MenuAction.PASTE]),
   ]),
 
   menu("add", "Add", [
