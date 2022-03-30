@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { dequal } from 'dequal/lite'
 import { getValueType, normalize, sanitize } from '../plugin'
 import {

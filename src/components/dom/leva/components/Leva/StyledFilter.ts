@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { styled } from '../../styles'
 
 const iconWidth = 40

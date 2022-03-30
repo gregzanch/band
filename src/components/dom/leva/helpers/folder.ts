@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { SpecialInputs } from '../types'
 import type { FolderInput, Schema, SchemaToValues, FolderSettings } from '../types'
 

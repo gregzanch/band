@@ -1,3 +1,4 @@
+//@ts-nocheck
 import type { InputWithSettings, LevaInputProps } from '../../types'
 
 export type StringSettings = { editable?: boolean; rows?: boolean | number }

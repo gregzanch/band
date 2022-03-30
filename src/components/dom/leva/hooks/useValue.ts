@@ -1,3 +1,4 @@
+//@ts-nocheck
 import shallow from 'zustand/shallow'
 import { useStoreContext } from '../context'
 

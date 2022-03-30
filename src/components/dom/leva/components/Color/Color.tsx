@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useRef, useState, useEffect } from 'react'
 import { RgbaColorPicker, RgbaColor, RgbColorPicker } from 'react-colorful'
 import { colord } from 'colord'

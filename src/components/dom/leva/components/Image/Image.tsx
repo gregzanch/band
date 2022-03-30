@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useCallback } from 'react'
 import { Label, Portal, Overlay, Row } from '../UI'
 import { useDropzone } from 'react-dropzone'

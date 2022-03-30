@@ -1,3 +1,4 @@
+//@ts-nocheck
 import shallow from 'zustand/shallow'
 import { getValuesForPaths } from '../utils/data'
 import type { Data, StoreType } from '../types'

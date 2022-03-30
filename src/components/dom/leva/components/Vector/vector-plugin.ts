@@ -1,3 +1,4 @@
+//@ts-nocheck
 import v8n from 'v8n'
 import { mapArrayToKeys } from '../../utils'
 import { sanitize } from '../Number/number-plugin'

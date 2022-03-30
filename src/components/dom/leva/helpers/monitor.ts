@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { SpecialInputs } from '../types'
 import type { MonitorInput, MonitorSettings } from '../types'
 

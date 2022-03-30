@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react'
 import { Vector } from '../Vector'
 import { Label, Row } from '../UI'

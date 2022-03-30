@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useState, useRef, useLayoutEffect, useCallback } from 'react'
 
 export function usePopin(margin = 3) {

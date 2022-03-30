@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { pick } from '.'
 import { Data } from '../types'
 

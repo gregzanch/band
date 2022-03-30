@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useRef, useCallback } from 'react'
 import { useInputContext } from '../../context'
 import { styled } from '../../styles'

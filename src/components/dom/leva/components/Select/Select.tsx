@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useRef } from 'react'
 import { useInputContext } from '../../context'
 import { Label, Row, Chevron } from '../UI'

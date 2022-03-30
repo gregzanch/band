@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { styled } from '../../styles'
 
 export const StyledButtonGroupButton = styled('button', {

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useRef, useCallback } from 'react'
 
 export function useTransform<T extends HTMLElement>(): [

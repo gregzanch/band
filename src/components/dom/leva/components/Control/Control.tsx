@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react'
 import { ControlInput } from './ControlInput'
 import { log, LevaErrors } from '../../utils/log'
@@ -23,7 +24,7 @@ export const Control = React.memo(({ path }: ControlProps) => {
   const { type, label, key, ...inputProps } = input
 
   if (type in SpecialInputs) {
-    // @ts-expect-error
+    // @ts-ignore
     const SpecialInputForType = specialComponents[type]
     return <SpecialInputForType label={label} path={path} {...inputProps} />
   }

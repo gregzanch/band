@@ -1,3 +1,5 @@
+//@ts-nocheck
+//@ts-nocheck
 import type { LevaInputProps, Vector2d, VectorObj } from '../../types'
 import type { InternalVectorSettings } from '../Vector/vector-types'
 

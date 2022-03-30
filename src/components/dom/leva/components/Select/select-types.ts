@@ -1,3 +1,4 @@
+//@ts-nocheck
 import type { LevaInputProps } from '../../types'
 
 export type SelectSettings<U = unknown> = { options: Record<string, U> | U[] }

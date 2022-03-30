@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react'
 import { StyledRow, StyledInputRow } from './StyledUI'
 

@@ -1,9 +1,10 @@
-// @ts-expect-error
-import merge from 'merge-value'
-import { getKeyPath } from '../../utils'
-import type { Tree } from '../../types'
+//@ts-nocheck
+//@ts-nocheck
+import merge from "merge-value"
+import { getKeyPath } from "../../utils"
+import type { Tree } from "../../types"
 
-export const isInput = (v: object) => '__levaInput' in v
+export const isInput = (v: object) => "__levaInput" in v
 
 export const buildTree = (paths: string[], filter?: string): Tree => {
   const tree = {}

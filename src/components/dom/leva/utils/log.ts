@@ -1,3 +1,4 @@
+//@ts-nocheck
 export enum LevaErrors {
   UNSUPPORTED_INPUT,
   NO_COMPONENT_FOR_TYPE,

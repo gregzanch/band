@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react'
 import { useStoreContext } from '../..'
 import { ButtonInput } from '../../types'

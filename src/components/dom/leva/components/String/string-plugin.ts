@@ -1,3 +1,4 @@
+//@ts-nocheck
 import v8n from 'v8n'
 import { StringInput } from './string-types'
 

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import type { LevaInputProps, IntervalInput } from '../../types'
 import type { InternalNumberSettings } from '../Number/number-types'
 

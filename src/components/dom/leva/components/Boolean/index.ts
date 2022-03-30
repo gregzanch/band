@@ -1,3 +1,4 @@
+//@ts-nocheck
 import * as props from './boolean-plugin'
 import { BooleanComponent } from './Boolean'
 import { createInternalPlugin } from '../../plugin'

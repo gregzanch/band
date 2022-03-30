@@ -1,3 +1,4 @@
+//@ts-nocheck
 import * as props from './image-plugin'
 import { ImageComponent } from './Image'
 import { createInternalPlugin } from '../../plugin'

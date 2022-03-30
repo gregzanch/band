@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useInputContext } from '../context'
 import { FullGestureState, useDrag as useDragHook, UserDragConfig } from '@use-gesture/react'
 

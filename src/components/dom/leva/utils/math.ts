@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const clamp = (x: number, min: number, max: number) => (x > max ? max : x < min ? min : x)
 export const pad = (x: number, pad: number) => String(x).padStart(pad, '0')
 export const ceil = (v: number) => Math.sign(v) * Math.ceil(Math.abs(v))

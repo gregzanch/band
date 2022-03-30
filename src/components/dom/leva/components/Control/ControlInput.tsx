@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react'
 import { Plugins } from '../../plugin'
 import { warn, LevaErrors } from '../../utils/log'

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react'
 import { useInputContext } from '../../context'
 import { Label, Row } from '../UI'

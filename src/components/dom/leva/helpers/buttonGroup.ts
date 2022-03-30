@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { SpecialInputs } from '../types'
 import type { ButtonGroupInput, ButtonGroupInputOpts } from '../types'
 

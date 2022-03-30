@@ -1,3 +1,4 @@
+//@ts-nocheck
 export * from './useInputSetters'
 export * from './useDeepMemo'
 export * from './useShallowMemo'

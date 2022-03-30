@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const debounce = <F extends Function>(callback: F, wait: number, immediate = false) => {
   let timeout: number = 0
 

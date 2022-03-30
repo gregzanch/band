@@ -1,16 +1,18 @@
-import React, { useRef } from 'react'
-import { RangeWrapper, Range, Scrubber, Indicator } from './StyledRange'
-import { sanitizeStep } from './number-plugin'
-import { useDrag } from '../../hooks'
-import { invertedRange, range } from '../../utils'
-import { useTh } from '../../styles'
-import type { RangeSliderProps } from './number-types'
+//@ts-nocheck
+//@ts-nocheck
+import React, { useRef } from "react"
+import { RangeWrapper, Range, Scrubber, Indicator } from "./StyledRange"
+import { sanitizeStep } from "./number-plugin"
+import { useDrag } from "../../hooks"
+import { invertedRange, range } from "../../utils"
+import { useTh } from "../../styles"
+import type { RangeSliderProps } from "./number-types"
 
 export function RangeSlider({ value, min, max, onDrag, step, initialValue }: RangeSliderProps) {
   const ref = useRef<HTMLDivElement>(null)
   const scrubberRef = useRef<HTMLDivElement>(null)
   const rangeWidth = useRef<number>(0)
-  const scrubberWidth = useTh('sizes', 'scrubberWidth')
+  const scrubberWidth = useTh("sizes", "scrubberWidth")
 
   const bind = useDrag(({ event, first, xy: [x], movement: [mx], memo }) => {
     if (first) {

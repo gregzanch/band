@@ -1,11 +1,13 @@
-import { getStep, clamp } from '../../utils'
-import type { InternalNumberSettings, NumberInput } from './number-types'
+//@ts-nocheck
+//@ts-nocheck
+import { getStep, clamp } from "../../utils"
+import type { InternalNumberSettings, NumberInput } from "./number-types"
 
-export const schema = (o: any) => typeof o === 'number' || (typeof o === 'string' && !isNaN(parseFloat(o)))
+export const schema = (o: any) => typeof o === "number" || (typeof o === "string" && !isNaN(parseFloat(o)))
 
 export const sanitize = (v: any, { min = -Infinity, max = Infinity, suffix }: InternalNumberSettings) => {
   const _v = parseFloat(v as string)
-  if (v === '' || isNaN(_v)) throw Error('Invalid number')
+  if (v === "" || isNaN(_v)) throw Error("Invalid number")
   const f = clamp(_v, min, max)
   return suffix ? f + suffix : f
 }
@@ -51,7 +53,7 @@ export const normalize = ({ value, ...settings }: NumberInput) => {
 // TODO fix this function, probably not needed
 export const sanitizeStep = (
   v: number,
-  { step, initialValue }: Pick<InternalNumberSettings, 'step' | 'initialValue'>
+  { step, initialValue }: Pick<InternalNumberSettings, "step" | "initialValue">
 ) => {
   const steps = Math.round((v - initialValue) / step)
   return initialValue + steps * step!

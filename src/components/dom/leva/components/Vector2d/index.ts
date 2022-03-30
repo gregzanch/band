@@ -1,3 +1,5 @@
+//@ts-nocheck
+//@ts-nocheck
 import { Vector2dComponent } from './Vector2d'
 import { getVectorPlugin } from '../Vector'
 import { createInternalPlugin } from '../../plugin'

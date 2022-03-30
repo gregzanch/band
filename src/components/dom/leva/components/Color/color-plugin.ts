@@ -1,3 +1,4 @@
+//@ts-nocheck
 import v8n from 'v8n'
 import { Colord, colord, extend, getFormat } from 'colord'
 import namesPlugin from 'colord/plugins/names'

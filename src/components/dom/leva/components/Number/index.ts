@@ -1,3 +1,4 @@
+//@ts-nocheck
 import * as props from './number-plugin'
 import { NumberComponent } from './Number'
 import { createInternalPlugin } from '../../plugin'

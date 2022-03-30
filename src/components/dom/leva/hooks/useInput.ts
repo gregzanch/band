@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useCallback, useState, useEffect } from 'react'
 import shallow from 'zustand/shallow'
 import { useStoreContext } from '../context'

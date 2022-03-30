@@ -1,3 +1,4 @@
+//@ts-nocheck
 import type { InputWithSettings, LevaInputProps, NumberSettings } from '../../types'
 
 export type InternalNumberSettings = {

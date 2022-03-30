@@ -1,3 +1,4 @@
+//@ts-nocheck
 export * from './Misc'
 export * from './Label'
 export * from './Chevron'

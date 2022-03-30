@@ -1,3 +1,4 @@
+//@ts-nocheck
 import type { ColorVectorInput, InputWithSettings, LevaInputProps } from '../../types'
 
 export type Format = 'hex' | 'rgb' | 'hsl' | 'hsv'

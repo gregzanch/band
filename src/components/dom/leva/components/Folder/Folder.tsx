@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState, useRef, useLayoutEffect } from 'react'
 import { FolderTitle } from './FolderTitle'
 import { StyledFolder, StyledWrapper, StyledContent } from './StyledFolder'

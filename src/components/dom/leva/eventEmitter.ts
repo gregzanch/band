@@ -1,3 +1,4 @@
+//@ts-nocheck
 type Listener = (...args: Array<any>) => void
 
 type EventEmitter = {

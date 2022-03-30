@@ -1,3 +1,4 @@
+//@ts-nocheck
 /* eslint-disable react/display-name */
 import React, { useMemo, useState } from "react"
 import { buildTree } from "./tree"

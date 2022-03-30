@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useRef } from 'react'
 import { Label, Row } from '../UI'
 import { Vector } from '../Vector'
@@ -19,7 +20,7 @@ function IntervalSlider({ value, bounds: [min, max], onDrag, ...settings }: Inte
   const minScrubberRef = useRef<HTMLDivElement>(null)
   const maxScrubberRef = useRef<HTMLDivElement>(null)
   const rangeWidth = useRef<number>(0)
-  const scrubberWidth = useTh('sizes', 'scrubberWidth')
+  const scrubberWidth = useTh("sizes", "scrubberWidth")
 
   const bind = useDrag(({ event, first, xy: [x], movement: [mx], memo = {} }) => {
     if (first) {
@@ -30,12 +31,12 @@ function IntervalSlider({ value, bounds: [min, max], onDrag, ...settings }: Inte
 
       memo.pos = invertedRange((x - left) / width, min, max)
       const delta = Math.abs(memo.pos - value.min) - Math.abs(memo.pos - value.max)
-      memo.key = delta < 0 || (delta === 0 && memo.pos <= value.min) ? 'min' : 'max'
+      memo.key = delta < 0 || (delta === 0 && memo.pos <= value.min) ? "min" : "max"
       if (targetIsScrub) memo.pos = value[memo.key as keyof InternalInterval]
     }
     const newValue = memo.pos + invertedRange(mx / rangeWidth.current, 0, max - min)
 
-    onDrag({ [memo.key]: sanitizeStep(newValue, settings[memo.key as 'min' | 'max']) })
+    onDrag({ [memo.key]: sanitizeStep(newValue, settings[memo.key as "min" | "max"]) })
     return memo
   })
 
@@ -43,12 +44,13 @@ function IntervalSlider({ value, bounds: [min, max], onDrag, ...settings }: Inte
   const maxStyle = `calc(${1 - range(value.max, min, max)} * (100% - ${scrubberWidth} - 8px) + 4px)`
 
   return (
+    //@ts-ignore
     <RangeWrapper ref={ref} {...bind()}>
       <Range>
         <Indicator style={{ left: minStyle, right: maxStyle }} />
       </Range>
-      <Scrubber position="left" ref={minScrubberRef} style={{ left: minStyle }} />
-      <Scrubber position="right" ref={maxScrubberRef} style={{ right: maxStyle }} />
+      <Scrubber position='left' ref={minScrubberRef} style={{ left: minStyle }} />
+      <Scrubber position='right' ref={maxScrubberRef} style={{ right: maxStyle }} />
     </RangeWrapper>
   )
 }
@@ -64,6 +66,7 @@ export function IntervalComponent() {
         <Label>{label}</Label>
         <Container>
           <IntervalSlider value={displayValue} {...settings} onDrag={onUpdate} />
+          {/* @ts-ignore */}
           <Vector value={displayValue} settings={_settings} onUpdate={onUpdate} innerLabelTrim={0} />
         </Container>
       </Row>

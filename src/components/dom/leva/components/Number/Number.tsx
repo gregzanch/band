@@ -1,13 +1,15 @@
-import React, { useState } from 'react'
-import { NumberInput } from '../ValueInput'
-import { Label, Row } from '../UI'
-import { useDrag } from '../../hooks'
-import { RangeGrid } from './StyledNumber'
-import { RangeSlider } from './RangeSlider'
-import { useInputContext } from '../../context'
-import type { NumberProps } from './number-types'
-import { multiplyStep } from '../../utils'
-import { InnerNumberLabel } from '../ValueInput/StyledInput'
+//@ts-nocheck
+//@ts-nocheck
+import React, { useState } from "react"
+import { NumberInput } from "../ValueInput"
+import { Label, Row } from "../UI"
+import { useDrag } from "../../hooks"
+import { RangeGrid } from "./StyledNumber"
+import { RangeSlider } from "./RangeSlider"
+import { useInputContext } from "../../context"
+import type { NumberProps } from "./number-types"
+import { multiplyStep } from "../../utils"
+import { InnerNumberLabel } from "../ValueInput/StyledInput"
 
 type DraggableLabelProps = {
   label: string
@@ -29,7 +31,7 @@ const DraggableLabel = React.memo(({ label, onUpdate, step, innerLabelTrim }: Dr
   })
 
   return (
-    <InnerNumberLabel dragging={dragging} title={label.length > 1 ? label : ''} {...bind()}>
+    <InnerNumberLabel dragging={dragging} title={label.length > 1 ? label : ""} {...bind()}>
       {label.slice(0, innerLabelTrim)}
     </InnerNumberLabel>
   )
@@ -43,7 +45,7 @@ export function Number({
   onChange,
   settings,
   innerLabelTrim = 1,
-}: Omit<NumberProps, 'setSettings' | 'emitOnEditStart' | 'emitOnEditEnd'> & {
+}: Omit<NumberProps, "setSettings" | "emitOnEditStart" | "emitOnEditEnd"> & {
   id?: string
   label: string
   innerLabelTrim?: number
@@ -67,7 +69,7 @@ export function NumberComponent() {
       <Label>{label}</Label>
       <RangeGrid hasRange={hasRange}>
         {hasRange && <RangeSlider value={parseFloat(value as any)} onDrag={onUpdate} {...settings} />}
-        <Number {...props} id={id} label="value" innerLabelTrim={hasRange ? 0 : 1} />
+        <Number {...props} id={id} label='value' innerLabelTrim={hasRange ? 0 : 1} />
       </RangeGrid>
     </Row>
   )

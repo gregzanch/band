@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { styled } from '../../styles'
 
 export const ColorPreview = styled('div', {

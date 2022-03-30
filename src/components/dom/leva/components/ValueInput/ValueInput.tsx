@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useCallback, useRef } from 'react'
 import { useInputContext } from '../../context'
 import { parseNumber } from '../../utils'

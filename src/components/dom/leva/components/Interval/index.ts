@@ -1,3 +1,4 @@
+//@ts-nocheck
 import * as props from './interval-plugin'
 import { IntervalComponent } from './Interval'
 import { createInternalPlugin } from '../../plugin'

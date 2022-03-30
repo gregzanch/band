@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useRef } from 'react'
 import { dequal } from 'dequal/lite'
 import shallow from 'zustand/shallow'

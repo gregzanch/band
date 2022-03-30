@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useRef, useEffect, useLayoutEffect } from 'react'
 
 export function useToggle(toggled: boolean) {

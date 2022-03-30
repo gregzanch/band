@@ -1,3 +1,5 @@
+//@ts-nocheck
+//@ts-nocheck
 import { styled } from '../../styles'
 
 export const JoystickTrigger = styled('div', {

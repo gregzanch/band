@@ -1,3 +1,4 @@
+//@ts-nocheck
 export * from './math'
 export * from './path'
 export * from './object'

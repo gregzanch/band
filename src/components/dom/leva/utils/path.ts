@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const join = (...args: (string | undefined)[]) => args.filter(Boolean).join('.')
 
 export const prefix = (obj: object, p: string) =>
