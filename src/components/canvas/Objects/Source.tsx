@@ -5,6 +5,7 @@ import useEditor from "@/state/editor"
 const SourceComponent = ({ name = "", id, position = [0, 0, 0] as [number, number, number] }) => {
   // This reference will give us direct access to the THREE.Mesh object
   const mesh = useRef(null)
+  const selectedObject = useEditor((state) => state.selectedObject)
   return (
     <>
       <mesh
@@ -23,8 +24,10 @@ const SourceComponent = ({ name = "", id, position = [0, 0, 0] as [number, numbe
         uuid={id}
       >
         <sphereBufferGeometry args={[1, 16, 16]} />
-        <meshBasicMaterial color={0x44a273} />
-        <Edges scale={1} threshold={0} color={0xb2b2b2} />
+        {/* <meshBasicMaterial color={0x44a273} /> */}
+        <meshPhysicalMaterial color={0x44a273} />
+        {selectedObject?.current?.uuid === id && <Edges scale={1} threshold={0} color={0xb2b2b2} />}
+        {/* <Edges scale={1} threshold={0} color={0xb2b2b2} /> */}
       </mesh>
     </>
   )

@@ -10,6 +10,7 @@ type MeshProps = {
 
 export default function MeshComponent({ mesh }: MeshProps) {
   const meshRef = useRef(mesh)
+  const selectedObject = useEditor((state) => state.selectedObject)
   return (
     <mesh
       ref={meshRef}
@@ -20,7 +21,7 @@ export default function MeshComponent({ mesh }: MeshProps) {
       }}
     >
       <meshPhysicalMaterial color={0x595e61} opacity={0.5} />
-      <Edges scale={1} threshold={15} color={0xb2b2b2} />
+      {selectedObject?.current?.uuid === mesh.uuid && <Edges scale={1} threshold={15} color={0xb2b2b2} />}
     </mesh>
   )
 }

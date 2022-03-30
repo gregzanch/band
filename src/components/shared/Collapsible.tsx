@@ -21,8 +21,8 @@ const close = keyframes({
 
 export const CollapsibleContent = styled(CollapsiblePrimitive.Content, {
   overflow: "hidden",
-  '&[data-state="open"]': { animation: `${open} 300ms ease-out forwards` },
-  '&[data-state="closed"]': { animation: `${close} 300ms ease-out forwards` },
+  '&[data-state="open"]': { animation: `${open} 300ms cubic-bezier(0.87, 0, 0.13, 1) forwards` },
+  '&[data-state="closed"]': { animation: `${close} 300ms cubic-bezier(0.87, 0, 0.13, 1) forwards` },
 })
 
 // Your app...
@@ -49,21 +49,3 @@ const IconButton = styled("button", {
   "&:hover": { backgroundColor: violet.violet3 },
   "&:focus": { boxShadow: `0 0 0 2px black` },
 })
-
-// export const CollapsibleDemo = () => {
-//   const [open, setOpen] = React.useState(true)
-//   return (
-//     <Collapsible open={open} onOpenChange={setOpen}>
-//       <CollapsibleTrigger asChild>
-//         <Flex css={{ alignItems: "center", justifyContent: "space-between" }}>
-//           <Text css={{ color: "white" }}>Object Properties</Text>
-//         </Flex>
-//       </CollapsibleTrigger>
-//       <CollapsibleContent>
-//         <ObjectProperties />
-//       </CollapsibleContent>
-//     </Collapsible>
-//   )
-// }
-
-// export default CollapsibleDemo

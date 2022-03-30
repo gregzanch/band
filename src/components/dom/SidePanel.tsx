@@ -72,9 +72,11 @@ const StyledPanel = styled("div", {
   zIndex: "50",
   right: "0px",
   position: "absolute",
-  height: "calc(100vh - $2 - $2)",
   width: "300px",
   overflowY: "scroll",
+  maxHeight: "calc(100vh - $2 - $2)",
+  // height: "100%",
+  // pointerEvents: "none",
 })
 
 const HeaderContainer = styled(Box, {
@@ -163,6 +165,7 @@ export function SidePanel() {
       <Box
         css={{
           position: "relative",
+          pointerEvents: "all",
         }}
       >
         <ResizeBar />
