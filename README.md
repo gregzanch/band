@@ -1,7 +1,7 @@
 <p align="center">
    <br/>
    <img width="250px" src="https://i.imgur.com/d6R7lAA.png" />
-   <h1 align="center" id="band" style="margin-bottom: 0; border-bottom: none;">Band</h1>
+   <h1 align="center" id="band" style="margin-bottom: 0; border-bottom: none;c">Band</h1>
    <p align="center" style="font-size: larger; opacity: 0.75;">a modern acoustic simulator</p>
 </p>
 
