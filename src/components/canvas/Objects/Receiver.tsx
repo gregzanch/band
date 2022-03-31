@@ -2,6 +2,8 @@ import { Edges } from "@react-three/drei"
 import { useEffect, useRef } from "react"
 import useEditor from "@/state/editor"
 import { Selection, Select, EffectComposer, Outline } from "@react-three/postprocessing"
+import { LayerMap } from "@/components/canvas/types"
+
 const ReceiverComponent = ({ name = "", id, position = [0, 0, 0] as [number, number, number] }) => {
   // This reference will give us direct access to the THREE.Mesh object
   const mesh = useRef(null)
@@ -24,6 +26,7 @@ const ReceiverComponent = ({ name = "", id, position = [0, 0, 0] as [number, num
       uuid={id}
       castShadow
       receiveShadow
+      // layers={LayerMap.OBJECTS}
     >
       <sphereBufferGeometry args={[1, 16, 16]} />
       <meshPhongMaterial color={0xe5732a} specular={0xf54b8c} shininess={5} />

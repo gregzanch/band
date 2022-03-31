@@ -2,7 +2,9 @@ import React from "react"
 import { styled, keyframes } from "@/styles/stitches.config"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { CaretDownIcon } from "@radix-ui/react-icons"
-import { violet, mauve, indigo, purple, blackA } from "@radix-ui/colors"
+import { violet, mauve, indigo, purple, blackA, amber } from "@radix-ui/colors"
+import { Button } from "../shared/Button"
+import { Box } from "../shared/Box"
 
 const enterFromRight = keyframes({
   from: { transform: "translateX(200px)", opacity: 0 },
@@ -60,6 +62,7 @@ const StyledList = styled(NavigationMenuPrimitive.List, {
   padding: 4,
   borderRadius: "$pill",
   listStyle: "none",
+  // gap: "$3",
   boxShadow: `0 2px 10px ${blackA.blackA7}`,
 })
 
@@ -75,6 +78,20 @@ const itemStyles = {
   "&:focus": { position: "relative", boxShadow: `0 0 0 2px $colors$yellow11` },
   "&:hover": { backgroundColor: "$elevation3" },
 }
+
+const StyledMenuItem = styled(NavigationMenuPrimitive.Item, {
+  borderRadius: "$pill",
+  variants: {
+    filled: {
+      true: {
+        background: "$orange11",
+        "&:hover": {
+          background: "$orange9",
+        },
+      },
+    },
+  },
+})
 
 const StyledTrigger = styled(NavigationMenuPrimitive.Trigger, {
   all: "unset",
@@ -111,6 +128,26 @@ const StyledLink = styled(NavigationMenuPrimitive.Link, {
   textDecoration: "none",
   fontSize: 15,
   lineHeight: 1,
+  variants: {
+    filled: {
+      true: {
+        // marginLeft: "$4",
+        background: "$orange9",
+        "&:hover": {
+          background: "$orange10",
+        },
+        textShadow: "0px 0px 2px $colors$orange8",
+      },
+    },
+  },
+})
+
+const StyledButton = styled(Button, {
+  ...itemStyles,
+  // display: "block",
+  // textDecoration: "none",
+  // fontSize: 15,
+  // lineHeight: 1,
 })
 
 const StyledContent = styled(NavigationMenuPrimitive.Content, {
@@ -188,7 +225,7 @@ const StyledViewport = styled(NavigationMenuPrimitive.Viewport, {
 // Exports
 const NavigationMenu = StyledMenu
 const NavigationMenuList = StyledList
-const NavigationMenuItem = NavigationMenuPrimitive.Item
+const NavigationMenuItem = StyledMenuItem
 const NavigationMenuTrigger = StyledTriggerWithCaret
 const NavigationMenuLink = StyledLink
 const NavigationMenuContent = StyledContent
@@ -228,7 +265,7 @@ const LinkTitle = styled("div", {
   fontWeight: 500,
   lineHeight: 1.2,
   marginBottom: 5,
-  color: "$yellow8",
+  color: "$highlight1",
 })
 
 const LinkText = styled("p", {
@@ -309,10 +346,10 @@ const ContentListItemCallout = React.forwardRef<
 const ViewportPosition = styled("div", {
   position: "absolute",
   display: "flex",
-  justifyContent: "center",
+  justifyContent: "flex-start",
   width: "100%",
   top: "100%",
-  left: 0,
+  left: "$8",
   perspective: "2000px",
 })
 
@@ -321,51 +358,69 @@ export const NavDemo = () => {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Learn</NavigationMenuTrigger>
+          <NavigationMenuTrigger>Features</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ContentList layout='one'>
-              <ContentListItemCallout />
-              <ContentListItem href='https://stitches.dev/' title='Stitches'>
-                CSS-in-JS with best-in-class developer experience.
+              {/* <ContentListItemCallout /> */}
+              <ContentListItem href='https://stitches.dev/' title='3D Editor'>
+                Interactive 3D model editor
               </ContentListItem>
-              <ContentListItem href='/colors' title='Colors'>
-                Beautiful, thought-out palettes with auto dark mode.
+              <ContentListItem href='https://stitches.dev/' title='Solvers'>
+                Diverse set of solvers
               </ContentListItem>
-              <ContentListItem href='https://icons.modulz.app/' title='Icons'>
-                A crisp set of 15x15 icons, balanced and consistent.
+              <ContentListItem href='https://stitches.dev/' title='Materials'>
+                Comprehensive material library
+              </ContentListItem>
+              <ContentListItem href='https://stitches.dev/' title='Projects'>
+                Automatic project saving
+              </ContentListItem>
+              <ContentListItem href='https://stitches.dev/' title='Results'>
+                Result visualization, auralization, and data export
               </ContentListItem>
             </ContentList>
           </NavigationMenuContent>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Overview</NavigationMenuTrigger>
+          <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ContentList layout='two'>
-              <ContentListItem title='Introduction' href='/docs/primitives/overview/introduction'>
-                Build high-quality, accessible design systems and web apps.
+              <ContentListItem title='Resource' href='#'>
+                Cool link desc here
               </ContentListItem>
-              <ContentListItem title='Getting started' href='/docs/primitives/overview/getting-started'>
-                A quick tutorial to get you up and running with Radix Primitives.
+              <ContentListItem title='Resource' href='#'>
+                Cool link desc here
               </ContentListItem>
-              <ContentListItem title='Styling' href='/docs/primitives/overview/styling'>
-                Unstyled and compatible with any styling solution.
+              <ContentListItem title='Resource' href='#'>
+                Cool link desc here
               </ContentListItem>
-              <ContentListItem title='Animation' href='/docs/primitives/overview/animation'>
-                Use CSS keyframes or any animation library of your choice.
+              <ContentListItem title='Resource' href='#'>
+                Cool link desc here
               </ContentListItem>
-              <ContentListItem title='Accessibility' href='/docs/primitives/overview/accessibility'>
-                Tested in a range of browsers and assistive technologies.
+              <ContentListItem title='Resource' href='#'>
+                Cool link desc here
               </ContentListItem>
-              <ContentListItem title='Releases' href='/docs/primitives/overview/releases'>
-                Radix Primitives releases and their changelogs.
+              <ContentListItem title='Resource' href='#'>
+                Cool link desc here
               </ContentListItem>
             </ContentList>
           </NavigationMenuContent>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuLink href='https://github.com/radix-ui'>Github</NavigationMenuLink>
+          <NavigationMenuLink href='#'>Docs</NavigationMenuLink>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuLink href='https://github.com/gregzanch/band'>Github</NavigationMenuLink>
+        </NavigationMenuItem>
+
+        <Box css={{ width: "$2" }} />
+
+        <NavigationMenuItem>
+          <NavigationMenuLink filled href='/editor'>
+            Open App
+          </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuIndicator />

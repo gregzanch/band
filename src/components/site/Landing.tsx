@@ -55,7 +55,7 @@ function Landing() {
       </StickyContainer>
       <Box
         css={{
-          paddingTop: "calc(4 * $4)",
+          paddingTop: "calc(8 * $4)",
           overflow: "auto",
         }}
       >
@@ -70,13 +70,21 @@ function Landing() {
         >
           <Text
             size={9}
-            variant='yellow'
-            gradient
             css={{
-              width: "fit-content",
+              // width: "fit-content",
               fontFamily: "$sans",
               textAlign: "center",
-              whiteSpace: "break-spaces",
+              // whiteSpace: "break-spaces",
+
+              color: "$yellow11",
+
+              "@supports (--css: variables)": {
+                color: "transparent",
+                WebkitTextFillColor: "transparent",
+                backgroundImage: "-webkit-linear-gradient(top right, $yellow11, $orange11)",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+              },
             }}
           >
             Band
@@ -96,16 +104,6 @@ function Landing() {
           </Text>
         </Container>
         <Logo />
-        <OpenEditorButton />
-        <DarkThemeButton />
-        <Text
-          css={{
-            whiteSpace: "break-spaces",
-          }}
-          size={7}
-        >
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-        </Text>
       </Box>
     </>
   )

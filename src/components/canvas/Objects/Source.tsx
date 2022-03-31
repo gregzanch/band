@@ -2,6 +2,7 @@ import { Edges } from "@react-three/drei"
 import { useEffect, useRef } from "react"
 import useEditor from "@/state/editor"
 import { Selection, Select, EffectComposer, Outline } from "@react-three/postprocessing"
+import { LayerMap } from "@/components/canvas/types"
 // import { useOutline } from "@/components/canvas/Effects/useOutline"
 
 const SourceComponent = ({ name = "", id, position = [0, 0, 0] as [number, number, number] }) => {
@@ -27,6 +28,7 @@ const SourceComponent = ({ name = "", id, position = [0, 0, 0] as [number, numbe
       uuid={id}
       castShadow
       receiveShadow
+      // layers={LayerMap.OBJECTS}
     >
       <sphereBufferGeometry args={[1, 16, 16]} />
       {/* <meshBasicMaterial color={0x44a273} /> */}

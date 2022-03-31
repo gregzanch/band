@@ -240,11 +240,21 @@ export const Text = styled("p", {
       variant: "yellow",
       gradient: "true",
       css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $yellow11, $orange11)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
+        // 👇 show a solid color in older browsers (e.g., IE11)
+        color: "$yellow11",
+
+        // 👇 show the text gradient in modern browsers
+        "@supports (--css: variables)": {
+          // background: linear-gradient(to right, darkblue, darkorchid);
+          // color: transparent;
+          // -webkit-background-clip: text;
+          // background-clip: text;
+          backgroundClip: "text",
+          color: "transparent",
+          background: "-webkit-linear-gradient(top right, $yellow11, $orange11)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        },
       },
     },
     {

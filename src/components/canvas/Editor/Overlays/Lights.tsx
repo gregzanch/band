@@ -1,6 +1,9 @@
 import { Fragment, useRef } from "react"
 import { DirectionalLightHelper, SpotLightHelper, Vector3 } from "three"
-import { Environment, BakeShadows, useHelper } from "@react-three/drei"
+import { Environment, BakeShadows, useHelper, Sky } from "@react-three/drei"
+import useEditor from "@/state/editor"
+import { RectAreaLightHelper } from "three-stdlib"
+import { LayerMap } from "@/components/canvas/types"
 
 const inclination = 0.2
 const azimuth = 0.25
@@ -15,6 +18,7 @@ type DirectionalProps = {
 }
 
 function Directional({ debug }: DirectionalProps) {
+  const colors = useEditor((state) => state.colors)
   const ref = useRef()
 
   // const mesh = useRef()
@@ -25,7 +29,8 @@ function Directional({ debug }: DirectionalProps) {
       ref={ref}
       position={sunPosition}
       castShadow
-      intensity={1.5}
+      intensity={1}
+      color={colors.directionalLight.getHex()}
       shadow-mapSize-width={2048}
       shadow-mapSize-height={2048}
       shadow-camera-far={100}
@@ -33,6 +38,7 @@ function Directional({ debug }: DirectionalProps) {
       shadow-camera-right={10}
       shadow-camera-top={10}
       shadow-camera-bottom={-10}
+      layers={LayerMap.LIGHTS}
     />
   )
 }
@@ -42,6 +48,7 @@ type SpotProps = {
 }
 
 function Spot({ debug }: SpotProps) {
+  const colors = useEditor((state) => state.colors)
   const ref = useRef()
 
   // const mesh = useRef()
@@ -50,37 +57,37 @@ function Spot({ debug }: SpotProps) {
   return (
     <spotLight
       ref={ref}
-      position={sunPosition}
-      // castShadow
+      position={[0, 30, 0]}
+      color={colors.spotLight.getHex()}
+      shadow-mapSize-width={2048}
+      shadow-mapSize-height={2048}
+      shadow-camera-far={100}
+      shadow-camera-left={-10}
+      shadow-camera-right={10}
+      shadow-camera-top={10}
+      shadow-camera-bottom={-10}
+      castShadow
       intensity={1}
-      penumbra={0.5}
-      distance={200}
-      angle={0.7}
-      decay={2}
+      penumbra={0.75}
+      distance={100}
+      angle={0.8}
+      decay={0.1}
+      layers={LayerMap.LIGHTS}
     />
   )
 }
 
 export function Lights() {
+  const colors = useEditor((state) => state.colors)
+
   return (
     <>
-      {/* <directionalLight
-        castShadow
-        position={[2.5, 8, 5]}
-        intensity={1.5}
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
-        shadow-camera-far={50}
-        shadow-camera-left={-10}
-        shadow-camera-right={10}
-        shadow-camera-top={10}
-        shadow-camera-bottom={-10}
-      /> */}
-      <Directional />
-      <Spot />
-      <ambientLight intensity={0.6} color={0xffffff} />
-      <Environment files='https://market-assets.fra1.cdn.digitaloceanspaces.com/market-assets/hdris/lebombo/lebombo_1k.hdr' />
-      {/* <BakeShadows /> */}
+      {/* <Directional debug /> */}
+      {/* <RectArea debug /> */}
+      {/* <Spot debug /> */}
+      <ambientLight intensity={1.0} color={colors.ambientLight.getHex()} layers={LayerMap.LIGHTS} />
+      <Environment files='/env-maps/studio_small_08_1k.pic' background={true} />
+      {/* <Sky distance={450000} sunPosition={[0, 1, 0]} inclination={0} azimuth={0.25} /> */}
     </>
   )
 }

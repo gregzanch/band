@@ -1,8 +1,13 @@
-import { ContactShadows } from "@react-three/drei"
+import { ContactShadows } from "@/components/canvas/Editor/Overlays/ContactShadows"
+import { useRef } from "react"
 
 export function Shadows() {
+  const ref = useRef()
+
+  console.log(ref)
   return (
     <ContactShadows
+      ref={ref}
       position={[0, 0.001, 0]}
       width={100}
       height={100}
@@ -10,5 +15,12 @@ export function Shadows() {
       // blur={20}
       rotation={[Math.PI / 2, 0, 0]}
     />
+    // <Shadow
+    //   color='black'
+    //   colorStop={0}
+    //   ref={ref}
+    //   opacity={0.5}
+    //   fog={false} // Reacts to fog (default=false)
+    // />
   )
 }

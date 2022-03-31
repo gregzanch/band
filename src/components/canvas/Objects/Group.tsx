@@ -5,6 +5,7 @@ import { Edges, Stage } from "@react-three/drei"
 import useEditor from "@/state/editor"
 import MeshComponent from "@/components/canvas/Objects/Mesh"
 import { Selection, Select, EffectComposer, Outline } from "@react-three/postprocessing"
+import { LayerMap } from "@/components/canvas/types"
 type MeshProps = {
   group: Group
 }
@@ -22,6 +23,7 @@ export default function GroupComponent({ group }: MeshProps) {
         useEditor.setState({ selectedObject: groupRef })
         e.stopPropagation()
       }}
+      // layers={LayerMap.OBJECTS}
     >
       {childMeshes.map((mesh) => {
         return <MeshComponent key={mesh.uuid} mesh={mesh} />

@@ -1,5 +1,5 @@
 import { Plane } from "@react-three/drei"
-
+import { LayerMap } from "@/components/canvas/types"
 // function Plane({ color, ...props }) {
 //   return (
 //     <RoundedBox receiveShadow castShadow smoothness={10} radius={0.015} {...props}>
@@ -22,8 +22,30 @@ export function Ground({ size = 100, segments = 100, color = 0xb3b3b3 }: GroundP
       castShadow
       rotation={[-Math.PI / 2, 0, 0]}
       position={[0, -0.01, 0]}
+      layers={LayerMap.ENVIRONMENT}
     >
-      <meshPhongMaterial attach='material' color={color} />
+      <meshStandardMaterial
+        attach='material'
+        color={color}
+        // reflectivity={0.05}
+        roughness={0.88}
+        metalness={0}
+        // clearcoat={0.25}
+        // clearcoatRoughness={0.45}
+        // transmission={0}
+        // ior={1.5}
+      />
+      {/* <meshPhysicalMaterial
+        attach='material'
+        color={color}
+        reflectivity={0.05}
+        roughness={0.88}
+        metalness={0}
+        clearcoat={0.25}
+        clearcoatRoughness={0.45}
+        transmission={0}
+        ior={1.5}
+      /> */}
     </Plane>
   )
 }

@@ -3,9 +3,63 @@ import { persist, subscribeWithSelector } from "zustand/middleware"
 import { Source, Receiver, ObjectType, BriefMesh, BriefAttribute, Mesh, Group } from "./types"
 import { openFilePicker } from "@/helpers/dom/openFilePicker"
 import { GLTFLoader } from "three-stdlib"
-import { BufferAttribute, Group as ThreeGroup, Mesh as ThreeMesh } from "three"
+import { BufferAttribute, Color, Group as ThreeGroup, Mesh as ThreeMesh, Box3 } from "three"
 import { nanoid } from "nanoid"
 import { stripExtension } from "@/helpers/string"
+import { darkTheme, theme } from "@/styles/stitches.config"
+import { useTheme } from "@/state/theme"
+
+import { slateDark } from "@radix-ui/colors"
+
+export type EditorColors = {
+  canvasBackground: Color
+  fog: Color
+  ground: Color
+  floorPrimary: Color
+  floorSecondary: Color
+  ambientLight: Color
+  spotLight: Color
+  directionalLight: Color
+}
+
+export const EditorColorMap = new Map<typeof darkTheme | typeof theme, EditorColors>()
+
+EditorColorMap.set(theme, {
+  canvasBackground: new Color().setStyle(theme.colors.elevation0.value),
+  fog: new Color().setStyle(theme.colors.elevation0.value),
+  ground: new Color().setStyle(theme.colors.elevation0.value),
+  floorPrimary: new Color().setStyle(theme.colors.elevation1.value),
+  floorSecondary: new Color().setStyle(theme.colors.elevation2.value),
+  ambientLight: new Color().setStyle(theme.colors.elevation0.value),
+  spotLight: new Color().setStyle(theme.colors.elevation0.value),
+  directionalLight: new Color().setStyle(theme.colors.elevation0.value),
+})
+
+// const slateDark = {
+//   slate1: "hsl(200, 7.0%, 8.8%)",
+//   slate2: "hsl(195, 7.1%, 11.0%)",
+//   slate3: "hsl(197, 6.8%, 13.6%)",
+//   slate4: "hsl(198, 6.6%, 15.8%)",
+//   slate5: "hsl(199, 6.4%, 17.9%)",
+//   slate6: "hsl(201, 6.2%, 20.5%)",
+//   slate7: "hsl(203, 6.0%, 24.3%)",
+//   slate8: "hsl(207, 5.6%, 31.6%)",
+//   slate9: "hsl(206, 6.0%, 43.9%)",
+//   slate10: "hsl(206, 5.2%, 49.5%)",
+//   slate11: "hsl(206, 6.0%, 63.0%)",
+//   slate12: "hsl(210, 6.0%, 93.0%)",
+// }
+
+EditorColorMap.set(darkTheme, {
+  canvasBackground: new Color().setStyle(darkTheme.colors.elevation0.value),
+  fog: new Color().setStyle(darkTheme.colors.elevation0.value),
+  ground: new Color().setHSL(197 / 360, 6.8 / 100, 13.6 / 100),
+  floorPrimary: new Color().setHSL(197 / 360, 6.8 / 100, 13.6 / 100),
+  floorSecondary: new Color().setHSL(197 / 360, 6.8 / 100, 13.6 / 100),
+  ambientLight: new Color().setStyle(theme.colors.elevation0.value),
+  spotLight: new Color().setStyle(theme.colors.elevation0.value),
+  directionalLight: new Color().setStyle(theme.colors.elevation0.value),
+})
 
 type EditorState = {
   cameraMatrix: number[]
@@ -16,11 +70,14 @@ type EditorState = {
   sources: Record<string, Source>
   receivers: Record<string, Receiver>
   meshes: Record<string, Mesh | Group>
+  colors: EditorColors
   // method: () => void
 }
 
 type EditorReducers = {
   uploadFile: () => Promise<void>
+  set: SetState<EditorState & EditorReducers>
+  calculateBounds: () => any
 }
 
 const initialState: EditorState = {
@@ -54,60 +111,21 @@ const initialState: EditorState = {
     },
   },
   meshes: {},
+  colors: EditorColorMap.get(useTheme.getState().theme || darkTheme),
 }
 
-function makeBriefAttribute(attribute: BufferAttribute, makeTyped = (x) => new Float32Array(x)): BriefAttribute {
-  return {
-    array: makeTyped(Array.from(attribute.array)),
-    count: attribute.count,
-    itemSize: attribute.itemSize,
-  }
+function isNumber(val: any): val is number {
+  return typeof val === "number" && !isNaN(val)
 }
 
-function makeBriefIndex(attribute: BufferAttribute, makeTyped = (x) => new Uint16Array(x)): BriefAttribute {
-  return {
-    array: makeTyped(Array.from(attribute.array)),
-    count: attribute.count,
-    itemSize: attribute.itemSize,
-  }
+function numberOr(val: any, def: number) {
+  return isNumber(val) ? val : def
 }
 
-function makeBriefMesh(mesh: Mesh): BriefMesh {
-  const briefAttributes = {}
-  for (const [key, attr] of Object.entries(mesh.geometry.attributes)) {
-    briefAttributes[key] = makeBriefAttribute(attr as BufferAttribute)
-  }
-  return {
-    userData: {
-      type: ObjectType.BRIEF_MESH,
-      name: mesh.name || "",
-      id: nanoid(10),
-    },
-    position: mesh.position.toArray(),
-    geometry: {
-      attributes: briefAttributes,
-      index: makeBriefIndex(mesh.geometry.index),
-    },
-  }
-}
-
-function scene2mesh(scene: Group): Record<string, Mesh> {
-  const meshes = scene.children.filter((x) => x.type === "Mesh")
-  return meshes.reduce(
-    (acc, curr) => ({
-      ...acc,
-      [curr.uuid]: {
-        ...curr,
-        userData: {
-          type: ObjectType.MESH,
-          name: curr.name || "",
-          id: curr.uuid,
-        },
-      },
-    }),
-    {}
-  )
-}
+const vectorMin = (vecA: number[], vecB: number[]) =>
+  vecA.map((_, i) => Math.min(numberOr(vecA[i], Infinity), numberOr(vecB[i], Infinity)))
+const vectorMax = (vecA: number[], vecB: number[]) =>
+  vecA.map((_, i) => Math.max(numberOr(vecA[i], -Infinity), numberOr(vecB[i], -Infinity)))
 
 export const useEditor = create<
   EditorState & EditorReducers,
@@ -120,6 +138,7 @@ export const useEditor = create<
     persist(
       (set, get) => ({
         ...initialState,
+        set,
         uploadFile: async () => {
           const files = await openFilePicker({ multiple: true, accept: ".gltf" })
           for (const file of files) {
@@ -164,6 +183,27 @@ export const useEditor = create<
             }
           }
         },
+        calculateBounds: () => {
+          const { sources, receivers, meshes } = get()
+          let min = [Infinity, Infinity, Infinity]
+          let max = [-Infinity, -Infinity, -Infinity]
+          for (const [id, source] of Object.entries(sources)) {
+            min = vectorMin(source.position, min)
+            max = vectorMax(source.position, max)
+          }
+          for (const [id, receiver] of Object.entries(receivers)) {
+            min = vectorMin(receiver.position, min)
+            max = vectorMax(receiver.position, max)
+          }
+          for (const [id, mesh] of Object.entries(meshes)) {
+            const aabb = new Box3()
+            aabb.setFromObject(mesh)
+            min = vectorMin(aabb.min.toArray(), min)
+            max = vectorMax(aabb.max.toArray(), max)
+          }
+          return { min, max }
+        },
+
         // method: () => {},
       }),
 

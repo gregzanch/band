@@ -9,6 +9,7 @@ import {
   TorusKnot,
   softShadows,
   BakeShadows,
+  ContactShadows,
 } from "@react-three/drei"
 import { Floor, Lights, Ground, Shadows } from "@/components/canvas/Editor/Overlays"
 import SourceComponent from "@/components/canvas/Objects/Source"
@@ -19,10 +20,11 @@ import {
   Vector3,
   Scene as THREEScene,
   Color as THREEColor,
+  Color,
 } from "three"
 import { Canvas, useThree, useFrame, createPortal } from "@react-three/fiber"
 
-import useEditor from "@/state/editor"
+import useEditor, { EditorColorMap } from "@/state/editor"
 import { useControls } from "@/components/dom/leva"
 import { cameraPropertiesStore } from "@/components/dom/Properties/CameraProperties"
 import { objectPropertiesStore } from "@/components/dom/Properties/ObjectProperties"
@@ -38,7 +40,8 @@ import GroupComponent from "../Objects/Group"
 
 // import { Outline, OutlineEffectOptions, OutlineProvider } from "@/components/canvas/Effects/useOutline"
 
-import { EffectComposer, Bloom, Outline, Noise, SMAA, SSAO } from "@react-three/postprocessing"
+// import { Bloom, , Noise, SMAA, SSAO } from "@react-three/postprocessing"
+import { EffectComposer, Outline } from "@/components/canvas/Effects"
 import {
   OutlineEffect,
   BlurPass,
@@ -51,6 +54,9 @@ import {
 import BoxComponent from "../Objects/Box"
 import { GizmoHelper } from "@/components/canvas/Gizmos/GizmoHelper"
 import { GizmoViewport } from "@/components/canvas/Gizmos/GizmoViewport"
+import { darkTheme, theme } from "@/styles/stitches.config"
+import useTheme from "@/state/theme"
+import { LayerMap } from "@/components/canvas/types"
 
 function FrameBufferThing() {
   const target = useFBO({ multisample: true, samples: 8, stencilBuffer: false })
@@ -83,7 +89,8 @@ function Effects() {
   const composerRef = useRef<EffectComposerImpl>()
   const { gl, camera, scene } = useThree()
   const selectedObject = useEditor((state) => state.selectedObject)
-  console.log(selectedObject)
+  // console.log(selectedObject)
+  console.log(composerRef)
 
   return (
     <Suspense fallback={null}>
@@ -134,6 +141,11 @@ const Controls = () => {
   const three = useThree()
 
   useEffect(() => {
+    three.raycaster.layers.enableAll()
+  }, [three.raycaster])
+
+  useEffect(() => {
+    // Object.assign(window, { three })
     useEditor.setState({ scene: three.scene })
   }, [three.scene])
 
@@ -155,6 +167,9 @@ const Controls = () => {
 
   useEffect(() => {
     if (transformControls.current) {
+      console.log(transformControls.current)
+      // transformControls.current.layers.set(LayerMap.TRANSFORM_CONTROLS)
+      // transformControls.current.traverse((item) => item.layers.set(LayerMap.TRANSFORM_CONTROLS))
       transformControls.current.enabled = false
       transformControls.current.visible = false
       useEditor.setState({ transformControls: transformControls.current })
@@ -197,9 +212,12 @@ const Controls = () => {
   useEffect(() => {
     const controlValue = control?.current
     if (controlValue) {
+      // controlValue.layers.enable(LayerMap.TRANSFORM_CONTROLS)
       useEditor.setState({ orbitControls: controlValue })
       // dom.current.style['touch-action'] = 'none'
       const camera = controlValue.object as PerspectiveCameraImpl
+      camera.layers.enableAll()
+      // camera.layers.enable(LayerMap.TRANSFORM_CONTROLS)
       const matrix = useEditor.getState().cameraMatrix
       camera.matrix.fromArray(matrix)
       camera.matrix.decompose(camera.position, camera.quaternion, camera.scale)
@@ -218,6 +236,8 @@ const Controls = () => {
           receiveShadow={false}
           mode='translate'
           renderOrder={1}
+          // layers={LayerMap.TRANSFORM_CONTROLS}
+          name='transform-controls'
           showX
           showY
           showZ
@@ -252,6 +272,23 @@ function OrientationGizmo() {
 softShadows()
 
 function Editor(props) {
+  const colors = useEditor((state) => state.colors)
+
+  useEffect(() => {
+    const unsub = useTheme.subscribe(
+      (store) => store.theme,
+      (theme) => {
+        if (EditorColorMap.has(theme)) {
+          useEditor.setState({ colors: EditorColorMap.get(theme) })
+        }
+      },
+      {
+        fireImmediately: true,
+      }
+    )
+    return unsub
+  }, [])
+
   useHotkeys("esc", () => {
     const { transformControls } = useEditor.getState()
     if (transformControls && transformControls.enabled) {
@@ -291,7 +328,7 @@ function Editor(props) {
   }, [])
 
   useEffect(() => {
-    Object.assign(window, { useEditor })
+    Object.assign(window, { useEditor, darkTheme, theme, Color })
   }, [])
 
   const sources = useEditor((state) => state.sources)
@@ -310,16 +347,21 @@ function Editor(props) {
         stencil: true,
         // alpha: false,
       }}
-      style={{ backgroundColor: "#bebebe" }}
+      style={{ backgroundColor: `#${colors.canvasBackground.getHexString()}` }}
     >
       <OrientationGizmo />
       <Controls />
       <Suspense fallback={null}>
         <Lights />
-        <fog attach='fog' args={["#818181", 0, 60]} />
+        {/* <fog attach='fog' args={[colors.fog.getHex(), 0, 60]} /> */}
       </Suspense>
-      {/* <Floor size={100} segments={100} primary={0x807f7f} secondary={0x807f7f} /> */}
-      <Ground color={0x818181} size={100} segments={100} />
+      <Floor
+        size={100}
+        segments={100}
+        primary={colors.floorPrimary.getHex()}
+        secondary={colors.floorSecondary.getHex()}
+      />
+      <Ground color={colors.ground.getHex()} size={100} segments={100} />
       {Object.entries(sources).map(([id, source]) => (
         <SourceComponent key={id} name={source.userData.name} position={source.position} id={id} />
       ))}
@@ -334,6 +376,7 @@ function Editor(props) {
           <MeshComponent key={id} mesh={mesh as Mesh} />
         )
       )}
+      <Shadows />
 
       <Effects />
     </Canvas>

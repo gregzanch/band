@@ -181,7 +181,7 @@ export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes
 
       ...whiteA,
       ...blackA,
-
+      elevation0: "hsl(210, 8%, 94%)",
       elevation1: "hsl(210, 14%, 89%)", // bg color of the rows (main panel color)
       elevation2: "hsl(225, 16%, 80%)", // bg color of the root panel (main title bar)
       elevation3: "hsl(225, 15%, 75%)", // bg color of the inputs
@@ -489,6 +489,7 @@ export const darkTheme = createTheme(darkThemeMode, {
     ...bronzeDarkA,
     ...goldDarkA,
 
+    elevation0: "hsl(210, 8%, 6%)",
     elevation1: "hsl(210, 14%, 11%)", // bg color of the rows (main panel color)
     elevation2: "hsl(225, 16%, 20%)", // bg color of the root panel (main title bar)
     elevation3: "hsl(225, 15%, 25%)", // bg color of the inputs
