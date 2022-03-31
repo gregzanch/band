@@ -215,6 +215,7 @@ export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes
     },
     fonts: {
       untitled: "Untitled Sans, -apple-system, system-ui, sans-serif",
+      sans: "'Source Sans Pro', sans-serif;",
       // mono1: "Söhne Mono, menlo, monospace",
       mono: "ui-monospace, SFMono-Regular, Menlo, monospace",
     },

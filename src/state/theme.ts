@@ -1,21 +1,24 @@
 import create, { SetState, GetState, Mutate, StoreApi } from "zustand"
 import { persist, subscribeWithSelector } from "zustand/middleware"
-import { darkTheme } from "@/styles/stitches.config"
+import { darkTheme, theme } from "@/styles/stitches.config"
 
 export type Mode = "theme-default" | "dark-theme"
 
 type ThemeState = {
   mode: Mode
+  theme: typeof theme | typeof darkTheme
 }
 
 type ThemeReducers = {
   setMode: (mode: Mode) => void
+  set: SetState<ThemeStore>
 }
 
 type ThemeStore = ThemeState & ThemeReducers
 
 const initialState: ThemeState = {
   mode: "dark-theme",
+  theme: darkTheme,
 }
 
 export const useTheme = create<
@@ -32,11 +35,44 @@ export const useTheme = create<
         setMode: (mode: Mode) => {
           set((prev) => ({ ...prev, mode }), true)
         },
+        set,
       }),
       {
         name: "band.theme",
+        deserialize: (str) => {
+          const parsed = JSON.parse(str)
+          switch (parsed.state.theme) {
+            case theme.toString():
+              {
+                parsed.state.theme = theme
+              }
+              break
+            case darkTheme.toString():
+              {
+                parsed.state.theme = darkTheme
+              }
+              break
+            default:
+              {
+                parsed.state = initialState
+              }
+              break
+          }
+          return parsed
+        },
+        serialize: (state) => {
+          return JSON.stringify({
+            state: {
+              mode: state.state.mode,
+              //@ts-ignore
+              theme: state.state.theme.toString(),
+            },
+            version: state.version,
+          })
+        },
         partialize: (state) => ({
           mode: state.mode,
+          theme: state.theme,
         }),
       }
     )

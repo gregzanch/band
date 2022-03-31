@@ -32,7 +32,7 @@ import ReceiverComponent from "../Objects/Receiver"
 
 import MeshComponent from "../Objects/Mesh"
 
-import { MenuHotkeys, ActionMap } from "@/components/custom/MainMenu"
+import { MenuHotkeys, ActionMap } from "@/components/dom/MainMenu"
 import { Group, Mesh, ObjectType } from "@/state/types"
 import GroupComponent from "../Objects/Group"
 
@@ -108,14 +108,14 @@ function Effects() {
           ref={outlineRef}
         />
         {/* <Noise opacity={0.1} /> */}
-        <Bloom
+        {/* <Bloom
           intensity={1.0}
           // width={Resolution.AUTO_SIZE}
           // height={Resolution.AUTO_SIZE}
           kernelSize={KernelSize.LARGE}
           luminanceThreshold={0.9}
           luminanceSmoothing={0.025}
-        />
+        /> */}
       </EffectComposer>
     </Suspense>
   )
@@ -308,17 +308,18 @@ function Editor(props) {
       gl={{
         antialias: true,
         stencil: true,
+        // alpha: false,
       }}
-      // style={{ backgroundColor: "#20252b" }}
+      style={{ backgroundColor: "#bebebe" }}
     >
       <OrientationGizmo />
       <Controls />
       <Suspense fallback={null}>
         <Lights />
-        <fog attach='fog' args={["white", 0, 60]} />
+        <fog attach='fog' args={["#818181", 0, 60]} />
       </Suspense>
-      <Floor size={100} segments={100} primary={0x999999} secondary={0x999999} />
-      <Ground color={0xb3b3b3} size={100} segments={100} />
+      {/* <Floor size={100} segments={100} primary={0x807f7f} secondary={0x807f7f} /> */}
+      <Ground color={0x818181} size={100} segments={100} />
       {Object.entries(sources).map(([id, source]) => (
         <SourceComponent key={id} name={source.userData.name} position={source.position} id={id} />
       ))}

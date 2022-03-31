@@ -20,7 +20,7 @@ import {
 import { Flex } from "../shared/Flex"
 import { IconButton } from "../shared/IconButton"
 import { Text } from "../shared/Text"
-import { darkThemeMode } from "@/styles/stitches.config"
+import { darkTheme, theme } from "@/styles/stitches.config"
 import useEditor from "@/state/editor"
 
 enum MenuAction {
@@ -223,8 +223,8 @@ export const ActionMap: Record<MenuAction, ActionFunction> = {
     return Promise.resolve(true)
   },
   [MenuAction.TOGGLE_THEME]: async (item?: MenuCheckboxItem, checked?: boolean) => {
-    const { mode, setMode } = useTheme.getState()
-    setMode(mode === "theme-default" ? darkThemeMode : "theme-default")
+    const { theme: currTheme, set } = useTheme.getState()
+    set({ theme: currTheme === darkTheme ? theme : darkTheme })
     return Promise.resolve(true)
   },
 
@@ -240,9 +240,9 @@ function ConnectedMenuCheckboxItemComponent({ item, hasItemState }: { item: Menu
     switch (item.id) {
       case "view.dark_mode": {
         const unsub = useTheme.subscribe(
-          (store) => store.mode,
-          (mode, prevMode) => {
-            setChecked(mode === "dark-theme")
+          (store) => store.theme,
+          (theme) => {
+            setChecked(theme === darkTheme)
           },
           {
             fireImmediately: true,

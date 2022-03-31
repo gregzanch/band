@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import useTheme from "./state/theme"
-import { darkThemeMode } from "@/styles/stitches.config"
+import { darkTheme } from "@/styles/stitches.config"
 
 const titleDefault = "Band"
 const url = "https://github.com/gregzanch"
@@ -21,8 +21,8 @@ const keywords = [
 ]
 
 const Header = ({ title = titleDefault }) => {
-  const mode = useTheme((state) => state.mode)
-  const directory = mode === darkThemeMode ? "dark" : "light"
+  const theme = useTheme((state) => state.theme)
+  const directory = theme === darkTheme ? "dark" : "light"
   return (
     <>
       <Head>
