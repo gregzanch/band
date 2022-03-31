@@ -24,9 +24,17 @@ export function DarkThemeButton() {
   }, [currTheme])
 
   return (
-    <IconButton onClick={() => set({ theme: currTheme === theme ? darkTheme : theme })}>
-      {currTheme === "theme-default" ? <MoonIcon /> : <SunIcon />}
-    </IconButton>
+    <Box
+      css={{
+        position: "fixed",
+        bottom: "$2",
+        left: "$2",
+      }}
+    >
+      <IconButton onClick={() => set({ theme: currTheme === theme ? darkTheme : theme })}>
+        {currTheme === theme ? <MoonIcon /> : <SunIcon />}
+      </IconButton>
+    </Box>
   )
 }
 
@@ -105,6 +113,7 @@ function Landing() {
         </Container>
         <Logo />
       </Box>
+      <DarkThemeButton />
     </>
   )
 }

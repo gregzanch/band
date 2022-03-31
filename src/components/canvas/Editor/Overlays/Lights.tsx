@@ -25,21 +25,38 @@ function Directional({ debug }: DirectionalProps) {
   useHelper(debug && ref, DirectionalLightHelper, 1, "red") // you can passe false instead of the object ref to hide the helper
 
   return (
-    <directionalLight
-      ref={ref}
-      position={sunPosition}
-      castShadow
-      intensity={1}
-      color={colors.directionalLight.getHex()}
-      shadow-mapSize-width={2048}
-      shadow-mapSize-height={2048}
-      shadow-camera-far={100}
-      shadow-camera-left={-10}
-      shadow-camera-right={10}
-      shadow-camera-top={10}
-      shadow-camera-bottom={-10}
-      layers={LayerMap.LIGHTS}
-    />
+    <>
+      <directionalLight
+        ref={ref}
+        position={[0, 8, -5]}
+        castShadow
+        intensity={0.7}
+        color={colors.directionalLight.getHex()}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        shadow-camera-far={100}
+        shadow-camera-left={-10}
+        shadow-camera-right={10}
+        shadow-camera-top={10}
+        shadow-camera-bottom={-10}
+        // layers={LayerMap.LIGHTS}
+      />
+      <directionalLight
+        ref={ref}
+        position={[0, 8, 5]}
+        castShadow
+        intensity={0.7}
+        color={colors.directionalLight.getHex()}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        shadow-camera-far={100}
+        shadow-camera-left={-10}
+        shadow-camera-right={10}
+        shadow-camera-top={10}
+        shadow-camera-bottom={-10}
+        // layers={LayerMap.LIGHTS}
+      />
+    </>
   )
 }
 
@@ -72,7 +89,7 @@ function Spot({ debug }: SpotProps) {
       distance={100}
       angle={0.8}
       decay={0.1}
-      layers={LayerMap.LIGHTS}
+      // layers={LayerMap.LIGHTS}
     />
   )
 }
@@ -82,11 +99,11 @@ export function Lights() {
 
   return (
     <>
-      {/* <Directional debug /> */}
+      <Directional />
       {/* <RectArea debug /> */}
       {/* <Spot debug /> */}
-      <ambientLight intensity={1.0} color={colors.ambientLight.getHex()} layers={LayerMap.LIGHTS} />
-      <Environment files='/env-maps/studio_small_08_1k.pic' background={true} />
+      <ambientLight intensity={1.0} color={colors.ambientLight.getHex()} />
+      <Environment files='/env-maps/studio_small_08_1k.pic' background={false} />
       {/* <Sky distance={450000} sunPosition={[0, 1, 0]} inclination={0} azimuth={0.25} /> */}
     </>
   )

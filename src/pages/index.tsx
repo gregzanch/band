@@ -2,7 +2,7 @@ import Landing from "@/components/site/Landing"
 import useTheme from "@/state/theme"
 
 import { globalCss, css, darkTheme, theme, styled } from "@/styles/stitches.config"
-import { useEffect } from "react"
+import { Fragment, useEffect } from "react"
 
 // console.log(theme)
 // console.log(darkTheme)
@@ -21,6 +21,7 @@ const Page = () => {
   }, [currTheme])
 
   globalStyles()
+
   return <Landing />
 }
 

@@ -122,7 +122,7 @@ export const ContactShadows = React.forwardRef(
         const initialOverrideMaterial = scene.overrideMaterial
         scene.overrideMaterial = depthMaterial
         gl.setRenderTarget(renderTarget)
-        gl.clearTarget(renderTarget, true, true, true)
+        gl.clear(true, true, true)
         // shadowCamera.current.layers.disable(LayerMap.TRANSFORM_CONTROLS)
         // shadowCamera.current.layers.disable(LayerMap.ENVIRONMENT)
         let switchBack = false

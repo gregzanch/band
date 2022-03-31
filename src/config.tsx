@@ -1,7 +1,8 @@
 import Head from 'next/head'
 import useTheme from "./state/theme"
 import { darkTheme } from "@/styles/stitches.config"
-
+import { useWindowFocus } from "@/hooks"
+import { useEffect, useState } from "react"
 const titleDefault = "Band"
 const url = "https://github.com/gregzanch"
 const description = "Simulate acoustic phenomena and generate impulse responses"
@@ -20,9 +21,21 @@ const keywords = [
   "Computational Acoustics",
 ]
 
+function getDir() {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+}
+
 const Header = ({ title = titleDefault }) => {
-  const theme = useTheme((state) => state.theme)
-  const directory = theme === darkTheme ? "dark" : "light"
+  const [dir, setDir] = useState(null)
+  useEffect(() => {
+    setDir(getDir())
+  }, [])
+  useWindowFocus((e) => {
+    const newDir = getDir()
+    if (newDir !== dir) {
+      setDir(newDir)
+    }
+  })
   return (
     <>
       <Head>
@@ -48,9 +61,9 @@ const Header = ({ title = titleDefault }) => {
         <meta name='og:site_name' content={title} />
         <meta name='og:description' content={description} />
 
-        <link rel='apple-touch-icon' sizes='180x180' href={`/icons/${directory}/apple-touch-icon.png`} />
-        <link rel='icon' type='image/png' sizes='32x32' href={`/icons/${directory}/favicon-32x32.png`} />
-        <link rel='icon' type='image/png' sizes='16x16' href={`/icons/${directory}/favicon-16x16.png`} />
+        <link rel='apple-touch-icon' sizes='180x180' href={`/icons/${dir}/apple-touch-icon.png`} />
+        <link rel='icon' type='image/png' sizes='32x32' href={`/icons/${dir}/favicon-32x32.png`} />
+        <link rel='icon' type='image/png' sizes='16x16' href={`/icons/${dir}/favicon-16x16.png`} />
 
         <meta name='msapplication-config' content='/browserconfig.xml' />
         <meta name='msapplication-TileColor' content='#000000' />
@@ -63,7 +76,7 @@ const Header = ({ title = titleDefault }) => {
         <meta name="HandheldFriendly" content="true"/>  */}
         <meta name='viewport' content='width=device-width, minimum-scale=1, initial-scale=1.0' />
         <meta name='theme-color' content='#000' />
-        <link rel='shortcut icon' href={`/icons/${directory}favicon.ico`} />
+        <link rel='shortcut icon' href={`/icons/${dir}favicon.ico`} />
 
         {/* 
       Twitter Summary card

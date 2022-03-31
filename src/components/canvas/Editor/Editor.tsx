@@ -89,8 +89,6 @@ function Effects() {
   const composerRef = useRef<EffectComposerImpl>()
   const { gl, camera, scene } = useThree()
   const selectedObject = useEditor((state) => state.selectedObject)
-  // console.log(selectedObject)
-  console.log(composerRef)
 
   return (
     <Suspense fallback={null}>
@@ -145,7 +143,6 @@ const Controls = () => {
   }, [three.raycaster])
 
   useEffect(() => {
-    // Object.assign(window, { three })
     useEditor.setState({ scene: three.scene })
   }, [three.scene])
 
@@ -157,19 +154,14 @@ const Controls = () => {
           // @ts-ignore
           control?.current.object.fov = value
           control?.current.object.updateProjectionMatrix()
-          // console.log(value)
         },
       },
-      // upload: button((get) => alert(`Number value is ${get('number').toFixed(2)}`))
     },
     { store: cameraPropertiesStore }
   )
 
   useEffect(() => {
     if (transformControls.current) {
-      console.log(transformControls.current)
-      // transformControls.current.layers.set(LayerMap.TRANSFORM_CONTROLS)
-      // transformControls.current.traverse((item) => item.layers.set(LayerMap.TRANSFORM_CONTROLS))
       transformControls.current.enabled = false
       transformControls.current.visible = false
       useEditor.setState({ transformControls: transformControls.current })
@@ -353,7 +345,7 @@ function Editor(props) {
       <Controls />
       <Suspense fallback={null}>
         <Lights />
-        {/* <fog attach='fog' args={[colors.fog.getHex(), 0, 60]} /> */}
+        <fog attach='fog' args={[colors.fog.getHex(), 0, 60]} />
       </Suspense>
       <Floor
         size={100}
