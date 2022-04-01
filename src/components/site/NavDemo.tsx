@@ -346,10 +346,11 @@ const ContentListItemCallout = React.forwardRef<
 const ViewportPosition = styled("div", {
   position: "absolute",
   display: "flex",
-  justifyContent: "flex-start",
-  width: "100%",
+  justifyContent: "center",
+  width: "calc(100% - $8 - $8)",
   top: "100%",
   left: "$8",
+  right: "$8",
   perspective: "2000px",
 })
 
