@@ -1,4 +1,6 @@
-import { SidePanel } from "@/components/dom/SidePanel"
+import { RightSidebar } from "@/components/dom/Sidebar/RightSidebar"
+import { EditorToolbar } from "@/components/dom/EditorToolbar"
+import { LeftSidebar } from "@/components/dom/Sidebar/LeftSidebar"
 import Editor from "@/components/canvas/Editor/Editor"
 
 import { MainMenu } from "@/components/dom/MainMenu"
@@ -26,7 +28,7 @@ export default function EditorPage() {
 
   return (
     <>
-      <Box
+      {/* <Box
         css={{
           position: "absolute",
           zIndex: 500,
@@ -34,8 +36,10 @@ export default function EditorPage() {
         }}
       >
         <MainMenu />
-      </Box>
-      <SidePanel />
+      </Box> */}
+      <EditorToolbar />
+      <LeftSidebar />
+      <RightSidebar />
       <Editor />
     </>
   )

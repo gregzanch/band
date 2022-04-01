@@ -339,7 +339,7 @@ function Editor(props) {
         stencil: true,
         // alpha: false,
       }}
-      style={{ backgroundColor: `#${colors.canvasBackground.getHexString()}` }}
+      // style={{ backgroundColor: `#${colors.canvasBackground.getHexString()}` }}
     >
       <OrientationGizmo />
       <Controls />

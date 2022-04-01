@@ -1,4 +1,5 @@
-import { ReactElement, ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
+import { ReactElement, ReactNode, useCallback, useEffect, useRef, useState } from "react"
+import { useIsomorphicLayoutEffect } from "@/hooks"
 import { styled } from "@/styles/stitches.config"
 import { Box } from "@/components/shared/Box"
 import { Text } from "@/components/shared/Text"
@@ -7,77 +8,8 @@ import ObjectProperties from "@/components/dom/Properties/ObjectProperties"
 import SceneGraph from "@/components/dom/SceneGraph/SceneGraph"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/shared/Accordion"
 import useEditor from "@/state/editor"
-
-const HandleBar = styled("div", {
-  position: "absolute",
-  height: "calc(100% - 1rem - 8px)",
-  width: "2px",
-  zIndex: "50",
-  marginTop: "16px",
-  marginBottom: "16px",
-  background: "transparent",
-  cursor: "ew-resize",
-})
-
-function ResizeBar({ minimumSize = 200, maximumSize = 850 }) {
-  const downPoint = useRef<number>(null)
-  const handleRef = useRef(null)
-  useLayoutEffect(() => {
-    const element = document.getElementById("side-panel")
-    const resizer = handleRef.current
-    let original_width = 0
-    let original_height = 0
-    let original_x = 0
-    let original_y = 0
-    let original_mouse_x = 0
-    let original_mouse_y = 0
-
-    function resize(e) {
-      let width = original_width - (e.pageX - original_mouse_x)
-      if (width >= maximumSize) {
-        width = maximumSize
-      }
-      if (width > minimumSize) {
-        element.style.width = width + "px"
-      }
-    }
-
-    function stopResize() {
-      window.removeEventListener("mousemove", resize)
-    }
-
-    function mouseDownHandler(e) {
-      e.preventDefault()
-      original_width = parseFloat(getComputedStyle(element, null).getPropertyValue("width").replace("px", ""))
-      original_height = parseFloat(getComputedStyle(element, null).getPropertyValue("height").replace("px", ""))
-      original_x = element.getBoundingClientRect().left
-      original_y = element.getBoundingClientRect().top
-      original_mouse_x = e.pageX
-      original_mouse_y = e.pageY
-      window.addEventListener("mousemove", resize)
-      window.addEventListener("mouseup", stopResize)
-    }
-
-    resizer.addEventListener("mousedown", mouseDownHandler)
-    return () => {
-      resizer.removeEventListener("mousedown", mouseDownHandler)
-    }
-  }, [minimumSize, maximumSize])
-  return <HandleBar ref={handleRef} />
-}
-
-const StyledPanel = styled("div", {
-  backgroundColor: "transparent",
-  margin: "$2",
-  zIndex: "50",
-  right: "0px",
-  position: "absolute",
-  width: "300px",
-  overflowY: "scroll",
-  maxHeight: "calc(100vh - $2 - $2)",
-  // height: "100%",
-  // pointerEvents: "none",
-})
+import { ResizeBar } from "./ResizeBar"
+import { SidebarPanel } from "./SidebarPanel"
 
 const HeaderContainer = styled(Box, {
   color: "$highlight2",
@@ -156,33 +88,26 @@ const Divider = styled("hr", {
   borderTop: "1px solid rgba(0, 0, 0, 30%)",
 })
 
-export function SidePanel() {
+export function RightSidebar() {
   // const [expanded, setExpanded] = useState(["scene_graph", "camera_properties", "object_properties"])
   // const selectedObject = useEditor((state) => state.selectedObject)
 
   return (
-    <StyledPanel id='side-panel'>
+    <SidebarPanel
+      side='right'
+      role='menubar'
+      aria-orientation='vertical'
+      dir='ltr'
+      aria-label='right panel'
+      data-orientation='vertical'
+    >
       <Box
         css={{
           position: "relative",
           pointerEvents: "all",
         }}
       >
-        <ResizeBar />
-        <Box
-          css={{
-            mb: "$2",
-          }}
-        >
-          <Accordion type='single' collapsible={false} defaultValue='scene_graph'>
-            <AccordionItem value='scene_graph'>
-              <AccordionTrigger hideChevron>Scene Graph</AccordionTrigger>
-              <AccordionContent>
-                <SceneGraph />
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </Box>
+        <ResizeBar side='left' />
         <Box
           css={{
             mb: "$2",
@@ -207,6 +132,6 @@ export function SidePanel() {
           </AccordionItem>
         </Accordion>
       </Box>
-    </StyledPanel>
+    </SidebarPanel>
   )
 }

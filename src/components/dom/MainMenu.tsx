@@ -397,11 +397,11 @@ export function MainMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <IconButton variant='raised'>
+        <IconButton>
           <HamburgerMenuIcon />
         </IconButton>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align='end'>
+      <DropdownMenuContent align='end' side='right'>
         {MainMenuConfig.map((item, index) => (
           <MenuItemComponent item={item} key={item.id} hasItemState={menuHasItemState(MainMenuConfig)} />
         ))}

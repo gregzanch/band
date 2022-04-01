@@ -1,7 +1,5 @@
 //@ts-nocheck
 import useEditor from "@/state/editor"
-import useStore from "@/state/store"
-import { Leva } from "@/components/dom/leva"
 import { useEffect, useRef, useState } from "react"
 import { Receiver, Source, ObjectType } from "@/state/types"
 import { Box } from "@/components/shared/Box"
@@ -208,7 +206,7 @@ export default function SceneGraph() {
   const selectedObject = useEditor((state) => state.selectedObject)
 
   return (
-    <div className='h-full'>
+    <Box fillHeight>
       {Object.entries(sources).map(([id, source]) => (
         <SceneGraphItem key={id} item={source} selected={selectedObject?.current?.userData?.id === id} />
       ))}
@@ -218,6 +216,6 @@ export default function SceneGraph() {
       {Object.entries(meshes).map(([id, receiver]) => (
         <SceneGraphItem key={id} item={receiver} selected={selectedObject?.current?.userData?.id === id} />
       ))}
-    </div>
+    </Box>
   )
 }

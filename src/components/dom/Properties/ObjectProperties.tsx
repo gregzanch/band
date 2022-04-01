@@ -1,9 +1,7 @@
 import useEditor from "@/state/editor"
-import useStore from "@/state/store"
 import { LevaPanel, useControls } from "@/components/dom/leva"
 import { Store } from "../leva/store"
 import { useEffect, useRef } from "react"
-import { SphereBufferGeometry } from "three"
 import { Text } from "@/components/shared/Text"
 import { Box } from "@/components/shared/Box"
 import { ObjectType } from "@/state/types"
@@ -437,9 +435,9 @@ export default function ObjectProperties() {
     Object.assign(window, { objectPropertiesStore })
   }, [])
   return (
-    <div className='h-full' id='object-properties'>
+    <Box fillHeight id='object-properties'>
       <SelectedObjectSwitcher />
       <LevaPanel store={objectPropertiesStore} fill flat titleBar={false} hideCopyButton />
-    </div>
+    </Box>
   )
 }

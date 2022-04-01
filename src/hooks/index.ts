@@ -1,1 +1,2 @@
-export * from "./useWindowFocus"
+export { useWindowFocus } from "./useWindowFocus"
+export { useIsomorphicLayoutEffect } from "./useIsomorphicLayoutEffect"
