@@ -6,8 +6,13 @@ function Material(props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const ENV = process.env.NEXT_PUBLIC_VERCEL_ENV
+  const isLocal = process.env.NEXT_PUBLIC_VERCEL_URL.startsWith("localhost")
+  const baseUrl = isLocal
+    ? `http://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+    : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_VERCEL_URL}/api/materials/${context.params.id}`)
+    const res = await fetch(`${baseUrl}/api/materials/${context.params.id}`)
     const data = await res.json()
     return { props: { ...data, title: "Material" } }
   } catch (error) {
