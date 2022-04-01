@@ -1,12 +1,17 @@
 import { SidePanel } from "@/components/dom/SidePanel"
 import Editor from "@/components/canvas/Editor/Editor"
-import MenuBar from "@/components/dom/MenuBar"
+
 import { MainMenu } from "@/components/dom/MainMenu"
 import { Box } from "@/components/shared/Box"
 import { useEffect } from "react"
-import { darkTheme, theme } from "@/styles/stitches.config"
+import { globalCss, darkTheme, theme } from "@/styles/stitches.config"
 import useTheme from "@/state/theme"
-import shallow from "zustand/shallow"
+
+const globalStyles = globalCss({
+  html: { width: "100%", height: "100%", margin: 0, padding: 0 },
+  body: { width: "100%", height: "100%", margin: 0, padding: 0 },
+  "#__next": { width: "100%", height: "100%", margin: 0, padding: 0 },
+})
 
 export default function EditorPage() {
   const currTheme = useTheme((state) => state.theme)
@@ -16,6 +21,8 @@ export default function EditorPage() {
     document.body.classList.remove(theme, darkTheme)
     document.body.classList.add(currTheme)
   }, [currTheme])
+
+  globalStyles()
 
   return (
     <>

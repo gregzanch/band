@@ -38,16 +38,6 @@ export function DarkThemeButton() {
   )
 }
 
-const OpenEditorButton = () => {
-  return (
-    <button className='btn btn-blue'>
-      <Link href={"/editor"} passHref>
-        <a>Open Editor</a>
-      </Link>
-    </button>
-  )
-}
-
 const StickyContainer = styled(Box, {
   // border: "1px solid white",
   my: "$4",
@@ -84,15 +74,7 @@ function Landing() {
               textAlign: "center",
               // whiteSpace: "break-spaces",
 
-              color: "$yellow11",
-
-              "@supports (--css: variables)": {
-                color: "transparent",
-                WebkitTextFillColor: "transparent",
-                backgroundImage: "-webkit-linear-gradient(top right, $yellow11, $orange11)",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-              },
+              color: "$orange10",
             }}
           >
             Band

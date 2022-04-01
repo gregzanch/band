@@ -7,7 +7,7 @@ import { Receiver, Source, ObjectType } from "@/state/types"
 import { Box } from "@/components/shared/Box"
 import { Text } from "@/components/shared/Text"
 import { SourceIcon, ReceiverIcon, MeshIcon, GroupIcon } from "@/components/svg/Icons"
-// import styled from "styled-components"
+
 import { styled } from "@/styles/stitches.config"
 import {
   ContextMenu,

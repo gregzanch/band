@@ -7,15 +7,6 @@ import "@/styles/index.css"
 
 import ProgressBar from "@badrap/bar-of-progress"
 
-import { createGlobalStyle } from "styled-components"
-
-const GlobalStyle = createGlobalStyle`
-  body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-`
 
 const progress = new ProgressBar({
   size: 2,
@@ -40,11 +31,9 @@ function App({ Component, pageProps = { title: "index" } }) {
     }
   }, [router])
 
-
   return (
     <>
       <Header title={pageProps.title} />
-      <GlobalStyle />
       <Component {...pageProps} />
     </>
   )
