@@ -13,6 +13,7 @@ export function Shadows() {
       height={100}
       // far={20}
       // blur={20}
+      // frames={1}
       rotation={[Math.PI / 2, 0, 0]}
     />
     // <Shadow

@@ -7,7 +7,7 @@ function Material(props) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const res = await fetch(`http://localhost:3000/api/materials/${context.params.id}`)
+    const res = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/materials/${context.params.id}`)
     const data = await res.json()
     return { props: { ...data, title: "Material" } }
   } catch (error) {
