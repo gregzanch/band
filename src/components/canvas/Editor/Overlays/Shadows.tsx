@@ -4,7 +4,6 @@ import { useRef } from "react"
 export function Shadows() {
   const ref = useRef()
 
-  console.log(ref)
   return (
     <ContactShadows
       ref={ref}

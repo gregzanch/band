@@ -1,12 +1,11 @@
 import { useRouter } from 'next/router'
 import useStore from '@/state/store'
 import useTheme from "@/state/theme"
-import { useEffect } from "react"
+import { Fragment, useEffect } from "react"
 import Header from "@/config"
 import "@/styles/index.css"
 
 import ProgressBar from "@badrap/bar-of-progress"
-
 
 const progress = new ProgressBar({
   size: 2,
@@ -14,6 +13,8 @@ const progress = new ProgressBar({
   className: "bar-of-progress",
   delay: 100,
 })
+
+const CSRPages = ["/editor"]
 
 function App({ Component, pageProps = { title: "index" } }) {
   const router = useRouter()
@@ -31,11 +32,22 @@ function App({ Component, pageProps = { title: "index" } }) {
     }
   }, [router])
 
-  return (
-    <>
+  const isCSR = !!CSRPages.find((route) => router.pathname.startsWith(route))
+
+  return isCSR ? (
+    <div className='csr-container' suppressHydrationWarning>
+      {typeof window !== "undefined" && (
+        <Fragment>
+          <Header title={pageProps.title} />
+          <Component {...pageProps} />
+        </Fragment>
+      )}
+    </div>
+  ) : (
+    <Fragment>
       <Header title={pageProps.title} />
       <Component {...pageProps} />
-    </>
+    </Fragment>
   )
 }
 

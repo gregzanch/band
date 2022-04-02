@@ -12,6 +12,13 @@ import { ResizeBar } from "./ResizeBar"
 import { SidebarPanel } from "./SidebarPanel"
 
 import { MainMenu } from "../MainMenu"
+import {
+  ScrollArea,
+  ScrollAreaViewport,
+  ScrollAreaScrollbar,
+  ScrollAreaThumb,
+  ScrollAreaCorner,
+} from "@/components/shared/ScrollArea"
 
 export function LeftSidebar() {
   return (
@@ -29,14 +36,28 @@ export function LeftSidebar() {
           pointerEvents: "all",
         }}
       >
-        <ResizeBar side='right' />
+        <ResizeBar
+          side='right'
+          onResize={(width) => {
+            console.log(width)
+            useEditor.setState({ orientationHelperMarginX: 80 + width })
+          }}
+        />
+
         <Box
           css={{
             mb: "$2",
           }}
         >
           <Accordion type='single' collapsible={false} defaultValue='scene_graph'>
-            <AccordionItem value='scene_graph'>
+            <AccordionItem
+              value='scene_graph'
+              css={{
+                height: "calc(100vh - $2 - $2)",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
               <AccordionTrigger hideChevron>
                 <Box
                   css={{
@@ -58,8 +79,19 @@ export function LeftSidebar() {
                   <MainMenu />
                 </Box>
               </AccordionTrigger>
-              <AccordionContent>
-                <SceneGraph />
+              <AccordionContent css={{ flex: "1" }}>
+                <ScrollArea css={{ width: "100%" }}>
+                  <ScrollAreaViewport>
+                    <SceneGraph />
+                  </ScrollAreaViewport>
+                  <ScrollAreaScrollbar orientation='vertical'>
+                    <ScrollAreaThumb />
+                  </ScrollAreaScrollbar>
+                  <ScrollAreaScrollbar orientation='horizontal'>
+                    <ScrollAreaThumb />
+                  </ScrollAreaScrollbar>
+                  <ScrollAreaCorner />
+                </ScrollArea>
               </AccordionContent>
             </AccordionItem>
           </Accordion>

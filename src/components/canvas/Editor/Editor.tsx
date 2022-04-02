@@ -244,11 +244,14 @@ const Controls = () => {
 
 function OrientationGizmo() {
   const { camera } = useThree()
+
+  const x = useEditor((state) => state.orientationHelperMarginX)
+
   return (
     <GizmoHelper
       // autoClear={false}
       alignment='bottom-left'
-      margin={[80, 80]}
+      margin={[x, 80]}
       renderPriority={2}
       castShadow={false}
       onUpdate={() => {
@@ -339,7 +342,7 @@ function Editor(props) {
         stencil: true,
         // alpha: false,
       }}
-      // style={{ backgroundColor: `#${colors.canvasBackground.getHexString()}` }}
+      style={{ backgroundColor: `#${colors.canvasBackground.getHexString()}` }}
     >
       <OrientationGizmo />
       <Controls />

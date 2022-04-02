@@ -49,9 +49,10 @@ type ResizeBarProps = {
   side: "right" | "left"
   minimumSize?: number
   maximumSize?: number
+  onResize?: (width: number) => void
 }
 
-export function ResizeBar({ side = "right", minimumSize = 10, maximumSize = 850 }: ResizeBarProps) {
+export function ResizeBar({ side = "right", minimumSize = 10, maximumSize = 850, onResize }: ResizeBarProps) {
   const downPoint = useRef<number>(null)
   const handleRef = useRef(null)
   const parent = useRef<HTMLElement | false>(null)
@@ -82,6 +83,7 @@ export function ResizeBar({ side = "right", minimumSize = 10, maximumSize = 850 
         }
         if (width > minimumSize) {
           element.style.width = width + "px"
+          onResize && onResize(width)
         }
       }
 

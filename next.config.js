@@ -34,9 +34,6 @@ const nextConfig = {
 
     return config
   },
-  compiler: {
-    styledComponents: true,
-  },
 }
 
 // manage i18n

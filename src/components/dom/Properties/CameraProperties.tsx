@@ -9,6 +9,7 @@ export default function CameraProperties() {
   useEffect(() => {
     Object.assign(window, { cameraPropertiesStore })
   }, [])
+  // debugger
   return (
     <Box fillHeight>
       <LevaPanel store={cameraPropertiesStore} fill flat titleBar={false} hideCopyButton />

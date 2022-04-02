@@ -145,6 +145,7 @@ export const GizmoHelper = ({
   const [marginX, marginY] = margin
   const x = alignment.endsWith("-left") ? -size.width / 2 + marginX : size.width / 2 - marginX
   const y = alignment.startsWith("top-") ? size.height / 2 - marginY : -size.height / 2 + marginY
+
   return createPortal(
     <Context.Provider value={gizmoHelperContext}>
       <OrthographicCamera ref={virtualCam} position={[0, 0, 200]} />

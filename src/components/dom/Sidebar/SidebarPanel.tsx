@@ -25,7 +25,7 @@ export const SidebarPanel = styled("div", {
   zIndex: "50",
   position: "absolute",
   width: "300px",
-  overflowY: "scroll",
+  // overflowY: "scroll",
   maxHeight: "calc(100vh - $2 - $2)",
   // height: "100%",
   // pointerEvents: "none",

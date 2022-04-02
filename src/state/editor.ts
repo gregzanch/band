@@ -56,6 +56,7 @@ type EditorState = {
   receivers: Record<string, Receiver>
   meshes: Record<string, Mesh | Group>
   colors: EditorColors
+  orientationHelperMarginX: number
   // method: () => void
 }
 
@@ -97,6 +98,7 @@ const initialState: EditorState = {
   },
   meshes: {},
   colors: EditorColorMap.get(useTheme.getState().theme || darkTheme),
+  orientationHelperMarginX: 380,
 }
 
 function isNumber(val: any): val is number {
