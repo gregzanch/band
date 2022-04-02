@@ -4,7 +4,7 @@ import { Edges, Stage } from "@react-three/drei"
 import useEditor from "@/state/editor"
 import { Mesh } from "@/state/types"
 import { Selection, Select, EffectComposer, Outline } from "@react-three/postprocessing"
-import { LayerMap } from "@/components/canvas/types"
+import { LayerMap } from "@/components/Editor/types"
 type MeshProps = {
   mesh: Mesh
 }

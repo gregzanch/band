@@ -11,8 +11,8 @@ import {
   BakeShadows,
   ContactShadows,
 } from "@react-three/drei"
-import { Floor, Lights, Ground, Shadows } from "@/components/canvas/Editor/Overlays"
-import SourceComponent from "@/components/canvas/Objects/Source"
+import { Floor, Lights, Ground, Shadows } from "@/components/Editor/Overlays"
+import SourceComponent from "@/components/Editor/Objects/Source"
 
 import {
   PerspectiveCamera as PerspectiveCameraImpl,
@@ -25,23 +25,23 @@ import {
 import { Canvas, useThree, useFrame, createPortal } from "@react-three/fiber"
 
 import useEditor, { EditorColorMap } from "@/state/editor"
-import { useControls } from "@/components/dom/leva"
-import { cameraPropertiesStore } from "@/components/dom/Properties/CameraProperties"
-import { objectPropertiesStore } from "@/components/dom/Properties/ObjectProperties"
+import { useControls } from "@/components/leva"
+import { cameraPropertiesStore } from "@/components/Editor/Properties/CameraProperties"
+import { objectPropertiesStore } from "@/components/Editor/Properties/ObjectProperties"
 
 import { useHotkeys } from "react-hotkeys-hook"
-import ReceiverComponent from "../Objects/Receiver"
+import ReceiverComponent from "./Objects/Receiver"
 
-import MeshComponent from "../Objects/Mesh"
+import MeshComponent from "./Objects/Mesh"
 
-import { MenuHotkeys, ActionMap } from "@/components/dom/MainMenu"
+import { MenuHotkeys, ActionMap } from "@/components/Editor/MainMenu"
 import { Group, Mesh, ObjectType } from "@/state/types"
-import GroupComponent from "../Objects/Group"
+import GroupComponent from "./Objects/Group"
 
 // import { Outline, OutlineEffectOptions, OutlineProvider } from "@/components/canvas/Effects/useOutline"
 
 // import { Bloom, , Noise, SMAA, SSAO } from "@react-three/postprocessing"
-import { EffectComposer, Outline } from "@/components/canvas/Effects"
+import { EffectComposer, Outline } from "@/components/Editor/Effects"
 import {
   OutlineEffect,
   BlurPass,
@@ -51,12 +51,12 @@ import {
   EffectComposer as EffectComposerImpl,
 } from "postprocessing"
 
-import BoxComponent from "../Objects/Box"
-import { GizmoHelper } from "@/components/canvas/Gizmos/GizmoHelper"
-import { GizmoViewport } from "@/components/canvas/Gizmos/GizmoViewport"
+import BoxComponent from "./Objects/Box"
+import { GizmoHelper } from "@/components/Editor/Gizmos/GizmoHelper"
+import { GizmoViewport } from "@/components/Editor/Gizmos/GizmoViewport"
 import { darkTheme, theme } from "@/styles/stitches.config"
 import useTheme from "@/state/theme"
-import { LayerMap } from "@/components/canvas/types"
+import { LayerMap } from "@/components/Editor/types"
 
 function FrameBufferThing() {
   const target = useFBO({ multisample: true, samples: 8, stencilBuffer: false })

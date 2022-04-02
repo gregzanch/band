@@ -12,7 +12,7 @@ import { IconButton } from "@/components/shared/IconButton"
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons"
 import useTheme from "@/state/theme"
 
-import { NavDemo } from "@/components/site/NavDemo"
+import { NavDemo } from "@/components/Home/NavDemo"
 
 export function DarkThemeButton() {
   const currTheme = useTheme((state) => state.theme)

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import useStore from '@/state/store'
+
 import useTheme from "@/state/theme"
 import { Fragment, useEffect } from "react"
 import Header from "@/config"
@@ -20,7 +20,6 @@ function App({ Component, pageProps = { title: "index" } }) {
   const router = useRouter()
 
   useEffect(() => {
-    useStore.setState({ router })
     router.events.on("routeChangeStart", progress.start)
     router.events.on("routeChangeComplete", progress.finish)
     router.events.on("routeChangeError", progress.finish)

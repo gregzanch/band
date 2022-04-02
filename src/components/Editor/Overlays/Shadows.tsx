@@ -1,4 +1,4 @@
-import { ContactShadows } from "@/components/canvas/Editor/Overlays/ContactShadows"
+import { ContactShadows } from "@/components/Editor/Overlays/ContactShadows"
 import { useRef } from "react"
 
 export function Shadows() {

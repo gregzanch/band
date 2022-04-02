@@ -3,7 +3,7 @@ import { DirectionalLightHelper, SpotLightHelper, Vector3 } from "three"
 import { Environment, BakeShadows, useHelper, Sky } from "@react-three/drei"
 import useEditor from "@/state/editor"
 import { RectAreaLightHelper } from "three-stdlib"
-import { LayerMap } from "@/components/canvas/types"
+import { LayerMap } from "@/components/Editor/types"
 
 const inclination = 0.2
 const azimuth = 0.25

@@ -1,5 +1,5 @@
 import { Plane } from "@react-three/drei"
-import { LayerMap } from "@/components/canvas/types"
+import { LayerMap } from "@/components/Editor/types"
 // function Plane({ color, ...props }) {
 //   return (
 //     <RoundedBox receiveShadow castShadow smoothness={10} radius={0.015} {...props}>

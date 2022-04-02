@@ -3,9 +3,9 @@ import { Group, Mesh } from "@/state/types"
 import React, { useRef, useMemo } from "react"
 import { Edges, Stage } from "@react-three/drei"
 import useEditor from "@/state/editor"
-import MeshComponent from "@/components/canvas/Objects/Mesh"
+import MeshComponent from "@/components/Editor/Objects/Mesh"
 import { Selection, Select, EffectComposer, Outline } from "@react-three/postprocessing"
-import { LayerMap } from "@/components/canvas/types"
+import { LayerMap } from "@/components/Editor/types"
 type MeshProps = {
   group: Group
 }

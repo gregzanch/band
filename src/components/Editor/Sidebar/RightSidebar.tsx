@@ -1,6 +1,6 @@
 import { Box } from "@/components/shared/Box"
-import CameraProperties from "@/components/dom/Properties/CameraProperties"
-import ObjectProperties from "@/components/dom/Properties/ObjectProperties"
+import CameraProperties from "@/components/Editor/Properties/CameraProperties"
+import ObjectProperties from "@/components/Editor/Properties/ObjectProperties"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/shared/Accordion"
 import { ResizeBar } from "./ResizeBar"
 import { SidebarPanel } from "./SidebarPanel"

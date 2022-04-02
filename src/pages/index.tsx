@@ -1,4 +1,4 @@
-import Landing from "@/components/site/Landing"
+import Landing from "@/components/Home/Landing"
 import useTheme from "@/state/theme"
 
 import { globalCss, css, darkTheme, lightTheme, styled } from "@/styles/stitches.config"

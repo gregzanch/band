@@ -1,6 +1,6 @@
 import useEditor from "@/state/editor"
-import { LevaPanel, useControls } from "@/components/dom/leva"
-import { Store } from "../leva/store"
+import { LevaPanel, useControls } from "@/components/leva"
+import { Store } from "../../leva/store"
 import { useEffect, useRef } from "react"
 import { Text } from "@/components/shared/Text"
 import { Box } from "@/components/shared/Box"
