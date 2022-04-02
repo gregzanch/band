@@ -1,14 +1,14 @@
 import Logo from "@/components/svg/Logo"
 import Link from "next/link"
 import Head from "next/link"
-import { Box } from "@/components/shared/Box"
-import { Container } from "@/components/shared/Container"
+import { Box } from "@/components/Shared/Box"
+import { Container } from "@/components/Shared/Container"
 
-import { Text } from "@/components/shared/Text"
+import { Text } from "@/components/Shared/Text"
 
 import React from "react"
 import { darkTheme, lightTheme, styled } from "@/styles/stitches.config"
-import { IconButton } from "@/components/shared/IconButton"
+import { IconButton } from "@/components/Shared/IconButton"
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons"
 import useTheme from "@/state/theme"
 

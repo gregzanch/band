@@ -24,8 +24,8 @@ import {
 } from "three"
 import { Canvas, useThree, useFrame, createPortal } from "@react-three/fiber"
 
-import useEditor, { EditorColorMap } from "@/state/editor"
-import { useControls } from "@/components/leva"
+import useEditor, { EditorColorMap } from "@/components/Editor/State/useEditor"
+import { useControls } from "@/components/Leva"
 import { cameraPropertiesStore } from "@/components/Editor/Properties/CameraProperties"
 import { objectPropertiesStore } from "@/components/Editor/Properties/ObjectProperties"
 
@@ -35,7 +35,7 @@ import ReceiverComponent from "./Objects/Receiver"
 import MeshComponent from "./Objects/Mesh"
 
 import { MenuHotkeys, ActionMap } from "@/components/Editor/MainMenu"
-import { Group, Mesh, ObjectType } from "@/state/types"
+import { Group, Mesh, ObjectType } from "@/components/Editor/State/types"
 import GroupComponent from "./Objects/Group"
 
 // import { Outline, OutlineEffectOptions, OutlineProvider } from "@/components/canvas/Effects/useOutline"
@@ -56,7 +56,7 @@ import { GizmoHelper } from "@/components/Editor/Gizmos/GizmoHelper"
 import { GizmoViewport } from "@/components/Editor/Gizmos/GizmoViewport"
 import { darkTheme, theme } from "@/styles/stitches.config"
 import useTheme from "@/state/theme"
-import { LayerMap } from "@/components/Editor/types"
+import { LayerMap } from "@/components/Editor/Objects/types"
 
 function FrameBufferThing() {
   const target = useFBO({ multisample: true, samples: 8, stencilBuffer: false })

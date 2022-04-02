@@ -1,13 +1,13 @@
 import { ReactElement, ReactNode, useCallback, useEffect, useRef, useState } from "react"
 import { useIsomorphicLayoutEffect } from "@/hooks"
 import { styled } from "@/styles/stitches.config"
-import { Box } from "@/components/shared/Box"
-import { Text } from "@/components/shared/Text"
+import { Box } from "@/components/Shared/Box"
+import { Text } from "@/components/Shared/Text"
 import CameraProperties from "@/components/Editor/Properties/CameraProperties"
 import ObjectProperties from "@/components/Editor/Properties/ObjectProperties"
 import SceneGraph from "@/components/Editor/SceneGraph/SceneGraph"
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/shared/Accordion"
-import useEditor from "@/state/editor"
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/Shared/Accordion"
+import useEditor from "@/components/Editor/State/useEditor"
 import { ResizeBar } from "./ResizeBar"
 import { SidebarPanel } from "./SidebarPanel"
 
@@ -18,7 +18,7 @@ import {
   ScrollAreaScrollbar,
   ScrollAreaThumb,
   ScrollAreaCorner,
-} from "@/components/shared/ScrollArea"
+} from "@/components/Shared/ScrollArea"
 
 export function LeftSidebar() {
   return (

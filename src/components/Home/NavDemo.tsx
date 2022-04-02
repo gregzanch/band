@@ -3,8 +3,8 @@ import { styled, keyframes } from "@/styles/stitches.config"
 import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
 import { CaretDownIcon } from "@radix-ui/react-icons"
 import { violet, mauve, indigo, purple, blackA, amber } from "@radix-ui/colors"
-import { Button } from "../shared/Button"
-import { Box } from "../shared/Box"
+import { Button } from "../Shared/Button"
+import { Box } from "../Shared/Box"
 
 const enterFromRight = keyframes({
   from: { transform: "translateX(200px)", opacity: 0 },

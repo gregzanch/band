@@ -1,4 +1,4 @@
-import { LayerMap } from "@/components/Editor/types"
+import { LayerMap } from "@/components/Editor/Objects/types"
 
 type FloorProps = {
   size?: number

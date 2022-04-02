@@ -1,10 +1,10 @@
-import useEditor from "@/state/editor"
-import { LevaPanel, useControls } from "@/components/leva"
-import { Store } from "../../leva/store"
+import useEditor from "@/components/Editor/State/useEditor"
+import { LevaPanel, useControls } from "@/components/Leva"
+import { Store } from "../../Leva/store"
 import { useEffect, useRef } from "react"
-import { Text } from "@/components/shared/Text"
-import { Box } from "@/components/shared/Box"
-import { ObjectType } from "@/state/types"
+import { Text } from "@/components/Shared/Text"
+import { Box } from "@/components/Shared/Box"
+import { ObjectType } from "@/components/Editor/State/types"
 
 export const objectPropertiesStore = new Store()
 

@@ -1,10 +1,10 @@
 import * as THREE from "three"
 import React, { useRef } from "react"
 import { Edges, Stage } from "@react-three/drei"
-import useEditor from "@/state/editor"
-import { Mesh } from "@/state/types"
+import useEditor from "@/components/Editor/State/useEditor"
+import { Mesh } from "@/components/Editor/State/types"
 import { Selection, Select, EffectComposer, Outline } from "@react-three/postprocessing"
-import { LayerMap } from "@/components/Editor/types"
+import { LayerMap } from "@/components/Editor/Objects/types"
 type MeshProps = {
   mesh: Mesh
 }

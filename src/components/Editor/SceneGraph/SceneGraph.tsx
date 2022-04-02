@@ -1,10 +1,10 @@
 //@ts-nocheck
-import useEditor from "@/state/editor"
+import useEditor from "@/components/Editor/State/useEditor"
 import { useEffect, useRef, useState } from "react"
-import { Receiver, Source, ObjectType } from "@/state/types"
-import { Box } from "@/components/shared/Box"
-import { Text } from "@/components/shared/Text"
-import { SourceIcon, ReceiverIcon, MeshIcon, GroupIcon } from "@/components/svg/Icons"
+import { Receiver, Source, ObjectType } from "@/components/Editor/State/types"
+import { Box } from "@/components/Shared/Box"
+import { Text } from "@/components/Shared/Text"
+import { SourceIcon, ReceiverIcon, MeshIcon, GroupIcon } from "@/components/Shared/Icons"
 
 import { styled } from "@/styles/stitches.config"
 import {
@@ -14,8 +14,8 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuCheckboxItem,
-} from "@/components/shared/ContextMenu"
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/shared/Collapsible"
+} from "@/components/Shared/ContextMenu"
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/Shared/Collapsible"
 import { ChevronDownIcon, ChevronRightIcon } from "@radix-ui/react-icons"
 const SceneGraphItemContainer = styled(Box, {
   cursor: "pointer",

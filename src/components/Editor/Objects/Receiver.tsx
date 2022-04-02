@@ -1,8 +1,8 @@
 import { Edges } from "@react-three/drei"
 import { useEffect, useRef } from "react"
-import useEditor from "@/state/editor"
+import useEditor from "@/components/Editor/State/useEditor"
 import { Selection, Select, EffectComposer, Outline } from "@react-three/postprocessing"
-import { LayerMap } from "@/components/Editor/types"
+import { LayerMap } from "@/components/Editor/Objects/types"
 
 const ReceiverComponent = ({ name = "", id, position = [0, 0, 0] as [number, number, number] }) => {
   // This reference will give us direct access to the THREE.Mesh object

@@ -5,7 +5,7 @@ import {
   ToolbarSeparator,
   ToolbarLink,
   ToolbarButton,
-} from "@/components/shared/Toolbar"
+} from "@/components/Shared/Toolbar"
 
 import {
   MoveIcon,
@@ -19,7 +19,7 @@ import {
   TargetIcon,
   CopyIcon,
 } from "@radix-ui/react-icons"
-import { Box } from "../shared/Box"
+import { Box } from "../Shared/Box"
 
 export function EditorToolbar() {
 

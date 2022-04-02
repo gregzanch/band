@@ -1,9 +1,9 @@
 import { Fragment, useRef } from "react"
 import { DirectionalLightHelper, SpotLightHelper, Vector3 } from "three"
 import { Environment, BakeShadows, useHelper, Sky } from "@react-three/drei"
-import useEditor from "@/state/editor"
+import useEditor from "@/components/Editor/State/useEditor"
 import { RectAreaLightHelper } from "three-stdlib"
-import { LayerMap } from "@/components/Editor/types"
+import { LayerMap } from "@/components/Editor/Objects/types"
 
 const inclination = 0.2
 const azimuth = 0.25

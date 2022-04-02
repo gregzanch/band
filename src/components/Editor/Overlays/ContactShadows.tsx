@@ -5,8 +5,8 @@ import * as React from "react"
 import * as THREE from "three"
 import { useFrame, useThree } from "@react-three/fiber"
 import { HorizontalBlurShader, VerticalBlurShader } from "three-stdlib"
-import { LayerMap } from "@/components/Editor/types"
-import useEditor from "@/state/editor"
+import { LayerMap } from "@/components/Editor/Objects/types"
+import useEditor from "@/components/Editor/State/useEditor"
 type Props = Omit<JSX.IntrinsicElements["group"], "scale"> & {
   opacity?: number
   width?: number
