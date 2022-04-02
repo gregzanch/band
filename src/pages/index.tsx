@@ -1,7 +1,7 @@
 import Landing from "@/components/site/Landing"
 import useTheme from "@/state/theme"
 
-import { globalCss, css, darkTheme, theme, styled } from "@/styles/stitches.config"
+import { globalCss, css, darkTheme, lightTheme, styled } from "@/styles/stitches.config"
 import { Fragment, useEffect } from "react"
 
 // console.log(theme)
@@ -16,7 +16,7 @@ const Page = () => {
 
   useEffect(() => {
     Object.assign(window, { useTheme })
-    document.body.classList.remove(theme, darkTheme)
+    document.body.classList.remove(lightTheme, darkTheme)
     document.body.classList.add(currTheme)
   }, [currTheme])
 

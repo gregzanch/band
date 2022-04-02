@@ -39,7 +39,6 @@ export function LeftSidebar() {
         <ResizeBar
           side='right'
           onResize={(width) => {
-            console.log(width)
             useEditor.setState({ orientationHelperMarginX: 80 + width })
           }}
         />

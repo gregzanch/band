@@ -6,7 +6,7 @@ import Editor from "@/components/canvas/Editor/Editor"
 import { MainMenu } from "@/components/dom/MainMenu"
 import { Box } from "@/components/shared/Box"
 import { useEffect } from "react"
-import { globalCss, darkTheme, theme } from "@/styles/stitches.config"
+import { globalCss, darkTheme, lightTheme } from "@/styles/stitches.config"
 import useTheme from "@/state/theme"
 
 const globalStyles = globalCss({
@@ -21,7 +21,7 @@ export default function EditorPage() {
 
   useEffect(() => {
     Object.assign(window, { useTheme })
-    document.body.classList.remove(theme, darkTheme)
+    document.body.classList.remove(lightTheme, darkTheme)
     document.body.classList.add(currTheme)
   }, [currTheme])
 

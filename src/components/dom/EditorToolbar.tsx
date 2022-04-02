@@ -22,7 +22,7 @@ import {
 import { Box } from "../shared/Box"
 
 export function EditorToolbar() {
-  console.log("render")
+
   return (
     <Box
       css={{

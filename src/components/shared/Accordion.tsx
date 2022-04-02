@@ -17,7 +17,7 @@ const StyledAccordion = styled(AccordionPrimitive.Root, {
   borderRadius: "$3",
   width: "100%",
   backgroundColor: "$elevation1",
-  boxShadow: "$level2, 0px 0px 1px 1px $colors$elevation3",
+  boxShadow: "$floating2",
   // borderColor: "$highlight1",
   // borderWidth: "1px",
 })
@@ -52,7 +52,7 @@ const StyledHeader = styled(AccordionPrimitive.Header, {
 const StyledTrigger = styled(AccordionPrimitive.Trigger, {
   all: "unset",
   fontFamily: "inherit",
-  backgroundColor: "transparent",
+  backgroundColor: "$slate3",
   flex: 1,
   display: "flex",
   alignItems: "center",
@@ -67,9 +67,15 @@ const StyledTrigger = styled(AccordionPrimitive.Trigger, {
   height: "$5",
   px: "$2",
   py: "$1",
-  '&[data-state="closed"]': { backgroundColor: "$elevation2" },
-  '&[data-state="open"]': { backgroundColor: "$elevation2" },
-  "&:hover": { backgroundColor: "$elevation3", color: "white" },
+
+  "&:hover": { backgroundColor: "$slate5" },
+  variants: {
+    hideChevron: {
+      true: {
+        "&:hover": { backgroundColor: "$slate3" },
+      },
+    },
+  },
 })
 
 const StyledContent = styled(AccordionPrimitive.Content, {
@@ -101,7 +107,7 @@ export const AccordionTrigger = React.forwardRef<
   React.ComponentProps<typeof StyledTrigger> & { hideChevron?: boolean }
 >(({ children, hideChevron, ...props }, forwardedRef) => (
   <StyledHeader>
-    <StyledTrigger {...props} ref={forwardedRef}>
+    <StyledTrigger hideChevron={hideChevron} {...props} ref={forwardedRef}>
       {children}
       {!hideChevron && <StyledChevron aria-hidden />}
     </StyledTrigger>

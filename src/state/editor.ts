@@ -6,7 +6,7 @@ import { GLTFLoader } from "three-stdlib"
 import { BufferAttribute, Color, Group as ThreeGroup, Mesh as ThreeMesh, Box3 } from "three"
 import { nanoid } from "nanoid"
 import { stripExtension } from "@/helpers/string"
-import { darkTheme, theme } from "@/styles/stitches.config"
+import { darkTheme, lightTheme } from "@/styles/stitches.config"
 import { useTheme } from "@/state/theme"
 
 import { slateDark } from "@radix-ui/colors"
@@ -22,17 +22,17 @@ export type EditorColors = {
   directionalLight: Color
 }
 
-export const EditorColorMap = new Map<typeof darkTheme | typeof theme, EditorColors>()
+export const EditorColorMap = new Map<typeof darkTheme | typeof lightTheme, EditorColors>()
 
-EditorColorMap.set(theme, {
-  canvasBackground: new Color().setStyle(theme.colors.elevation0.value),
-  fog: new Color().setStyle(theme.colors.elevation0.value),
-  ground: new Color().setStyle(theme.colors.elevation0.value),
-  floorPrimary: new Color().setStyle(theme.colors.elevation1.value),
-  floorSecondary: new Color().setStyle(theme.colors.elevation2.value),
-  ambientLight: new Color().setStyle(theme.colors.elevation0.value),
-  spotLight: new Color().setStyle(theme.colors.elevation0.value),
-  directionalLight: new Color().setStyle(theme.colors.elevation0.value),
+EditorColorMap.set(lightTheme, {
+  canvasBackground: new Color().setStyle(lightTheme.colors.elevation0.value),
+  fog: new Color().setStyle(lightTheme.colors.elevation0.value),
+  ground: new Color().setStyle(lightTheme.colors.elevation0.value),
+  floorPrimary: new Color().setStyle(lightTheme.colors.elevation1.value),
+  floorSecondary: new Color().setStyle(lightTheme.colors.elevation2.value),
+  ambientLight: new Color().setStyle(lightTheme.colors.elevation0.value),
+  spotLight: new Color().setStyle(lightTheme.colors.elevation0.value),
+  directionalLight: new Color().setStyle(lightTheme.colors.elevation0.value),
 })
 
 EditorColorMap.set(darkTheme, {
@@ -41,9 +41,9 @@ EditorColorMap.set(darkTheme, {
   ground: new Color().setHSL(197 / 360, 6.8 / 100, 3 / 100),
   floorPrimary: new Color().setHSL(197 / 360, 6.8 / 100, 13.6 / 100),
   floorSecondary: new Color().setHSL(197 / 360, 6.8 / 100, 13.6 / 100),
-  ambientLight: new Color().setStyle(theme.colors.elevation0.value),
-  spotLight: new Color().setStyle(theme.colors.elevation0.value),
-  directionalLight: new Color().setStyle(theme.colors.elevation0.value),
+  ambientLight: new Color().setStyle(lightTheme.colors.elevation0.value),
+  spotLight: new Color().setStyle(lightTheme.colors.elevation0.value),
+  directionalLight: new Color().setStyle(lightTheme.colors.elevation0.value),
 })
 
 type EditorState = {

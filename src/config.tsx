@@ -1,6 +1,4 @@
-import Head from 'next/head'
-import useTheme from "./state/theme"
-import { darkTheme } from "@/styles/stitches.config"
+import Head from "next/head"
 import { useWindowFocus } from "@/hooks"
 import { useEffect, useState } from "react"
 const titleDefault = "Band"

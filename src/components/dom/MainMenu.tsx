@@ -20,7 +20,7 @@ import {
 import { Flex } from "../shared/Flex"
 import { IconButton } from "../shared/IconButton"
 import { Text } from "../shared/Text"
-import { darkTheme, theme } from "@/styles/stitches.config"
+import { darkTheme, lightTheme } from "@/styles/stitches.config"
 import useEditor from "@/state/editor"
 
 enum MenuAction {
@@ -53,6 +53,7 @@ export const MenuHotkeys = {
   [MenuAction.CUT]: "command+x",
   [MenuAction.COPY]: "command+c",
   [MenuAction.PASTE]: "command+v",
+  [MenuAction.TOGGLE_THEME]: "command+shift+d",
 }
 
 enum MenuType {
@@ -224,7 +225,7 @@ export const ActionMap: Record<MenuAction, ActionFunction> = {
   },
   [MenuAction.TOGGLE_THEME]: async (item?: MenuCheckboxItem, checked?: boolean) => {
     const { theme: currTheme, set } = useTheme.getState()
-    set({ theme: currTheme === darkTheme ? theme : darkTheme })
+    set({ theme: currTheme === darkTheme ? lightTheme : darkTheme })
     return Promise.resolve(true)
   },
 
@@ -388,7 +389,9 @@ const MainMenuConfig: Array<GenericMenuItem> = [
     menuItem("add.receiver", "Receiver", MenuAction.ADD_RECEIVER),
   ]),
 
-  menu("view", "View", [menuCheckboxItem("view.dark_mode", "Dark Mode", MenuAction.TOGGLE_THEME)]),
+  menu("view", "View", [
+    menuCheckboxItem("view.dark_mode", "Dark Mode", MenuAction.TOGGLE_THEME, MenuHotkeys[MenuAction.TOGGLE_THEME]),
+  ]),
 
   menu("help", "Help", [menuItem("help.documentation", "Documentation", MenuAction.OPEN_DOCUMENTATION)]),
 ]

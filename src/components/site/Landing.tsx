@@ -7,7 +7,7 @@ import { Container } from "@/components/shared/Container"
 import { Text } from "@/components/shared/Text"
 
 import React from "react"
-import { darkTheme, theme, styled } from "@/styles/stitches.config"
+import { darkTheme, lightTheme, styled } from "@/styles/stitches.config"
 import { IconButton } from "@/components/shared/IconButton"
 import { MoonIcon, SunIcon } from "@radix-ui/react-icons"
 import useTheme from "@/state/theme"
@@ -19,7 +19,7 @@ export function DarkThemeButton() {
   const set = useTheme((state) => state.set)
 
   React.useEffect(() => {
-    document.body.classList.remove(theme, darkTheme)
+    document.body.classList.remove(lightTheme, darkTheme)
     document.body.classList.add(currTheme)
   }, [currTheme])
 
@@ -31,8 +31,8 @@ export function DarkThemeButton() {
         left: "$2",
       }}
     >
-      <IconButton onClick={() => set({ theme: currTheme === theme ? darkTheme : theme })}>
-        {currTheme === theme ? <MoonIcon /> : <SunIcon />}
+      <IconButton onClick={() => set({ theme: currTheme === lightTheme ? darkTheme : lightTheme })}>
+        {currTheme === lightTheme ? <MoonIcon /> : <SunIcon />}
       </IconButton>
     </Box>
   )

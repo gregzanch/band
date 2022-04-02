@@ -1,12 +1,12 @@
 import create, { SetState, GetState, Mutate, StoreApi } from "zustand"
 import { persist, subscribeWithSelector } from "zustand/middleware"
-import { darkTheme, theme } from "@/styles/stitches.config"
+import { darkTheme, lightTheme } from "@/styles/stitches.config"
 
-export type Mode = "theme-default" | "dark-theme"
+export type Mode = "dark-theme" | "light-theme"
 
 type ThemeState = {
   mode: Mode
-  theme: typeof theme | typeof darkTheme
+  theme: typeof lightTheme | typeof darkTheme
 }
 
 type ThemeReducers = {
@@ -42,9 +42,9 @@ export const useTheme = create<
         deserialize: (str) => {
           const parsed = JSON.parse(str)
           switch (parsed.state.theme) {
-            case theme.toString():
+            case lightTheme.toString():
               {
-                parsed.state.theme = theme
+                parsed.state.theme = lightTheme
               }
               break
             case darkTheme.toString():

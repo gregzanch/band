@@ -1,52 +1,43 @@
-import React from "react"
 import { styled } from "@/styles/stitches.config"
+import type { CSS } from "@/styles/stitches.config"
 import { violet, blackA, mauve } from "@radix-ui/colors"
-import {
-  StrikethroughIcon,
-  TextAlignLeftIcon,
-  TextAlignCenterIcon,
-  TextAlignRightIcon,
-  FontBoldIcon,
-  FontItalicIcon,
-} from "@radix-ui/react-icons"
 import * as ToolbarPrimitive from "@radix-ui/react-toolbar"
 
 const StyledToolbar = styled(ToolbarPrimitive.Root, {
   display: "flex",
-  padding: 10,
+  padding: "$2",
   width: "100%",
   minWidth: "max-content",
-  borderRadius: 6,
-  backgroundColor: "white",
-  boxShadow: `0 2px 10px ${blackA.blackA7}`,
+  borderRadius: "$3",
+  backgroundColor: "$slate3",
+  boxShadow: `$floating2`,
 })
 
-const itemStyles = {
+const itemStyles: CSS = {
   all: "unset",
   flex: "0 0 auto",
-  color: mauve.mauve11,
-  height: 25,
-  padding: "0 5px",
-  borderRadius: 4,
+  color: "$slate10",
+  height: "$5",
+  padding: "0 $1",
+  borderRadius: "$1",
   display: "inline-flex",
-  fontSize: 13,
+  fontSize: "$2",
   lineHeight: 1,
   alignItems: "center",
   justifyContent: "center",
-  "&:hover": { backgroundColor: violet.violet3, color: violet.violet11 },
-  "&:focus": { position: "relative", boxShadow: `0 0 0 2px ${violet.violet7}` },
+  "&:hover": { backgroundColor: "$slate2", color: "$slate12" },
+  "&:focus": { position: "relative", boxShadow: `0 0 0 2px $colors$accent2` },
 }
 
 const StyledButton = styled(
   ToolbarPrimitive.Button,
   {
     ...itemStyles,
-    paddingLeft: 10,
-    paddingRight: 10,
+    px: "$2",
     color: "white",
-    backgroundColor: violet.violet9,
+    backgroundColor: "$orange9",
   },
-  { "&:hover": { color: "white", backgroundColor: violet.violet10 } }
+  { "&:hover": { color: "white", backgroundColor: "$orange10" } }
 )
 
 const StyledLink = styled(
@@ -54,7 +45,7 @@ const StyledLink = styled(
   {
     ...itemStyles,
     backgroundColor: "transparent",
-    color: mauve.mauve11,
+    color: "$slate11",
     display: "inline-flex",
     justifyContent: "center",
     alignItems: "center",
@@ -64,22 +55,22 @@ const StyledLink = styled(
 
 const StyledSeparator = styled(ToolbarPrimitive.Separator, {
   width: 1,
-  backgroundColor: mauve.mauve6,
-  margin: "0 10px",
+  backgroundColor: "$slate10",
+  margin: "0 $2",
 })
 
 const StyledToggleGroup = styled(ToolbarPrimitive.ToggleGroup, {
   display: "inline-flex",
-  borderRadius: 4,
+  borderRadius: "$1",
 })
 
 const StyledToggleItem = styled(ToolbarPrimitive.ToggleItem, {
   ...itemStyles,
   boxShadow: 0,
-  backgroundColor: "white",
-  marginLeft: 2,
+  backgroundColor: "$slate3",
+  marginLeft: "$half",
   "&:first-child": { marginLeft: 0 },
-  "&[data-state=on]": { backgroundColor: violet.violet5, color: violet.violet11 },
+  "&[data-state=on]": { backgroundColor: "$slate2", color: "$slate12" },
 })
 
 // Exports

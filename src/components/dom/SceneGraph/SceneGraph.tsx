@@ -29,11 +29,11 @@ const SceneGraphItemContainer = styled(Box, {
   paddingBottom: "$1",
   gap: "8px",
   alignItems: "flex-start",
-  backgroundColor: "$elevation1",
+  backgroundColor: "$slate2",
   color: "$highlight2",
   fontFamily: "$mono",
   "&:hover": {
-    backgroundColor: "$elevation2",
+    backgroundColor: "$slate3",
     color: "$hiContrast",
   },
   variants: {

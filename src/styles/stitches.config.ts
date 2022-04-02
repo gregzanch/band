@@ -212,6 +212,8 @@ export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes
     shadows: {
       level1: "0 0 9px 0 #00000088",
       level2: "0 4px 14px #00000033",
+      floating1: "0 0px 8px $colors$blackA7",
+      floating2: "0 2px 10px $colors$blackA7",
     },
     fonts: {
       untitled: "Untitled Sans, -apple-system, system-ui, sans-serif",
@@ -220,6 +222,7 @@ export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes
       mono: "ui-monospace, SFMono-Regular, Menlo, monospace",
     },
     space: {
+      half: "3px",
       1: "5px",
       2: "10px",
       3: "15px",
@@ -241,28 +244,6 @@ export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes
       8: "65px",
       9: "80px",
     },
-    // space: {
-    //   1: '4px',
-    //   2: '8px',
-    //   3: '16px',
-    //   4: '20px',
-    //   5: '24px',
-    //   6: '32px',
-    //   7: '48px',
-    //   8: '64px',
-    //   9: '80px',
-    // },
-    // sizes: {
-    //   1: '4px',
-    //   2: '8px',
-    //   3: '16px',
-    //   4: '20px',
-    //   5: '24px',
-    //   6: '32px',
-    //   7: '48px',
-    //   8: '64px',
-    //   9: '80px',
-    // },
     fontSizes: {
       1: "11px",
       2: "12px",
@@ -274,17 +255,6 @@ export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes
       8: "35px",
       9: "59px",
     },
-    // fontSizes: {
-    //   1: '11px',
-    //   2: '12px',
-    //   3: '15px',
-    //   4: '17px',
-    //   5: '20px',
-    //   6: '22px',
-    //   7: '28px',
-    //   8: '36px',
-    //   9: '60px',
-    // },
     radii: {
       1: "4px",
       2: "6px",
@@ -428,6 +398,101 @@ export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes
 })
 
 export type CSS = Stitches.CSS<typeof config>
+
+export const lightThemeMode = "light-theme"
+export const lightTheme = createTheme(lightThemeMode, {
+  colors: {
+    ...gray,
+    ...mauve,
+    ...slate,
+    ...sage,
+    ...olive,
+    ...sand,
+    ...tomato,
+    ...red,
+    ...crimson,
+    ...pink,
+    ...plum,
+    ...purple,
+    ...violet,
+    ...indigo,
+    ...blue,
+    ...sky,
+    ...mint,
+    ...cyan,
+    ...teal,
+    ...green,
+    ...grass,
+    ...lime,
+    ...yellow,
+    ...amber,
+    ...orange,
+    ...brown,
+    ...bronze,
+    ...gold,
+
+    ...grayA,
+    ...mauveA,
+    ...slateA,
+    ...sageA,
+    ...oliveA,
+    ...sandA,
+    ...tomatoA,
+    ...redA,
+    ...crimsonA,
+    ...pinkA,
+    ...plumA,
+    ...purpleA,
+    ...violetA,
+    ...indigoA,
+    ...blueA,
+    ...skyA,
+    ...mintA,
+    ...cyanA,
+    ...tealA,
+    ...greenA,
+    ...grassA,
+    ...limeA,
+    ...yellowA,
+    ...amberA,
+    ...orangeA,
+    ...brownA,
+    ...bronzeA,
+    ...goldA,
+
+    ...whiteA,
+    ...blackA,
+    elevation0: "hsl(210, 8%, 94%)",
+    elevation1: "hsl(210, 14%, 89%)", // bg color of the rows (main panel color)
+    elevation2: "hsl(225, 16%, 80%)", // bg color of the root panel (main title bar)
+    elevation3: "hsl(225, 15%, 75%)", // bg color of the inputs
+    accent1: "hsl(212, 100%, 57%)",
+    accent2: "hsl(211, 100%, 50%)",
+    accent3: "hsl(213, 100%, 38%)",
+    highlight1: "hsl(222, 7%, 65%)",
+    highlight2: "hsl(225, 12%, 60%)",
+    highlight3: "hsl(0, 0%, 0%)",
+    vivid1: "hsl(48, 100%, 50%)",
+    folderWidgetColor: "$highlight2",
+    folderTextColor: "$highlight3",
+    toolTipBackground: "$highlight3",
+    toolTipText: "$elevation2",
+
+    // Semantic colors
+    hiContrast: "$slate12",
+    // loContrast: '$slate1',
+    loContrast: "white",
+    canvas: "hsl(0 0% 93%)",
+    panel: "$elevation1",
+    panelHi: "$slate4",
+    panelLo: "$slate2",
+    transparentPanel: "hsl(0 0% 0% / 97%)",
+    shadowLight: "hsl(206 22% 7% / 35%)",
+    shadowDark: "hsl(206 22% 7% / 20%)",
+  },
+})
+
+
 export const darkThemeMode = "dark-theme"
 export const darkTheme = createTheme(darkThemeMode, {
   colors: {
