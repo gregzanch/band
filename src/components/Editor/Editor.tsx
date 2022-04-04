@@ -35,7 +35,7 @@ import ReceiverComponent from "./Objects/Receiver"
 import MeshComponent from "./Objects/Mesh"
 
 import { MenuHotkeys, ActionMap } from "@/components/Editor/MainMenu"
-import { Group, Mesh, ObjectType } from "@/components/Editor/State/types"
+import { Group, Mesh, ObjectType } from "@/components/Editor/Objects/types"
 import GroupComponent from "./Objects/Group"
 
 // import { Outline, OutlineEffectOptions, OutlineProvider } from "@/components/canvas/Effects/useOutline"
@@ -358,7 +358,7 @@ function Editor(props) {
       />
       <Ground color={colors.ground.getHex()} size={100} segments={100} />
       {Object.entries(sources).map(([id, source]) => (
-        <SourceComponent key={id} name={source.userData.name} position={source.position} id={id} />
+        <SourceComponent key={id} source={source} />
       ))}
 
       {Object.entries(receivers).map(([id, receiver]) => (

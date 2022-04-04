@@ -4,7 +4,7 @@ import { Store } from "../../Leva/store"
 import { useEffect, useRef } from "react"
 import { Text } from "@/components/Shared/Text"
 import { Box } from "@/components/Shared/Box"
-import { ObjectType } from "@/components/Editor/State/types"
+import { ObjectType } from "@/components/Editor/Objects/types"
 
 export const objectPropertiesStore = new Store()
 
@@ -85,18 +85,13 @@ function ReceiverProperties({ uuid, selectedObject }) {
   return null
 }
 
-function SourceProperties({ uuid, selectedObject }) {
-  // const selectedObject = useEditor((state) => state.selectedObject?.current)
-  // const selectedObject = useEditor.getState().selectedObject?.current
+function SourceProperties({ uuid }) {
+  const selectedObject = useEditor((state) => state.selectedObject?.current)
   const initialRef = useRef(false)
-  // console.log(selectedObject?.userData?.type)
 
   useEffect(() => {
-    // console.log("setting initial to false")
     initialRef.current = false
   }, [uuid])
-
-  // console.log("initialRef.current", initialRef.current, selectedObject?.userData?.name)
 
   const [, set] = useControls(
     () => ({
@@ -105,26 +100,15 @@ function SourceProperties({ uuid, selectedObject }) {
         editable: false,
       },
       name: {
-        value: selectedObject.userData?.name || "",
+        value: selectedObject.name || "",
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.userData.name = value
-            useEditor.setState((state) => {
-              return {
-                sources: {
-                  ...state.sources,
-                  [selectedObject.userData.id]: {
-                    ...state.sources[selectedObject.userData.id],
-                    userData: {
-                      ...state.sources[selectedObject.userData.id].userData,
-                      name: value,
-                    },
-                  },
-                },
-              }
-            })
-          } else {
-            // console.log("skipping name", selectedObject?.userData?.name)
+            selectedObject.name = value
+            useEditor.setState((state) => ({
+              sources: {
+                ...state.sources,
+              },
+            }))
           }
         },
       },
@@ -180,7 +164,7 @@ function SourceProperties({ uuid, selectedObject }) {
         z: selectedObject.position.z,
       },
       scale: selectedObject.scale.toArray(),
-      name: selectedObject.userData.name,
+      name: selectedObject.name,
     })
     initialRef.current = true
   }, [selectedObject, set, uuid])
@@ -420,7 +404,7 @@ function SelectedObjectSwitcher() {
     case ObjectType.RECEIVER:
       return <ReceiverProperties uuid={selectedObject?.current?.uuid} selectedObject={selectedObject?.current} />
     case ObjectType.SOURCE:
-      return <SourceProperties uuid={selectedObject?.current?.uuid} selectedObject={selectedObject?.current} />
+      return <SourceProperties uuid={selectedObject?.current?.uuid} />
     case ObjectType.MESH:
       return <MeshProperties uuid={selectedObject?.current?.uuid} selectedObject={selectedObject?.current} />
     case ObjectType.GROUP:

@@ -1,4 +1,4 @@
-import Logo from "@/components/svg/Logo"
+import Logo from "@/components/Shared/Logo"
 import Link from "next/link"
 import Head from "next/link"
 import { Box } from "@/components/Shared/Box"

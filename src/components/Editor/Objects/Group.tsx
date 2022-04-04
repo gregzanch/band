@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { Group, Mesh } from "@/components/Editor/State/types"
+import { Group, Mesh } from "@/components/Editor/Objects/types"
 import React, { useRef, useMemo } from "react"
 import { Edges, Stage } from "@react-three/drei"
 import useEditor from "@/components/Editor/State/useEditor"

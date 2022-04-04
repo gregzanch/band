@@ -1,6 +1,7 @@
 import create, { SetState, GetState, Mutate, StoreApi } from "zustand"
 import { persist, subscribeWithSelector } from "zustand/middleware"
-import { Source, Receiver, ObjectType, BriefMesh, BriefAttribute, Mesh, Group } from "./types"
+import { Receiver, ObjectType, Mesh, Group } from "../Objects/types"
+import { Source } from "../Objects/Source/Source"
 import { openFilePicker } from "@/helpers/dom/openFilePicker"
 import { GLTFLoader } from "three-stdlib"
 import { BufferAttribute, Color, Group as ThreeGroup, Mesh as ThreeMesh, Box3 } from "three"
@@ -10,6 +11,7 @@ import { darkTheme, lightTheme } from "@/styles/stitches.config"
 import { useTheme } from "@/state/theme"
 
 import { slateDark } from "@radix-ui/colors"
+import React from "react"
 
 export type EditorColors = {
   canvasBackground: Color
@@ -66,6 +68,8 @@ type EditorReducers = {
   calculateBounds: () => any
 }
 
+const s1 = new Source("Source Left 1", [0.2, 1, 3], 0x44a273)
+
 const initialState: EditorState = {
   cameraMatrix: [
     0.8242150329508605, 0, -0.5662769458999827, 0, -0.2699522486780919, 0.8790583556703647, -0.39291499177271955, 0,
@@ -77,25 +81,9 @@ const initialState: EditorState = {
   selectedObject: null,
   scene: null,
   sources: {
-    "57C19E93-33CC-4AC5-A435-E284C0F1CDA1": {
-      position: [0.2, 1, 3],
-      userData: {
-        type: ObjectType.SOURCE,
-        name: "Source Left 1",
-        id: "57C19E93-33CC-4AC5-A435-E284C0F1CDA1",
-      },
-    },
+    [s1.uuid]: s1,
   },
-  receivers: {
-    "DC78D831-BAE7-49F9-9337-514186917A7B": {
-      position: [1, 1.5, 4],
-      userData: {
-        type: ObjectType.RECEIVER,
-        name: "Receiver",
-        id: "DC78D831-BAE7-49F9-9337-514186917A7B",
-      },
-    },
-  },
+  receivers: {},
   meshes: {},
   colors: EditorColorMap.get(useTheme.getState().theme || darkTheme),
   orientationHelperMarginX: 380,
@@ -175,8 +163,8 @@ export const useEditor = create<
           let min = [Infinity, Infinity, Infinity]
           let max = [-Infinity, -Infinity, -Infinity]
           for (const [id, source] of Object.entries(sources)) {
-            min = vectorMin(source.position, min)
-            max = vectorMax(source.position, max)
+            min = vectorMin(source.position.toArray(), min)
+            max = vectorMax(source.position.toArray(), max)
           }
           for (const [id, receiver] of Object.entries(receivers)) {
             min = vectorMin(receiver.position, min)
@@ -203,5 +191,5 @@ export const useEditor = create<
     )
   )
 )
-
+export type Editor = typeof useEditor
 export default useEditor

@@ -1,7 +1,7 @@
 //@ts-nocheck
 import useEditor from "@/components/Editor/State/useEditor"
 import { useEffect, useRef, useState } from "react"
-import { Receiver, Source, ObjectType } from "@/components/Editor/State/types"
+import { Receiver, Source, ObjectType } from "@/components/Editor/Objects/types"
 import { Box } from "@/components/Shared/Box"
 import { Text } from "@/components/Shared/Text"
 import { SourceIcon, ReceiverIcon, MeshIcon, GroupIcon } from "@/components/Shared/Icons"
@@ -134,29 +134,19 @@ function SceneGraphGroupContainer({ item, selected, level = 1 }: SceneGraphItemP
 }
 
 function SceneGraphItem({ item, selected, level = 1 }: SceneGraphItemProps) {
-  const Icon = IconMap[item.userData.type]
+  const Icon = IconMap[item.type]
 
   const Item =
-    item.userData.type === ObjectType.GROUP ? (
+    item.type === ObjectType.GROUP ? (
       <SceneGraphGroupContainer item={item} selected={selected} level={level} />
     ) : (
       <SceneGraphItemContainer
         css={getIndent(level)}
         selected={selected}
         onClick={() => {
-          const { scene } = useEditor.getState()
-          const itemRef = scene.getObjectByProperty("uuid", item.userData.id)
-          if (itemRef) {
-            useEditor.setState({ selectedObject: { current: itemRef } })
-          }
+          useEditor.setState({ selectedObject: { current: item } })
         }}
       >
-        {/* <Box
-          css={{
-            width: "15px",
-            height: "15px",
-          }}
-        /> */}
         <Icon size={15} />
         <Text
           size='1'
@@ -167,7 +157,7 @@ function SceneGraphItem({ item, selected, level = 1 }: SceneGraphItemProps) {
             fontFamily: "inherit",
           }}
         >
-          {item.userData.name}
+          {item.name}
         </Text>
       </SceneGraphItemContainer>
     )
@@ -208,7 +198,7 @@ export default function SceneGraph() {
   return (
     <Box fillHeight>
       {Object.entries(sources).map(([id, source]) => (
-        <SceneGraphItem key={id} item={source} selected={selectedObject?.current?.userData?.id === id} />
+        <SceneGraphItem key={id} item={source} selected={selectedObject?.current?.uuid === id} />
       ))}
       {Object.entries(receivers).map(([id, receiver]) => (
         <SceneGraphItem key={id} item={receiver} selected={selectedObject?.current?.userData?.id === id} />
