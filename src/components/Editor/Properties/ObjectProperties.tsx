@@ -8,7 +8,8 @@ import { ObjectType } from "@/components/Editor/Objects/types"
 
 export const objectPropertiesStore = new Store()
 
-function ReceiverProperties({ uuid, selectedObject }) {
+function ReceiverProperties({ uuid }) {
+  const selectedObject = useEditor((state) => state.selectedObject?.current)
   const initialRef = useRef(false)
 
   useEffect(() => {
@@ -22,10 +23,15 @@ function ReceiverProperties({ uuid, selectedObject }) {
         editable: false,
       },
       name: {
-        value: selectedObject.userData?.name || "",
+        value: selectedObject.name || "",
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.userData.name = value
+            selectedObject.name = value
+            useEditor.setState((state) => ({
+              receivers: {
+                ...state.receivers,
+              },
+            }))
           }
         },
       },
@@ -402,7 +408,7 @@ function SelectedObjectSwitcher() {
   const objectType = selectedObject?.current?.userData?.type
   switch (objectType) {
     case ObjectType.RECEIVER:
-      return <ReceiverProperties uuid={selectedObject?.current?.uuid} selectedObject={selectedObject?.current} />
+      return <ReceiverProperties uuid={selectedObject?.current?.uuid} />
     case ObjectType.SOURCE:
       return <SourceProperties uuid={selectedObject?.current?.uuid} />
     case ObjectType.MESH:

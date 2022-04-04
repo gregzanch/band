@@ -201,7 +201,7 @@ export default function SceneGraph() {
         <SceneGraphItem key={id} item={source} selected={selectedObject?.current?.uuid === id} />
       ))}
       {Object.entries(receivers).map(([id, receiver]) => (
-        <SceneGraphItem key={id} item={receiver} selected={selectedObject?.current?.userData?.id === id} />
+        <SceneGraphItem key={id} item={receiver} selected={selectedObject?.current?.uuid === id} />
       ))}
       {Object.entries(meshes).map(([id, receiver]) => (
         <SceneGraphItem key={id} item={receiver} selected={selectedObject?.current?.userData?.id === id} />

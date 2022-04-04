@@ -1,11 +1,11 @@
 import { ColorRepresentation, Mesh, MeshPhongMaterial, SphereGeometry, Color } from "three"
 import { ObjectType } from "../types"
 
-export class Source extends Mesh<SphereGeometry, MeshPhongMaterial> {
-  type: ObjectType.SOURCE
+export class Receiver extends Mesh<SphereGeometry, MeshPhongMaterial> {
+  type: ObjectType.RECEIVER
   color: ColorRepresentation
 
-  constructor(name: string, position: [number, number, number] = [0, 0, 0], color: ColorRepresentation = 0x44a273) {
+  constructor(name: string, position: [number, number, number] = [0, 0, 0], color: ColorRepresentation = 0xe5732a) {
     const geometry = new SphereGeometry(0.5, 16, 16)
     const material = new MeshPhongMaterial({
       wireframe: false,
@@ -20,7 +20,7 @@ export class Source extends Mesh<SphereGeometry, MeshPhongMaterial> {
     this.name = name
     this.position.set(...position)
 
-    this.type = ObjectType.SOURCE
+    this.type = ObjectType.RECEIVER
 
     this.matrixAutoUpdate = true
 

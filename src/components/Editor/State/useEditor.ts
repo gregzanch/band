@@ -1,7 +1,8 @@
 import create, { SetState, GetState, Mutate, StoreApi } from "zustand"
 import { persist, subscribeWithSelector } from "zustand/middleware"
-import { Receiver, ObjectType, Mesh, Group } from "../Objects/types"
+import { ObjectType, Mesh, Group } from "../Objects/types"
 import { Source } from "../Objects/Source/Source"
+import { Receiver } from "../Objects/Receiver/Receiver"
 import { openFilePicker } from "@/helpers/dom/openFilePicker"
 import { GLTFLoader } from "three-stdlib"
 import { BufferAttribute, Color, Group as ThreeGroup, Mesh as ThreeMesh, Box3 } from "three"
@@ -69,6 +70,7 @@ type EditorReducers = {
 }
 
 const s1 = new Source("Source Left 1", [0.2, 1, 3], 0x44a273)
+const r1 = new Receiver("Receiver Left 1", [0.2, 5, 3], 0xe5732a)
 
 const initialState: EditorState = {
   cameraMatrix: [
@@ -83,7 +85,9 @@ const initialState: EditorState = {
   sources: {
     [s1.uuid]: s1,
   },
-  receivers: {},
+  receivers: {
+    [r1.uuid]: r1,
+  },
   meshes: {},
   colors: EditorColorMap.get(useTheme.getState().theme || darkTheme),
   orientationHelperMarginX: 380,
@@ -167,8 +171,8 @@ export const useEditor = create<
             max = vectorMax(source.position.toArray(), max)
           }
           for (const [id, receiver] of Object.entries(receivers)) {
-            min = vectorMin(receiver.position, min)
-            max = vectorMax(receiver.position, max)
+            min = vectorMin(receiver.position.toArray(), min)
+            max = vectorMax(receiver.position.toArray(), max)
           }
           for (const [id, mesh] of Object.entries(meshes)) {
             const aabb = new Box3()

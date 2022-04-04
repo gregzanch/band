@@ -12,7 +12,7 @@ import {
   ContactShadows,
 } from "@react-three/drei"
 import { Floor, Lights, Ground, Shadows } from "@/components/Editor/Overlays"
-import SourceComponent from "@/components/Editor/Objects/Source"
+import SourceComponent from "@/components/Editor/Objects/Source/SourceComponent"
 
 import {
   PerspectiveCamera as PerspectiveCameraImpl,
@@ -30,7 +30,7 @@ import { cameraPropertiesStore } from "@/components/Editor/Properties/CameraProp
 import { objectPropertiesStore } from "@/components/Editor/Properties/ObjectProperties"
 
 import { useHotkeys } from "react-hotkeys-hook"
-import ReceiverComponent from "./Objects/Receiver"
+import ReceiverComponent from "./Objects/Receiver/ReceiverComponent"
 
 import MeshComponent from "./Objects/Mesh"
 
@@ -358,11 +358,11 @@ function Editor(props) {
       />
       <Ground color={colors.ground.getHex()} size={100} segments={100} />
       {Object.entries(sources).map(([id, source]) => (
-        <SourceComponent key={id} source={source} />
+        <SourceComponent key={id} item={source} />
       ))}
 
       {Object.entries(receivers).map(([id, receiver]) => (
-        <ReceiverComponent key={id} name={receiver.userData.name} position={receiver.position} id={id} />
+        <ReceiverComponent key={id} item={receiver} />
       ))}
       {Object.entries(meshes).map(([id, mesh]) =>
         mesh.userData.type === ObjectType.GROUP ? (
