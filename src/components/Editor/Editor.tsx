@@ -25,7 +25,7 @@ import {
 import { Canvas, useThree, useFrame, createPortal } from "@react-three/fiber"
 
 import useEditor, { EditorColorMap } from "@/components/Editor/State/useEditor"
-import { useControls } from "@/components/Leva"
+import { useControls } from "@/components/Leva/useControls"
 import { cameraPropertiesStore } from "@/components/Editor/Properties/CameraProperties"
 import { objectPropertiesStore } from "@/components/Editor/Properties/ObjectProperties"
 
