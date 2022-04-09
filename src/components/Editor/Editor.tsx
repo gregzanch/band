@@ -1,6 +1,6 @@
 import hotkeys from "hotkeys-js"
 import { useRef, useEffect, Suspense } from "react"
-import { OrbitControls, TransformControls, useFBO, Box, softShadows } from "@react-three/drei"
+import { OrbitControls, TransformControls, useFBO, Box, softShadows, Stats } from "@react-three/drei"
 import { Floor, Lights, Ground, Shadows } from "@/components/Editor/Overlays"
 
 import { PerspectiveCamera as PerspectiveCameraImpl, Color } from "three"
@@ -316,6 +316,16 @@ function Editor(props) {
   const sources = useEditor((state) => state.sources)
   const receivers = useEditor((state) => state.receivers)
   const meshes = useEditor((state) => state.meshes)
+  const debug = useEditor((state) => state.debug)
+
+  const { fogDistance } = useControls(
+    {
+      fogDistance: {
+        value: 75,
+      },
+    },
+    { store: cameraPropertiesStore }
+  )
 
   return (
     <Canvas
@@ -329,7 +339,14 @@ function Editor(props) {
       }}
       style={{ backgroundColor: `#${colors.canvasBackground.getHexString()}` }}
       onPointerMissed={(e) => {
-        useEditor.getState().signals.pointerMissed.dispatch()
+        // useEditor.getState().signals.pointerMissed.dispatch()
+        const { transformControls } = useEditor.getState()
+        if (transformControls && transformControls.enabled) {
+          transformControls.enabled = false
+          transformControls.visible = false
+        } else {
+          useEditor.setState({ selectedObject: null })
+        }
         e.stopPropagation()
       }}
     >
@@ -337,7 +354,7 @@ function Editor(props) {
       <Controls />
       <Suspense fallback={null}>
         <Lights />
-        <fog attach='fog' args={[colors.fog.getHex(), 0, 60]} />
+        <fog attach='fog' args={[colors.fog.getHex(), 0, fogDistance]} />
       </Suspense>
       <Floor
         size={100}
@@ -362,7 +379,7 @@ function Editor(props) {
           key={id}
           object={receiver}
           onClick={(e) => {
-            useEditor.setState({ selectedObject: { current: receiver } })
+            useEditor.getState().signals.objectSelected.dispatch(receiver)
             e.stopPropagation()
           }}
         />
@@ -377,6 +394,7 @@ function Editor(props) {
       <Shadows />
 
       <Effects />
+      {debug && <Stats className='editor-stats' />}
     </Canvas>
   )
 }

@@ -24,10 +24,11 @@ export function Ground({ size = 100, segments = 100, color = 0xb3b3b3 }: GroundP
       rotation={[-Math.PI / 2, 0, 0]}
       position={[0, 0, 0]}
       layers={LayerMap.ENVIRONMENT}
-      onClick={(e) => {
-        useEditor.getState().signals.pointerMissed.dispatch()
-        e.stopPropagation()
-      }}
+      // onClick={(e) => {
+      //   useEditor.getState().signals.pointerMissed.dispatch()
+      //   e.stopPropagation()
+      // }}
+      raycast={null}
     >
       <meshStandardMaterial
         attach='material'

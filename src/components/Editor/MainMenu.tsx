@@ -50,14 +50,15 @@ export const MenuHotkeys = {
   [MenuAction.SAVE]: "command+s",
   [MenuAction.IMPORT]: "command+i",
   [MenuAction.UNDO]: "command+z",
-  [MenuAction.REDO]: "command+shift+z",
+  [MenuAction.REDO]: "shift+command+z",
   [MenuAction.DUPLICATE]: "command+d",
   [MenuAction.CUT]: "command+x",
   [MenuAction.COPY]: "command+c",
   [MenuAction.PASTE]: "command+v",
   [MenuAction.ADD_SOURCE]: "alt+s",
   [MenuAction.ADD_RECEIVER]: "alt+r",
-  [MenuAction.TOGGLE_THEME]: "command+shift+d",
+  [MenuAction.TOGGLE_THEME]: "shift+command+d",
+  [MenuAction.DEBUG]: "shift+command+i",
 }
 
 enum MenuType {
@@ -233,6 +234,9 @@ export const ActionMap: Record<MenuAction, ActionFunction> = {
     return Promise.resolve(true)
   },
   [MenuAction.DEBUG]: async (item?: MenuCheckboxItem, checked?: boolean) => {
+    useEditor.setState((prev) => ({
+      debug: !prev.debug,
+    }))
     return Promise.resolve(true)
   },
   [MenuAction.TOGGLE_THEME]: async (item?: MenuCheckboxItem, checked?: boolean) => {
@@ -265,6 +269,21 @@ function ConnectedMenuCheckboxItemComponent({ item, hasItemState }: { item: Menu
           unsub()
         }
       }
+
+      case "view.debug": {
+        const unsub = useEditor.subscribe(
+          (store) => store.debug,
+          (debug) => {
+            setChecked(debug)
+          },
+          {
+            fireImmediately: true,
+          }
+        )
+        return () => {
+          unsub()
+        }
+      }
     }
   }, [item.id])
 
@@ -272,7 +291,7 @@ function ConnectedMenuCheckboxItemComponent({ item, hasItemState }: { item: Menu
     <DropdownMenuCheckboxItem
       hasItemState={hasItemState}
       disabled={item.disabled}
-      onClick={() => ActionMap[item.action](item, checked)}
+      onClick={() => ActionMap[item.action](item, !checked)}
       checked={checked}
     >
       {item.title}
@@ -403,6 +422,7 @@ const MainMenuConfig: Array<GenericMenuItem> = [
 
   menu("view", "View", [
     menuCheckboxItem("view.dark_mode", "Dark Mode", MenuAction.TOGGLE_THEME, MenuHotkeys[MenuAction.TOGGLE_THEME]),
+    menuCheckboxItem("view.debug", "Debug", MenuAction.DEBUG, MenuHotkeys[MenuAction.DEBUG]),
   ]),
 
   menu("help", "Help", [menuItem("help.documentation", "Documentation", MenuAction.OPEN_DOCUMENTATION)]),

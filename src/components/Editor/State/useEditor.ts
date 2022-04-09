@@ -71,6 +71,9 @@ type EditorState = {
     objectSelected: Signal
     pointerMissed: Signal
   }
+
+  debug: boolean
+
   // method: () => void
 }
 
@@ -103,6 +106,8 @@ const initialState: EditorState = {
     objectSelected: new Signal(),
     pointerMissed: new Signal(),
   },
+
+  debug: false,
 }
 
 function isNumber(val: any): val is number {

@@ -14,11 +14,12 @@ export function Floor({ size = 100, segments = 100, primary = 0xb2b2b2, secondar
       receiveShadow
       args={[size, segments, primary, secondary]}
       layers={LayerMap.ENVIRONMENT}
-      onClick={(e) => {
-        useEditor.getState().signals.pointerMissed.dispatch()
-        // console.log("clicked grid helper")
-        e.stopPropagation()
-      }}
+      // onClick={(e) => {
+      //   useEditor.getState().signals.pointerMissed.dispatch()
+      //   // console.log("clicked grid helper")
+      //   e.stopPropagation()
+      // }}
+      raycast={null}
     />
   )
 }

@@ -14,6 +14,7 @@ const globalStyles = globalCss({
   body: { width: "100%", height: "100%", margin: 0, padding: 0 },
   "#__next": { width: "100%", height: "100%", margin: 0, padding: 0 },
   ".csr-container": { width: "100%", height: "100%", margin: 0, padding: 0 },
+  ".editor-stats": { bottom: "$2", right: "$2", top: "unset !important", left: "unset !important" },
 })
 
 export default function EditorPage() {
@@ -29,16 +30,6 @@ export default function EditorPage() {
 
   return (
     <>
-      {/* <Box
-        css={{
-          position: "absolute",
-          zIndex: 500,
-          margin: "$2",
-        }}
-      >
-        <MainMenu />
-      </Box> */}
-
       <EditorToolbar />
       <LeftSidebar />
       <RightSidebar />
