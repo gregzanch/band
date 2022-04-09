@@ -32,11 +32,11 @@ import { objectPropertiesStore } from "@/components/Editor/Properties/ObjectProp
 import { useHotkeys } from "react-hotkeys-hook"
 import ReceiverComponent from "./Objects/Receiver/ReceiverComponent"
 
-import MeshComponent from "./Objects/Mesh"
+import MeshComponent from "./Objects/Mesh/MeshComponent"
 
 import { MenuHotkeys, ActionMap } from "@/components/Editor/MainMenu"
-import { Group, Mesh, ObjectType } from "@/components/Editor/Objects/types"
-import GroupComponent from "./Objects/Group"
+import { ObjectType } from "@/components/Editor/Objects/types"
+import GroupComponent from "./Objects/Group/GroupComponent"
 
 // import { Outline, OutlineEffectOptions, OutlineProvider } from "@/components/canvas/Effects/useOutline"
 
@@ -57,6 +57,8 @@ import { GizmoViewport } from "@/components/Editor/Gizmos/GizmoViewport"
 import { darkTheme, theme } from "@/styles/stitches.config"
 import useTheme from "@/state/theme"
 import { LayerMap } from "@/components/Editor/Objects/types"
+import { Mesh } from "./Objects/Mesh/Mesh"
+import { Group } from "./Objects/Group/Group"
 
 function FrameBufferThing() {
   const target = useFBO({ multisample: true, samples: 8, stencilBuffer: false })
@@ -90,6 +92,10 @@ function Effects() {
   const { gl, camera, scene } = useThree()
   const selectedObject = useEditor((state) => state.selectedObject)
 
+  useEffect(() => {
+    console.log(selectedObject)
+  }, [selectedObject])
+
   return (
     <Suspense fallback={null}>
       <EffectComposer ref={composerRef} autoClear={false} enabled camera={camera} scene={scene} multisampling={8}>
@@ -103,7 +109,7 @@ function Effects() {
           // height={Resolution.AUTO_SIZE}
           selection={
             selectedObject
-              ? selectedObject.current.userData.type === ObjectType.GROUP
+              ? selectedObject.current.type === ObjectType.GROUP
                 ? [...selectedObject.current.children]
                 : [selectedObject.current]
               : undefined
@@ -365,10 +371,10 @@ function Editor(props) {
         <ReceiverComponent key={id} item={receiver} />
       ))}
       {Object.entries(meshes).map(([id, mesh]) =>
-        mesh.userData.type === ObjectType.GROUP ? (
-          <GroupComponent key={id} group={mesh as Group} />
+        mesh.type === ObjectType.GROUP ? (
+          <GroupComponent key={id} item={mesh as Group} />
         ) : (
-          <MeshComponent key={id} mesh={mesh as Mesh} />
+          <MeshComponent key={id} item={mesh as Mesh} />
         )
       )}
       <Shadows />

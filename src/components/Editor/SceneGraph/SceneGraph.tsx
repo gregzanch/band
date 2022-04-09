@@ -88,7 +88,7 @@ function getIndent(level: number) {
 
 function SceneGraphGroupContainer({ item, selected, level = 1 }: SceneGraphItemProps<Group>) {
   const [open, setOpen] = useState(true)
-  const Icon = IconMap[item.userData.type]
+  const Icon = IconMap[item.type]
   const selectedObject = useEditor((state) => state.selectedObject)
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
@@ -97,7 +97,7 @@ function SceneGraphGroupContainer({ item, selected, level = 1 }: SceneGraphItemP
         selected={selected}
         onClick={() => {
           const { scene } = useEditor.getState()
-          const itemRef = scene.getObjectByProperty("uuid", item.userData.id)
+          const itemRef = scene.getObjectByProperty("uuid", item.uuid)
           if (itemRef) {
             useEditor.setState({ selectedObject: { current: itemRef } })
           }
@@ -116,7 +116,7 @@ function SceneGraphGroupContainer({ item, selected, level = 1 }: SceneGraphItemP
             fontFamily: "inherit",
           }}
         >
-          {item.userData.name}
+          {item.name}
         </Text>
       </SceneGraphItemContainer>
       <CollapsibleContent>
@@ -125,7 +125,7 @@ function SceneGraphGroupContainer({ item, selected, level = 1 }: SceneGraphItemP
             level={level + 1}
             key={child.uuid}
             item={child}
-            selected={selectedObject?.current?.userData?.id === child.userData?.id}
+            selected={selectedObject?.current?.uuid === child?.uuid}
           />
         ))}
       </CollapsibleContent>
@@ -136,6 +136,9 @@ function SceneGraphGroupContainer({ item, selected, level = 1 }: SceneGraphItemP
 function SceneGraphItem({ item, selected, level = 1 }: SceneGraphItemProps) {
   const Icon = IconMap[item.type]
 
+  console.log("updating source")
+  console.log(item.name)
+
   const Item =
     item.type === ObjectType.GROUP ? (
       <SceneGraphGroupContainer item={item} selected={selected} level={level} />
@@ -144,7 +147,9 @@ function SceneGraphItem({ item, selected, level = 1 }: SceneGraphItemProps) {
         css={getIndent(level)}
         selected={selected}
         onClick={() => {
-          useEditor.setState({ selectedObject: { current: item } })
+          const { scene } = useEditor.getState()
+          const itemRef = scene.getObjectByProperty("uuid", item.uuid)
+          useEditor.setState({ selectedObject: { current: itemRef } })
         }}
       >
         <Icon size={15} />
@@ -169,9 +174,9 @@ function SceneGraphItem({ item, selected, level = 1 }: SceneGraphItemProps) {
         <ContextMenuItem
           onClick={() => {
             const { scene } = useEditor.getState()
-            const itemRef = scene.getObjectByProperty("uuid", item.userData.id)
+            const itemRef = scene.getObjectByProperty("uuid", item.uuid)
             if (itemRef) {
-              console.groupCollapsed(`(${item.userData.type}) "${item.userData.name}"`)
+              console.groupCollapsed(`(${item.type}) "${item.name}"`)
               console.group("State Data")
               console.log(item)
               console.groupEnd()
@@ -195,6 +200,8 @@ export default function SceneGraph() {
   const meshes = useEditor((state) => state.meshes)
   const selectedObject = useEditor((state) => state.selectedObject)
 
+  console.log("updating scene graph")
+
   return (
     <Box fillHeight>
       {Object.entries(sources).map(([id, source]) => (
@@ -203,8 +210,8 @@ export default function SceneGraph() {
       {Object.entries(receivers).map(([id, receiver]) => (
         <SceneGraphItem key={id} item={receiver} selected={selectedObject?.current?.uuid === id} />
       ))}
-      {Object.entries(meshes).map(([id, receiver]) => (
-        <SceneGraphItem key={id} item={receiver} selected={selectedObject?.current?.userData?.id === id} />
+      {Object.entries(meshes).map(([id, mesh]) => (
+        <SceneGraphItem key={id} item={mesh} selected={selectedObject?.current?.uuid === id} />
       ))}
     </Box>
   )

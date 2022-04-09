@@ -1,8 +1,10 @@
 import create, { SetState, GetState, Mutate, StoreApi } from "zustand"
 import { persist, subscribeWithSelector } from "zustand/middleware"
-import { ObjectType, Mesh, Group } from "../Objects/types"
+import { ObjectType } from "../Objects/types"
 import { Source } from "../Objects/Source/Source"
 import { Receiver } from "../Objects/Receiver/Receiver"
+import { Group } from "../Objects/Group/Group"
+import { Mesh } from "../Objects/Mesh/Mesh"
 import { openFilePicker } from "@/helpers/dom/openFilePicker"
 import { GLTFLoader } from "three-stdlib"
 import { BufferAttribute, Color, Group as ThreeGroup, Mesh as ThreeMesh, Box3 } from "three"
@@ -129,22 +131,19 @@ export const useEditor = create<
                 //@ts-ignore
                 const meshes = parsed.scene.children
                   .filter((x) => x.type === "Mesh")
-                  .map((x) => {
-                    x.userData = {
-                      id: x.uuid,
-                      name: x.name || "",
-                      type: ObjectType.MESH,
-                    }
-                    return x
+                  .map((m) => {
+                    const newMesh = new Mesh(m.name, m.geometry.clone())
+                    newMesh.position.copy(m.position)
+                    newMesh.scale.copy(m.scale)
+                    newMesh.rotation.copy(m.rotation)
+                    newMesh.applyMatrix4(m.matrix)
+                    // newMesh.matrix.copy(m.matrix)
+                    newMesh.updateMatrix()
+                    return newMesh
                   }) as Mesh[]
 
-                const group = new ThreeGroup()
-                group.name = stripExtension(file.name)
-                group.userData = {
-                  id: group.uuid,
-                  name: group.name,
-                  type: ObjectType.GROUP,
-                }
+                const group = new Group(stripExtension(file.name))
+
                 for (const mesh of meshes) {
                   group.add(mesh)
                 }
@@ -153,9 +152,7 @@ export const useEditor = create<
                   meshes: {
                     ...get().meshes,
                     // ...meshes,
-                    ...{
-                      [group.uuid]: group as Group,
-                    },
+                    [group.uuid]: group as Group,
                   },
                 })
               }

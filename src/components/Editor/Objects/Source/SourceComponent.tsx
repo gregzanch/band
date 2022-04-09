@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import useEditor from "@/components/Editor/State/useEditor"
 import { extend, Object3DNode } from "@react-three/fiber"
 import { Source } from "./Source"
@@ -14,6 +14,15 @@ declare global {
 
 export const SourceComponent = ({ item }: { item: Source }) => {
   const itemRef = useRef(item)
+
+  useEffect(() => {
+    useEditor.setState((prev) => ({
+      sources: {
+        ...prev.sources,
+        [itemRef.current.uuid]: itemRef.current,
+      },
+    }))
+  }, [item])
 
   return (
     <sourceObject

@@ -10,8 +10,8 @@ export class Source extends Mesh<SphereGeometry, MeshPhongMaterial> {
     const material = new MeshPhongMaterial({
       wireframe: false,
       fog: true,
-      shininess: 5,
-      specular: new Color(color).lerp(new Color(0xffffff), 0.5),
+      shininess: 2,
+      specular: new Color(color).lerp(new Color(0xffffff), 0.25),
     })
 
     super(geometry, material)

@@ -83,7 +83,7 @@ function ReceiverProperties({ uuid }) {
         z: selectedObject.position.z,
       },
       scale: selectedObject.scale.toArray(),
-      name: selectedObject.userData.name,
+      name: selectedObject.name,
     })
     initialRef.current = true
   }, [selectedObject, set, uuid])
@@ -198,26 +198,15 @@ function MeshProperties({ uuid, selectedObject }) {
         editable: false,
       },
       name: {
-        value: selectedObject.userData?.name || "",
+        value: selectedObject.name || "",
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.userData.name = value
-            useEditor.setState((state) => {
-              return {
-                meshes: {
-                  ...state.meshes,
-                  [selectedObject.userData.id]: {
-                    ...state.meshes[selectedObject.userData.id],
-                    userData: {
-                      ...state.meshes[selectedObject.userData.id].userData,
-                      name: value,
-                    },
-                  },
-                },
-              }
-            })
-          } else {
-            // console.log("skipping name", selectedObject?.userData?.name)
+            selectedObject.name = value
+            useEditor.setState((state) => ({
+              meshes: {
+                ...state.meshes,
+              },
+            }))
           }
         },
       },
@@ -273,7 +262,7 @@ function MeshProperties({ uuid, selectedObject }) {
         z: selectedObject.position.z,
       },
       scale: selectedObject.scale.toArray(),
-      name: selectedObject.userData.name,
+      name: selectedObject.name,
     })
     initialRef.current = true
   }, [selectedObject, set, uuid])
@@ -295,26 +284,15 @@ function GroupProperties({ uuid, selectedObject }) {
         editable: false,
       },
       name: {
-        value: selectedObject.userData?.name || "",
+        value: selectedObject.name || "",
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.userData.name = value
-            useEditor.setState((state) => {
-              return {
-                meshes: {
-                  ...state.meshes,
-                  [selectedObject.userData.id]: {
-                    ...state.meshes[selectedObject.userData.id],
-                    userData: {
-                      ...state.meshes[selectedObject.userData.id].userData,
-                      name: value,
-                    },
-                  },
-                },
-              }
-            })
-          } else {
-            // console.log("skipping name", selectedObject?.userData?.name)
+            selectedObject.name = value
+            useEditor.setState((state) => ({
+              meshes: {
+                ...state.meshes,
+              },
+            }))
           }
         },
       },
@@ -370,7 +348,7 @@ function GroupProperties({ uuid, selectedObject }) {
         z: selectedObject.position.z,
       },
       scale: selectedObject.scale.toArray(),
-      name: selectedObject.userData.name,
+      name: selectedObject.name,
     })
     initialRef.current = true
   }, [selectedObject, set, uuid])
@@ -405,7 +383,7 @@ function SelectedObjectSwitcher() {
   if (selectedObject == null) {
     return <EmptySelection />
   }
-  const objectType = selectedObject?.current?.userData?.type
+  const objectType = selectedObject?.current?.type
   switch (objectType) {
     case ObjectType.RECEIVER:
       return <ReceiverProperties uuid={selectedObject?.current?.uuid} />
