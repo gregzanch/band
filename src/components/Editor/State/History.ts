@@ -1,3 +1,4 @@
+//@ts-nocheck
 import * as Commands from "./Commands/index.js"
 
 function History(editor) {

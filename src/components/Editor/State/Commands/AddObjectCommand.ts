@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Command } from "../Command"
 import { ObjectLoader } from "three"
 import { Editor } from "../useEditor"
