@@ -4,7 +4,7 @@ import { LeftSidebar } from "@/components/Editor/Sidebar/LeftSidebar"
 import Editor from "@/components/Editor/Editor"
 
 import { MainMenu } from "@/components/Editor/MainMenu"
-import { Box } from "@/components/Shared/Box"
+import { Box } from "@/components/shared/Box"
 import { useEffect } from "react"
 import { globalCss, darkTheme, lightTheme } from "@/styles/stitches.config"
 import useTheme from "@/state/theme"

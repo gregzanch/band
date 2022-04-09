@@ -2,9 +2,9 @@
 import useEditor from "@/components/Editor/State/useEditor"
 import { useEffect, useRef, useState } from "react"
 import { Receiver, Source, ObjectType } from "@/components/Editor/Objects/types"
-import { Box } from "@/components/Shared/Box"
-import { Text } from "@/components/Shared/Text"
-import { SourceIcon, ReceiverIcon, MeshIcon, GroupIcon } from "@/components/Shared/Icons"
+import { Box } from "@/components/shared/Box"
+import { Text } from "@/components/shared/Text"
+import { SourceIcon, ReceiverIcon, MeshIcon, GroupIcon } from "@/components/shared/Icons"
 
 import { styled } from "@/styles/stitches.config"
 import {
@@ -14,8 +14,8 @@ import {
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuCheckboxItem,
-} from "@/components/Shared/ContextMenu"
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/Shared/Collapsible"
+} from "@/components/shared/ContextMenu"
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/shared/Collapsible"
 import { ChevronDownIcon, ChevronRightIcon } from "@radix-ui/react-icons"
 const SceneGraphItemContainer = styled(Box, {
   cursor: "pointer",

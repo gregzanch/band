@@ -1,7 +1,7 @@
 import { LevaPanel } from "@/components/Editor/Leva"
 import { Store } from "../Leva/store"
 import { useEffect, useRef } from "react"
-import { Box } from "@/components/Shared/Box"
+import { Box } from "@/components/shared/Box"
 
 export const cameraPropertiesStore = new Store()
 

@@ -1,6 +1,6 @@
 import React from "react"
 import { styled, CSS } from "@/styles/stitches.config"
-import { Flex } from "@/components/Shared/Flex"
+import { Flex } from "@/components/shared/Flex"
 import { CheckIcon } from "@radix-ui/react-icons"
 
 const StyledVerifiedBadge = styled("div", Flex, {

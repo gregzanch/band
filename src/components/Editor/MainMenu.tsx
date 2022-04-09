@@ -2,7 +2,7 @@ import useTheme from "@/state/theme"
 import { HamburgerMenuIcon, ChevronRightIcon } from "@radix-ui/react-icons"
 import { nanoid } from "nanoid"
 import { Fragment, useEffect, useState } from "react"
-import { Button } from "../Shared/Button"
+import { Button } from "../shared/Button"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -16,10 +16,10 @@ import {
   DropdownMenuTrigger,
   DropdownMenuTriggerItem,
   DropdownMenuRightSlot,
-} from "../Shared/DropdownMenu"
-import { Flex } from "../Shared/Flex"
-import { IconButton } from "../Shared/IconButton"
-import { Text } from "../Shared/Text"
+} from "../shared/DropdownMenu"
+import { Flex } from "../shared/Flex"
+import { IconButton } from "../shared/IconButton"
+import { Text } from "../shared/Text"
 import { darkTheme, lightTheme } from "@/styles/stitches.config"
 import useEditor, { getSignals } from "@/components/Editor/State/useEditor"
 import { Source } from "@/components/Editor/Objects/Source/Source"

@@ -1,6 +1,6 @@
 import React from "react"
-import { Flex } from "@/components/Shared/Flex"
-import { Box } from "@/components/Shared/Box"
+import { Flex } from "@/components/shared/Flex"
+import { Box } from "@/components/shared/Box"
 import { useLayoutEffect } from "@radix-ui/react-use-layout-effect"
 
 type Point = {

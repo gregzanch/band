@@ -2,8 +2,8 @@ import useEditor from "@/components/Editor/State/useEditor"
 import { LevaPanel, useControls } from "@/components/Editor/Leva"
 import { Store } from "../Leva/store"
 import { useEffect, useRef } from "react"
-import { Text } from "@/components/Shared/Text"
-import { Box } from "@/components/Shared/Box"
+import { Text } from "@/components/shared/Text"
+import { Box } from "@/components/shared/Box"
 import { ObjectType } from "@/components/Editor/Objects/types"
 
 export const objectPropertiesStore = new Store()
