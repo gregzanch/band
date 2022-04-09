@@ -22,6 +22,7 @@ export const SourceComponent = ({ item }: { item: Source }) => {
         [itemRef.current.uuid]: itemRef.current,
       },
     }))
+    // useEditor.getState().signals.sourceRendered
   }, [item])
 
   return (

@@ -1,27 +1,55 @@
 //@ts-nocheck
+import { Command } from "./Command.js"
 import * as Commands from "./Commands/index.js"
 
-function History(editor) {
-  this.editor = editor
-  this.undos = []
-  this.redos = []
-  this.lastCmdTime = new Date()
-  this.idCounter = 0
+export class History {
+  undos: Command[]
+  redos: Command[]
+  lastCmdTime: Date
+  idCounter: number
+  historyDisabled: boolean
 
-  this.historyDisabled = false
-  this.config = editor.config
+  constructor() {
+    this.undos = []
+    this.redos = []
+    this.lastCmdTime = new Date()
+    this.idCounter = 0
 
-  // signals
+    this.historyDisabled = false
+  }
+  execute(cmd: Command, optionalName?: string) {
+    const lastCmd = this.undos[this.undos.length - 1]
+    const timeDifference = new Date().getTime() - this.lastCmdTime.getTime()
 
-  const scope = this
+    const isUpdatableCmd =
+      lastCmd &&
+      lastCmd.updatable &&
+      cmd.updatable &&
+      lastCmd.object === cmd.object &&
+      lastCmd.type === cmd.type &&
+      lastCmd.script === cmd.script &&
+      lastCmd.attributeName === cmd.attributeName
 
-  this.editor.signals.startPlayer.add(function () {
-    scope.historyDisabled = true
-  })
+    if (isUpdatableCmd && timeDifference < 500) {
+      lastCmd.update(cmd)
+      cmd = lastCmd
+    } else {
+      // the command is not updatable and is added as a new part of the history
+      this.undos.push(cmd)
+      cmd.id = ++this.idCounter
+    }
 
-  this.editor.signals.stopPlayer.add(function () {
-    scope.historyDisabled = false
-  })
+    cmd.name = optionalName !== undefined ? optionalName : cmd.name
+    cmd.execute()
+    cmd.inMemory = true
+
+    this.lastCmdTime = new Date()
+
+    // clearing all the redo-commands
+
+    this.redos = []
+    // this.editor.signals.historyChanged.dispatch(cmd)
+  }
 }
 
 History.prototype = {

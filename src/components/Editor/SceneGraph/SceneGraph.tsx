@@ -136,9 +136,6 @@ function SceneGraphGroupContainer({ item, selected, level = 1 }: SceneGraphItemP
 function SceneGraphItem({ item, selected, level = 1 }: SceneGraphItemProps) {
   const Icon = IconMap[item.type]
 
-  console.log("updating source")
-  console.log(item.name)
-
   const Item =
     item.type === ObjectType.GROUP ? (
       <SceneGraphGroupContainer item={item} selected={selected} level={level} />
@@ -147,9 +144,7 @@ function SceneGraphItem({ item, selected, level = 1 }: SceneGraphItemProps) {
         css={getIndent(level)}
         selected={selected}
         onClick={() => {
-          const { scene } = useEditor.getState()
-          const itemRef = scene.getObjectByProperty("uuid", item.uuid)
-          useEditor.setState({ selectedObject: { current: itemRef } })
+          useEditor.getState().signals.objectSelected.dispatch(item)
         }}
       >
         <Icon size={15} />
@@ -199,8 +194,6 @@ export default function SceneGraph() {
   const receivers = useEditor((state) => state.receivers)
   const meshes = useEditor((state) => state.meshes)
   const selectedObject = useEditor((state) => state.selectedObject)
-
-  console.log("updating scene graph")
 
   return (
     <Box fillHeight>

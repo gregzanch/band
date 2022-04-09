@@ -21,7 +21,9 @@ import { Flex } from "../Shared/Flex"
 import { IconButton } from "../Shared/IconButton"
 import { Text } from "../Shared/Text"
 import { darkTheme, lightTheme } from "@/styles/stitches.config"
-import useEditor from "@/components/Editor/State/useEditor"
+import useEditor, { getSignals } from "@/components/Editor/State/useEditor"
+import { Source } from "@/components/Editor/Objects/Source/Source"
+import { Receiver } from "@/components/Editor/Objects/Receiver/Receiver"
 
 enum MenuAction {
   NEW = "new",
@@ -53,6 +55,8 @@ export const MenuHotkeys = {
   [MenuAction.CUT]: "command+x",
   [MenuAction.COPY]: "command+c",
   [MenuAction.PASTE]: "command+v",
+  [MenuAction.ADD_SOURCE]: "alt+s",
+  [MenuAction.ADD_RECEIVER]: "alt+r",
   [MenuAction.TOGGLE_THEME]: "command+shift+d",
 }
 
@@ -211,9 +215,17 @@ export const ActionMap: Record<MenuAction, ActionFunction> = {
     return Promise.resolve(true)
   },
   [MenuAction.ADD_SOURCE]: async (item?: MenuItem) => {
+    const { signals } = useEditor.getState()
+    const src = new Source("New Source", [0, 2, 0], 0x44a273).addToDefaultScene(useEditor)
+    signals.sourceAdded.dispatch(src)
+    signals.objectSelected.dispatch(src)
     return Promise.resolve(true)
   },
   [MenuAction.ADD_RECEIVER]: async (item?: MenuItem) => {
+    const { signals } = useEditor.getState()
+    const rec = new Receiver("New Receiver", [0, 2, 0], 0xe5732a).addToDefaultScene(useEditor)
+    signals.receiverAdded.dispatch(rec)
+    signals.objectSelected.dispatch(rec)
     return Promise.resolve(true)
   },
 
@@ -385,8 +397,8 @@ const MainMenuConfig: Array<GenericMenuItem> = [
   ]),
 
   menu("add", "Add", [
-    menuItem("add.source", "Source", MenuAction.ADD_SOURCE),
-    menuItem("add.receiver", "Receiver", MenuAction.ADD_RECEIVER),
+    menuItem("add.source", "Source", MenuAction.ADD_SOURCE, MenuHotkeys[MenuAction.ADD_SOURCE]),
+    menuItem("add.receiver", "Receiver", MenuAction.ADD_RECEIVER, MenuHotkeys[MenuAction.ADD_RECEIVER]),
   ]),
 
   menu("view", "View", [

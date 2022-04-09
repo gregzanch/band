@@ -7,7 +7,7 @@ import { Group } from "../Objects/Group/Group"
 import { Mesh } from "../Objects/Mesh/Mesh"
 import { openFilePicker } from "@/helpers/dom/openFilePicker"
 import { GLTFLoader } from "three-stdlib"
-import { BufferAttribute, Color, Group as ThreeGroup, Mesh as ThreeMesh, Box3 } from "three"
+import { BufferAttribute, Color, Group as ThreeGroup, Mesh as ThreeMesh, Box3, Scene } from "three"
 import { nanoid } from "nanoid"
 import { stripExtension } from "@/helpers/string"
 import { darkTheme, lightTheme } from "@/styles/stitches.config"
@@ -15,6 +15,7 @@ import { useTheme } from "@/state/theme"
 
 import { slateDark } from "@radix-ui/colors"
 import React from "react"
+import { Signal } from "./Signal"
 
 export type EditorColors = {
   canvasBackground: Color
@@ -56,12 +57,20 @@ type EditorState = {
   orbitControls: any
   transformControls: any
   selectedObject: any
-  scene: any
+  scene: Scene | null
   sources: Record<string, Source>
   receivers: Record<string, Receiver>
   meshes: Record<string, Mesh | Group>
   colors: EditorColors
   orientationHelperMarginX: number
+  transformType: "translate" | "rotate" | "scale"
+
+  signals: {
+    sourceAdded: Signal
+    receiverAdded: Signal
+    objectSelected: Signal
+    pointerMissed: Signal
+  }
   // method: () => void
 }
 
@@ -70,9 +79,6 @@ type EditorReducers = {
   set: SetState<EditorState & EditorReducers>
   calculateBounds: () => any
 }
-
-const s1 = new Source("Source Left 1", [0.2, 1, 3], 0x44a273)
-const r1 = new Receiver("Receiver Left 1", [0.2, 5, 3], 0xe5732a)
 
 const initialState: EditorState = {
   cameraMatrix: [
@@ -84,15 +90,19 @@ const initialState: EditorState = {
   transformControls: null,
   selectedObject: null,
   scene: null,
-  sources: {
-    [s1.uuid]: s1,
-  },
-  receivers: {
-    [r1.uuid]: r1,
-  },
+  sources: {},
+  receivers: {},
   meshes: {},
   colors: EditorColorMap.get(useTheme.getState().theme || darkTheme),
   orientationHelperMarginX: 380,
+  transformType: "translate",
+
+  signals: {
+    sourceAdded: new Signal(),
+    receiverAdded: new Signal(),
+    objectSelected: new Signal(),
+    pointerMissed: new Signal(),
+  },
 }
 
 function isNumber(val: any): val is number {
@@ -194,3 +204,28 @@ export const useEditor = create<
 )
 export type Editor = typeof useEditor
 export default useEditor
+
+export const getSignals = () => useEditor.getState().signals
+
+getSignals().sourceAdded.add((source: Source) => {
+  useEditor.setState((state) => ({
+    sources: {
+      ...state.sources,
+      [source.uuid]: source,
+    },
+  }))
+})
+
+getSignals().receiverAdded.add((receiver: Receiver) => {
+  useEditor.setState((state) => ({
+    receivers: {
+      ...state.receivers,
+      [receiver.uuid]: receiver,
+    },
+  }))
+})
+
+getSignals().objectSelected.add((object: any) => {
+  const selectedObject = object ? { current: object } : null
+  useEditor.setState({ selectedObject })
+})

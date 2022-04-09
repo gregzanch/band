@@ -8,7 +8,11 @@ import { Fragment, useEffect } from "react"
 // console.log(darkTheme)
 
 const globalStyles = globalCss({
-  body: { margin: 0, padding: 0, backgroundColor: "$elevation1" },
+  body: {
+    margin: 0,
+    padding: 0,
+    backgroundColor: "$gray1",
+  },
 })
 
 const Page = () => {

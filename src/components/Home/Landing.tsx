@@ -47,7 +47,7 @@ const StickyContainer = styled(Box, {
 
 function Landing() {
   return (
-    <>
+    <Box css={{ background: "linear-gradient(120deg, $indigo4, $plum3)" }}>
       <StickyContainer>
         <NavDemo />
       </StickyContainer>
@@ -96,7 +96,7 @@ function Landing() {
         <Logo />
       </Box>
       <DarkThemeButton />
-    </>
+    </Box>
   )
 }
 

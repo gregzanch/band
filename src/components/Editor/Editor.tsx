@@ -13,6 +13,7 @@ import {
 } from "@react-three/drei"
 import { Floor, Lights, Ground, Shadows } from "@/components/Editor/Overlays"
 import SourceComponent from "@/components/Editor/Objects/Source/SourceComponent"
+import { Source } from "@/components/Editor/Objects/Source/Source"
 
 import {
   PerspectiveCamera as PerspectiveCameraImpl,
@@ -25,7 +26,7 @@ import {
 import { Canvas, useThree, useFrame, createPortal } from "@react-three/fiber"
 
 import useEditor, { EditorColorMap } from "@/components/Editor/State/useEditor"
-import { useControls } from "@/components/Leva/useControls"
+
 import { cameraPropertiesStore } from "@/components/Editor/Properties/CameraProperties"
 import { objectPropertiesStore } from "@/components/Editor/Properties/ObjectProperties"
 
@@ -59,6 +60,7 @@ import useTheme from "@/state/theme"
 import { LayerMap } from "@/components/Editor/Objects/types"
 import { Mesh } from "./Objects/Mesh/Mesh"
 import { Group } from "./Objects/Group/Group"
+import { useControls } from "../Leva"
 
 function FrameBufferThing() {
   const target = useFBO({ multisample: true, samples: 8, stencilBuffer: false })
@@ -91,10 +93,6 @@ function Effects() {
   const composerRef = useRef<EffectComposerImpl>()
   const { gl, camera, scene } = useThree()
   const selectedObject = useEditor((state) => state.selectedObject)
-
-  useEffect(() => {
-    console.log(selectedObject)
-  }, [selectedObject])
 
   return (
     <Suspense fallback={null}>
@@ -141,6 +139,7 @@ const Controls = () => {
   const control = useRef(null)
   const transformControls = useRef(null)
   const selectedObject = useEditor((state) => state.selectedObject)
+  const transformType = useEditor((state) => state.transformType)
 
   const three = useThree()
 
@@ -176,7 +175,7 @@ const Controls = () => {
         control.current.enabled = !event.value
       }
       const changeCallback = (event) => {
-        if (objectPropertiesStore.getData()["position"]) {
+        if (event.target.mode === "translate" && objectPropertiesStore.getData()["position"]) {
           const { x, y, z } = objectPropertiesStore.get("position")
           if (!selectedObject.current) {
             return
@@ -192,6 +191,27 @@ const Controls = () => {
                 x: selectedObject.current.position.x,
                 y: selectedObject.current.position.y,
                 z: selectedObject.current.position.z,
+              },
+              false
+            )
+          }
+        }
+        if (event.target.mode === "scale" && objectPropertiesStore.getData()["scale"]) {
+          const { x, y, z } = objectPropertiesStore.get("scale")
+          if (!selectedObject.current) {
+            return
+          }
+          if (
+            selectedObject.current.scale.x !== x ||
+            selectedObject.current.scale.y !== y ||
+            selectedObject.current.scale.z !== z
+          ) {
+            objectPropertiesStore.setValueAtPath(
+              "scale",
+              {
+                x: selectedObject.current.scale.x,
+                y: selectedObject.current.scale.y,
+                z: selectedObject.current.scale.z,
               },
               false
             )
@@ -232,7 +252,7 @@ const Controls = () => {
           ref={transformControls}
           castShadow={false}
           receiveShadow={false}
-          mode='translate'
+          mode={transformType}
           renderOrder={1}
           // layers={LayerMap.TRANSFORM_CONTROLS}
           name='transform-controls'
@@ -330,6 +350,9 @@ function Editor(props) {
 
   useEffect(() => {
     Object.assign(window, { useEditor, darkTheme, theme, Color })
+    setTimeout(() => {
+      console.clear()
+    }, 500)
   }, [])
 
   const sources = useEditor((state) => state.sources)
@@ -349,6 +372,10 @@ function Editor(props) {
         // alpha: false,
       }}
       style={{ backgroundColor: `#${colors.canvasBackground.getHexString()}` }}
+      onPointerMissed={(e) => {
+        useEditor.getState().signals.pointerMissed.dispatch()
+        e.stopPropagation()
+      }}
     >
       <OrientationGizmo />
       <Controls />
@@ -364,11 +391,25 @@ function Editor(props) {
       />
       <Ground color={colors.ground.getHex()} size={100} segments={100} />
       {Object.entries(sources).map(([id, source]) => (
-        <SourceComponent key={id} item={source} />
+        <primitive
+          key={id}
+          object={source}
+          onClick={(e) => {
+            useEditor.getState().signals.objectSelected.dispatch(source)
+            e.stopPropagation()
+          }}
+        />
       ))}
 
       {Object.entries(receivers).map(([id, receiver]) => (
-        <ReceiverComponent key={id} item={receiver} />
+        <primitive
+          key={id}
+          object={receiver}
+          onClick={(e) => {
+            useEditor.setState({ selectedObject: { current: receiver } })
+            e.stopPropagation()
+          }}
+        />
       ))}
       {Object.entries(meshes).map(([id, mesh]) =>
         mesh.type === ObjectType.GROUP ? (

@@ -1,4 +1,5 @@
 import { ColorRepresentation, Mesh, MeshPhongMaterial, SphereGeometry, Color } from "three"
+import { Editor } from "../../State/useEditor"
 import { ObjectType } from "../types"
 
 export class Receiver extends Mesh<SphereGeometry, MeshPhongMaterial> {
@@ -23,8 +24,16 @@ export class Receiver extends Mesh<SphereGeometry, MeshPhongMaterial> {
     this.type = ObjectType.RECEIVER
 
     this.matrixAutoUpdate = true
+    this.castShadow = true
+    this.receiveShadow = true
 
     this.update()
+  }
+
+  addToDefaultScene(editor: Editor) {
+    const { scene } = editor.getState()
+    scene && scene.add(this)
+    return this
   }
 
   dispose() {

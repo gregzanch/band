@@ -20,8 +20,10 @@ import {
   CopyIcon,
 } from "@radix-ui/react-icons"
 import { Box } from "../Shared/Box"
+import useEditor from "./State/useEditor"
 
 export function EditorToolbar() {
+  const transformType = useEditor((state) => state.transformType)
 
   return (
     <Box
@@ -34,28 +36,23 @@ export function EditorToolbar() {
         zIndex: "$max",
       }}
     >
-      <Toolbar aria-label='Formatting options'>
-        <ToolbarToggleGroup type='multiple' aria-label='Text formatting'>
-          <ToolbarToggleItem value='bold' aria-label='Bold'>
+      <Toolbar aria-label='Editor toolbar'>
+        <ToolbarToggleGroup
+          type='single'
+          aria-label='Transform type'
+          value={transformType}
+          onValueChange={(val: "translate" | "rotate" | "scale") => {
+            useEditor.setState({ transformType: val })
+          }}
+        >
+          <ToolbarToggleItem value='translate' aria-label='Translate'>
             <MoveIcon />
           </ToolbarToggleItem>
-          <ToolbarToggleItem value='italic' aria-label='Italic'>
+          <ToolbarToggleItem value='rotate' aria-label='Rotate'>
             <SymbolIcon />
           </ToolbarToggleItem>
-          <ToolbarToggleItem value='strikethrough' aria-label='Strike through'>
+          <ToolbarToggleItem value='scale' aria-label='Scale'>
             <SizeIcon />
-          </ToolbarToggleItem>
-        </ToolbarToggleGroup>
-        <ToolbarSeparator />
-        <ToolbarToggleGroup type='single' defaultValue='center' aria-label='Text alignment'>
-          <ToolbarToggleItem value='left' aria-label='Left aligned'>
-            <TargetIcon />
-          </ToolbarToggleItem>
-          <ToolbarToggleItem value='center' aria-label='Center aligned'>
-            <CopyIcon />
-          </ToolbarToggleItem>
-          <ToolbarToggleItem value='right' aria-label='Right aligned'>
-            <TrashIcon />
           </ToolbarToggleItem>
         </ToolbarToggleGroup>
       </Toolbar>
