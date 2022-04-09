@@ -1,3 +1,4 @@
+import { CommandType } from "./Commands/types"
 import type { Editor } from "./useEditor"
 
 export class Command {

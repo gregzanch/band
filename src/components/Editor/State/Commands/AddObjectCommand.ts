@@ -1,13 +1,14 @@
 //@ts-nocheck
 import { Command } from "../Command"
-import { ObjectLoader } from "three"
 import { Editor } from "../useEditor"
+import { CommandType } from "./types"
+import { ObjectType } from "../../Objects/types"
 
 class AddObjectCommand extends Command {
   constructor(editor: Editor, object) {
     super(editor)
 
-    this.type = "AddObjectCommand"
+    this.type = CommandType.AddObjectCommand
 
     this.object = object
     if (object !== undefined) {
@@ -16,13 +17,29 @@ class AddObjectCommand extends Command {
   }
 
   execute() {
-    this.editor.addObject(this.object)
-    this.editor.select(this.object)
+    // this.editor.addObject(this.object)
+    switch (this.object.type) {
+      case ObjectType.SOURCE:
+        this.editor.getState().signals.sourceAdded.dispatch(this.object)
+        break
+      case ObjectType.RECEIVER:
+        this.editor.getState().signals.receiverAdded.dispatch(this.object)
+        break
+    }
+    // this.editor.select(this.object)
   }
 
   undo() {
-    this.editor.removeObject(this.object)
-    this.editor.deselect()
+    switch (this.object.type) {
+      case ObjectType.SOURCE:
+        this.editor.getState().signals.sourceRemoved.dispatch(this.object)
+        break
+      case ObjectType.RECEIVER:
+        this.editor.getState().signals.receiverRemoved.dispatch(this.object)
+        break
+    }
+    // this.editor.removeObject(this.object)
+    // this.editor.deselect()
   }
 
   toJSON() {
@@ -36,12 +53,12 @@ class AddObjectCommand extends Command {
   fromJSON(json) {
     super.fromJSON(json)
 
-    this.object = this.editor.objectByUuid(json.object.object.uuid)
+    // this.object = this.editor.objectByUuid(json.object.object.uuid)
 
-    if (this.object === undefined) {
-      const loader = new ObjectLoader()
-      this.object = loader.parse(json.object)
-    }
+    // if (this.object === undefined) {
+    //   const loader = new ObjectLoader()
+    //   this.object = loader.parse(json.object)
+    // }
   }
 }
 

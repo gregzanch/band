@@ -1,7 +1,7 @@
 //@ts-nocheck
-import { Command } from "./Command.js"
-import * as Commands from "./Commands/index.js"
-import { Editor } from "./useEditor.js"
+import { Command } from "./Command"
+import * as Commands from "./Commands"
+import { Editor } from "./useEditor"
 
 export class History {
   undos: Command[]
@@ -51,58 +51,8 @@ export class History {
     this.redos = []
     this.editor.getState().signals.historyChanged.dispatch(cmd)
   }
-}
-
-History.prototype = {
-  execute: function (cmd, optionalName) {
-    const lastCmd = this.undos[this.undos.length - 1]
-    const timeDifference = new Date().getTime() - this.lastCmdTime.getTime()
-
-    const isUpdatableCmd =
-      lastCmd &&
-      lastCmd.updatable &&
-      cmd.updatable &&
-      lastCmd.object === cmd.object &&
-      lastCmd.type === cmd.type &&
-      lastCmd.script === cmd.script &&
-      lastCmd.attributeName === cmd.attributeName
-
-    if (isUpdatableCmd && cmd.type === "SetScriptValueCommand") {
-      // When the cmd.type is "SetScriptValueCommand" the timeDifference is ignored
-
-      lastCmd.update(cmd)
-      cmd = lastCmd
-    } else if (isUpdatableCmd && timeDifference < 500) {
-      lastCmd.update(cmd)
-      cmd = lastCmd
-    } else {
-      // the command is not updatable and is added as a new part of the history
-
-      this.undos.push(cmd)
-      cmd.id = ++this.idCounter
-    }
-
-    cmd.name = optionalName !== undefined ? optionalName : cmd.name
-    cmd.execute()
-    cmd.inMemory = true
-
-    if (this.config.getKey("settings/history")) {
-      cmd.json = cmd.toJSON() // serialize the cmd immediately after execution and append the json to the cmd
-    }
-
-    this.lastCmdTime = new Date()
-
-    // clearing all the redo-commands
-
-    this.redos = []
-    this.editor.signals.historyChanged.dispatch(cmd)
-  },
-
-  undo: function () {
-    if (this.historyDisabled) {
-      alert("Undo/Redo disabled while scene is playing.")
-      return
-    }
+  undo() {
+    if (this.historyDisabled) return
 
     let cmd = undefined
 
@@ -117,17 +67,13 @@ History.prototype = {
     if (cmd !== undefined) {
       cmd.undo()
       this.redos.push(cmd)
-      this.editor.signals.historyChanged.dispatch(cmd)
+      this.editor.getState().signals.historyChanged.dispatch(cmd)
     }
 
     return cmd
-  },
-
-  redo: function () {
-    if (this.historyDisabled) {
-      alert("Undo/Redo disabled while scene is playing.")
-      return
-    }
+  }
+  redo() {
+    if (this.historyDisabled) return
 
     let cmd = undefined
 
@@ -142,20 +88,19 @@ History.prototype = {
     if (cmd !== undefined) {
       cmd.execute()
       this.undos.push(cmd)
-      this.editor.signals.historyChanged.dispatch(cmd)
+      this.editor.getState().signals.historyChanged.dispatch(cmd)
     }
 
     return cmd
-  },
-
-  toJSON: function () {
+  }
+  toJSON() {
     const history = {}
     history.undos = []
     history.redos = []
 
-    if (!this.config.getKey("settings/history")) {
-      return history
-    }
+    // if (!this.config.getKey("settings/history")) {
+    //   return history
+    // }
 
     // Append Undos to History
 
@@ -174,9 +119,9 @@ History.prototype = {
     }
 
     return history
-  },
+  }
 
-  fromJSON: function (json) {
+  fromJSON(json) {
     if (json === undefined) return
 
     for (let i = 0; i < json.undos.length; i++) {
@@ -200,25 +145,22 @@ History.prototype = {
     }
 
     // Select the last executed undo-command
-    this.editor.signals.historyChanged.dispatch(this.undos[this.undos.length - 1])
-  },
+    this.editor.getState().signals.historyChanged.dispatch(this.undos[this.undos.length - 1])
+  }
 
-  clear: function () {
+  clear() {
     this.undos = []
     this.redos = []
     this.idCounter = 0
 
-    this.editor.signals.historyChanged.dispatch()
-  },
+    this.editor.getState().signals.historyChanged.dispatch()
+  }
 
-  goToState: function (id) {
-    if (this.historyDisabled) {
-      alert("Undo/Redo disabled while scene is playing.")
-      return
-    }
+  goToState(id) {
+    if (this.historyDisabled) return
 
-    this.editor.signals.sceneGraphChanged.active = false
-    this.editor.signals.historyChanged.active = false
+    this.editor.getState().signals.sceneGraphChanged.active = false
+    this.editor.getState().signals.historyChanged.active = false
 
     let cmd = this.undos.length > 0 ? this.undos[this.undos.length - 1] : undefined // next cmd to pop
 
@@ -237,14 +179,13 @@ History.prototype = {
       }
     }
 
-    this.editor.signals.sceneGraphChanged.active = true
-    this.editor.signals.historyChanged.active = true
+    this.editor.getState().signals.sceneGraphChanged.active = true
+    this.editor.getState().signals.historyChanged.active = true
 
-    this.editor.signals.sceneGraphChanged.dispatch()
-    this.editor.signals.historyChanged.dispatch(cmd)
-  },
-
-  enableSerialization: function (id) {
+    this.editor.getState().signals.sceneGraphChanged.dispatch()
+    this.editor.getState().signals.historyChanged.dispatch(cmd)
+  }
+  enableSerialization(id) {
     /**
      * because there might be commands in this.undos and this.redos
      * which have not been serialized with .toJSON() we go back
@@ -254,8 +195,8 @@ History.prototype = {
 
     this.goToState(-1)
 
-    this.editor.signals.sceneGraphChanged.active = false
-    this.editor.signals.historyChanged.active = false
+    this.editor.getState().signals.sceneGraphChanged.active = false
+    this.editor.getState().signals.historyChanged.active = false
 
     let cmd = this.redo()
     while (cmd !== undefined) {
@@ -266,11 +207,9 @@ History.prototype = {
       cmd = this.redo()
     }
 
-    this.editor.signals.sceneGraphChanged.active = true
-    this.editor.signals.historyChanged.active = true
+    this.editor.getState().signals.sceneGraphChanged.active = true
+    this.editor.getState().signals.historyChanged.active = true
 
     this.goToState(id)
-  },
+  }
 }
-
-export { History }

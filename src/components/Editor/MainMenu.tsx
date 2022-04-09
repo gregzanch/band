@@ -24,6 +24,7 @@ import { darkTheme, lightTheme } from "@/styles/stitches.config"
 import useEditor, { getSignals } from "@/components/Editor/State/useEditor"
 import { Source } from "@/components/Editor/Objects/Source/Source"
 import { Receiver } from "@/components/Editor/Objects/Receiver/Receiver"
+import { AddObjectCommand } from "./State/Commands"
 
 enum MenuAction {
   NEW = "new",
@@ -216,17 +217,23 @@ export const ActionMap: Record<MenuAction, ActionFunction> = {
     return Promise.resolve(true)
   },
   [MenuAction.ADD_SOURCE]: async (item?: MenuItem) => {
-    const { signals } = useEditor.getState()
-    const src = new Source("New Source", [0, 2, 0], 0x44a273).addToDefaultScene(useEditor)
-    signals.sourceAdded.dispatch(src)
-    signals.objectSelected.dispatch(src)
+    const { history } = useEditor.getState()
+    history.execute(
+      new AddObjectCommand(useEditor, new Source("New Source", [0, 2, 0], 0x44a273).addToDefaultScene(useEditor))
+    )
+    // const src = new Source("New Source", [0, 2, 0], 0x44a273).addToDefaultScene(useEditor)
+    // signals.sourceAdded.dispatch(src)
+    // signals.objectSelected.dispatch(src)
     return Promise.resolve(true)
   },
   [MenuAction.ADD_RECEIVER]: async (item?: MenuItem) => {
-    const { signals } = useEditor.getState()
-    const rec = new Receiver("New Receiver", [0, 2, 0], 0xe5732a).addToDefaultScene(useEditor)
-    signals.receiverAdded.dispatch(rec)
-    signals.objectSelected.dispatch(rec)
+    const { history } = useEditor.getState()
+    history.execute(
+      new AddObjectCommand(useEditor, new Receiver("New Receiver", [0, 2, 0], 0xe5732a).addToDefaultScene(useEditor))
+    )
+    // const rec = new Receiver("New Receiver", [0, 2, 0], 0xe5732a).addToDefaultScene(useEditor)
+    // signals.receiverAdded.dispatch(rec)
+    // signals.objectSelected.dispatch(rec)
     return Promise.resolve(true)
   },
 

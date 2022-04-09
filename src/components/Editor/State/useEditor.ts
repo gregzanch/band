@@ -17,6 +17,9 @@ import { slateDark } from "@radix-ui/colors"
 import React from "react"
 import { Signal } from "./Signal"
 
+import { History } from "./History"
+import { omit } from "@/helpers/object"
+
 export type EditorColors = {
   canvasBackground: Color
   fog: Color
@@ -67,12 +70,18 @@ type EditorState = {
 
   signals: {
     sourceAdded: Signal
+    sourceRemoved: Signal
     receiverAdded: Signal
+    receiverRemoved: Signal
     objectSelected: Signal
     pointerMissed: Signal
+    historyChanged: Signal
+    sceneGraphChanged: Signal
   }
 
   debug: boolean
+
+  history: History | null
 
   // method: () => void
 }
@@ -116,12 +125,18 @@ const initialState: EditorState = {
 
   signals: {
     sourceAdded: new Signal(),
+    sourceRemoved: new Signal(),
     receiverAdded: new Signal(),
+    receiverRemoved: new Signal(),
     objectSelected: new Signal(),
     pointerMissed: new Signal(),
+    historyChanged: new Signal(),
+    sceneGraphChanged: new Signal(),
   },
 
   debug: false,
+
+  history: null,
 }
 
 function isNumber(val: any): val is number {
@@ -223,6 +238,10 @@ export const useEditor = create<
 export type Editor = typeof useEditor
 export default useEditor
 
+useEditor.setState({
+  history: new History(useEditor),
+})
+
 export const getSignals = () => useEditor.getState().signals
 
 getSignals().sourceAdded.add((source: Source) => {
@@ -234,12 +253,25 @@ getSignals().sourceAdded.add((source: Source) => {
   }))
 })
 
+getSignals().sourceRemoved.add((source: Source) => {
+  useEditor.setState((state) => ({
+    sources: omit([source.uuid], state.sources),
+  }))
+})
+
 getSignals().receiverAdded.add((receiver: Receiver) => {
   useEditor.setState((state) => ({
     receivers: {
       ...state.receivers,
       [receiver.uuid]: receiver,
     },
+  }))
+})
+
+
+getSignals().receiverRemoved.add((receiver: Receiver) => {
+  useEditor.setState((state) => ({
+    receivers: omit([receiver.uuid], state.receivers),
   }))
 })
 
