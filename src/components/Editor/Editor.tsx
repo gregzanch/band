@@ -1,29 +1,10 @@
 import hotkeys from "hotkeys-js"
-import { useRef, useEffect, Suspense, MutableRefObject, Ref, RefAttributes, Fragment, useMemo } from "react"
-import {
-  OrbitControls,
-  PerspectiveCamera,
-  TransformControls,
-  useFBO,
-  Box,
-  TorusKnot,
-  softShadows,
-  BakeShadows,
-  ContactShadows,
-} from "@react-three/drei"
+import { useRef, useEffect, Suspense } from "react"
+import { OrbitControls, TransformControls, useFBO, Box, softShadows } from "@react-three/drei"
 import { Floor, Lights, Ground, Shadows } from "@/components/Editor/Overlays"
-import SourceComponent from "@/components/Editor/Objects/Source/SourceComponent"
-import { Source } from "@/components/Editor/Objects/Source/Source"
 
-import {
-  PerspectiveCamera as PerspectiveCameraImpl,
-  Camera as THREECamera,
-  Vector3,
-  Scene as THREEScene,
-  Color as THREEColor,
-  Color,
-} from "three"
-import { Canvas, useThree, useFrame, createPortal } from "@react-three/fiber"
+import { PerspectiveCamera as PerspectiveCameraImpl, Color } from "three"
+import { Canvas, useThree, useFrame } from "@react-three/fiber"
 
 import useEditor, { EditorColorMap } from "@/components/Editor/State/useEditor"
 
@@ -31,7 +12,6 @@ import { cameraPropertiesStore } from "@/components/Editor/Properties/CameraProp
 import { objectPropertiesStore } from "@/components/Editor/Properties/ObjectProperties"
 
 import { useHotkeys } from "react-hotkeys-hook"
-import ReceiverComponent from "./Objects/Receiver/ReceiverComponent"
 
 import MeshComponent from "./Objects/Mesh/MeshComponent"
 
@@ -43,21 +23,12 @@ import GroupComponent from "./Objects/Group/GroupComponent"
 
 // import { Bloom, , Noise, SMAA, SSAO } from "@react-three/postprocessing"
 import { EffectComposer, Outline } from "@/components/Editor/Effects"
-import {
-  OutlineEffect,
-  BlurPass,
-  Resolution,
-  KernelSize,
-  BlendFunction,
-  EffectComposer as EffectComposerImpl,
-} from "postprocessing"
+import { OutlineEffect, BlendFunction, EffectComposer as EffectComposerImpl } from "postprocessing"
 
-import BoxComponent from "./Objects/Box"
 import { GizmoHelper } from "@/components/Editor/Gizmos/GizmoHelper"
 import { GizmoViewport } from "@/components/Editor/Gizmos/GizmoViewport"
 import { darkTheme, theme } from "@/styles/stitches.config"
 import useTheme from "@/state/theme"
-import { LayerMap } from "@/components/Editor/Objects/types"
 import { Mesh } from "./Objects/Mesh/Mesh"
 import { Group } from "./Objects/Group/Group"
 import { useControls } from "./Leva"
@@ -103,8 +74,6 @@ function Effects() {
           pulseSpeed={0.0}
           visibleEdgeColor={0xffcc00}
           hiddenEdgeColor={0xffcc00}
-          // width={Resolution.AUTO_SIZE}
-          // height={Resolution.AUTO_SIZE}
           selection={
             selectedObject
               ? selectedObject.current.type === ObjectType.GROUP
@@ -116,15 +85,6 @@ function Effects() {
           //@ts-ignore
           ref={outlineRef}
         />
-        {/* <Noise opacity={0.1} /> */}
-        {/* <Bloom
-          intensity={1.0}
-          // width={Resolution.AUTO_SIZE}
-          // height={Resolution.AUTO_SIZE}
-          kernelSize={KernelSize.LARGE}
-          luminanceThreshold={0.9}
-          luminanceSmoothing={0.025}
-        /> */}
       </EffectComposer>
     </Suspense>
   )
@@ -254,7 +214,6 @@ const Controls = () => {
           receiveShadow={false}
           mode={transformType}
           renderOrder={1}
-          // layers={LayerMap.TRANSFORM_CONTROLS}
           name='transform-controls'
           showX
           showY
@@ -263,7 +222,6 @@ const Controls = () => {
         />
       )}
       <OrbitControls ref={control} enableDamping={false} makeDefault />
-      {/* <OrientationGizmo /> */}
     </>
   )
 }
@@ -358,8 +316,6 @@ function Editor(props) {
   const sources = useEditor((state) => state.sources)
   const receivers = useEditor((state) => state.receivers)
   const meshes = useEditor((state) => state.meshes)
-  const selectObject = useEditor((state) => state.selectedObject)
-  const controls = useEditor((state) => state.orbitControls)
 
   return (
     <Canvas

@@ -1,6 +1,7 @@
 //@ts-nocheck
 import { Command } from "./Command.js"
 import * as Commands from "./Commands/index.js"
+import { Editor } from "./useEditor.js"
 
 export class History {
   undos: Command[]
@@ -8,13 +9,13 @@ export class History {
   lastCmdTime: Date
   idCounter: number
   historyDisabled: boolean
-
-  constructor() {
+  editor: Editor
+  constructor(editor: Editor) {
     this.undos = []
     this.redos = []
     this.lastCmdTime = new Date()
     this.idCounter = 0
-
+    this.editor = editor
     this.historyDisabled = false
   }
   execute(cmd: Command, optionalName?: string) {
@@ -48,7 +49,7 @@ export class History {
     // clearing all the redo-commands
 
     this.redos = []
-    // this.editor.signals.historyChanged.dispatch(cmd)
+    this.editor.getState().signals.historyChanged.dispatch(cmd)
   }
 }
 
