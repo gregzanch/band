@@ -199,9 +199,11 @@ export const ActionMap: Record<MenuAction, ActionFunction> = {
     return Promise.resolve(true)
   },
   [MenuAction.UNDO]: async (item?: MenuItem) => {
+    useEditor.getState().history.undo()
     return Promise.resolve(true)
   },
   [MenuAction.REDO]: async (item?: MenuItem) => {
+    useEditor.getState().history.redo()
     return Promise.resolve(true)
   },
   [MenuAction.DUPLICATE]: async (item?: MenuItem) => {
@@ -221,9 +223,6 @@ export const ActionMap: Record<MenuAction, ActionFunction> = {
     history.execute(
       new AddObjectCommand(useEditor, new Source("New Source", [0, 2, 0], 0x44a273).addToDefaultScene(useEditor))
     )
-    // const src = new Source("New Source", [0, 2, 0], 0x44a273).addToDefaultScene(useEditor)
-    // signals.sourceAdded.dispatch(src)
-    // signals.objectSelected.dispatch(src)
     return Promise.resolve(true)
   },
   [MenuAction.ADD_RECEIVER]: async (item?: MenuItem) => {
@@ -231,9 +230,7 @@ export const ActionMap: Record<MenuAction, ActionFunction> = {
     history.execute(
       new AddObjectCommand(useEditor, new Receiver("New Receiver", [0, 2, 0], 0xe5732a).addToDefaultScene(useEditor))
     )
-    // const rec = new Receiver("New Receiver", [0, 2, 0], 0xe5732a).addToDefaultScene(useEditor)
-    // signals.receiverAdded.dispatch(rec)
-    // signals.objectSelected.dispatch(rec)
+
     return Promise.resolve(true)
   },
 
