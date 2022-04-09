@@ -5,7 +5,7 @@ import {
   ToolbarSeparator,
   ToolbarLink,
   ToolbarButton,
-} from "@/components/Shared/Toolbar"
+} from "../Shared/Toolbar"
 
 import {
   MoveIcon,
