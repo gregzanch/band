@@ -1,4 +1,5 @@
 import { ColorRepresentation, Group as ThreeGroup, MeshPhongMaterial, SphereGeometry, Color } from "three"
+import { Editor } from "../../State/useEditor"
 import { ObjectType } from "../types"
 
 export class Group extends ThreeGroup {
@@ -14,7 +15,16 @@ export class Group extends ThreeGroup {
 
     this.matrixAutoUpdate = true
 
+    this.castShadow = true
+    this.receiveShadow = true
+
     this.update()
+  }
+
+  addToDefaultScene(editor: Editor) {
+    const { scene } = editor.getState()
+    scene && scene.add(this)
+    return this
   }
 
   update() {

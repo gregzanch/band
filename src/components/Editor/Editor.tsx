@@ -335,7 +335,6 @@ function Editor(props) {
       gl={{
         antialias: true,
         stencil: true,
-        // alpha: false,
       }}
       style={{ backgroundColor: `#${colors.canvasBackground.getHexString()}` }}
       onPointerMissed={(e) => {
@@ -386,7 +385,19 @@ function Editor(props) {
       ))}
       {Object.entries(meshes).map(([id, mesh]) =>
         mesh.type === ObjectType.GROUP ? (
-          <GroupComponent key={id} item={mesh as Group} />
+          // <GroupComponent key={id} item={mesh as Group} />
+          <primitive
+            key={id}
+            object={mesh}
+            onDoubleClick={(e) => {
+              useEditor.getState().signals.objectSelected.dispatch(e.object)
+              e.stopPropagation()
+            }}
+            onClick={(e) => {
+              useEditor.getState().signals.objectSelected.dispatch(mesh)
+              e.stopPropagation()
+            }}
+          />
         ) : (
           <MeshComponent key={id} item={mesh as Mesh} />
         )

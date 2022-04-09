@@ -1,5 +1,6 @@
 import { ensureArray } from "@/helpers/array"
 import { Mesh as ThreeMesh, MeshPhongMaterial, DoubleSide, BufferGeometry, Material } from "three"
+import { Editor } from "../../State/useEditor"
 import { ObjectType } from "../types"
 
 export class Mesh extends ThreeMesh {
@@ -17,7 +18,16 @@ export class Mesh extends ThreeMesh {
 
     this.matrixAutoUpdate = true
 
+    this.castShadow = true
+    this.receiveShadow = true
+
     // this.update()
+  }
+
+  addToDefaultScene(editor: Editor) {
+    const { scene } = editor.getState()
+    scene && scene.add(this)
+    return this
   }
 
   // dispose() {

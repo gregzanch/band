@@ -43,6 +43,7 @@ report.*.json
 
 # blender
 *.blend
+*.blend1
 
 .env
 .env.local

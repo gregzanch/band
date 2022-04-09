@@ -84,10 +84,24 @@ type EditorReducers = {
 }
 
 const initialState: EditorState = {
+  // prettier-ignore
   cameraMatrix: [
-    0.8242150329508605, 0, -0.5662769458999827, 0, -0.2699522486780919, 0.8790583556703647, -0.39291499177271955, 0,
-    0.49779048091687483, 0.47671417781110165, 0.7245331115845789, 0, 2.4889524045843774, 2.383570889055511,
-    3.6226655579228995, 1,
+    +0.82421503295086050,
+    +0.00000000000000000,
+    -0.56627694589998270,
+    +0.00000000000000000,
+    -0.26995224867809190,
+    +0.87905835567036470,
+    -0.39291499177271955,
+    +0.00000000000000000,
+    +0.49779048091687483,
+    +0.47671417781110165,
+    +0.72453311158457890,
+    +0.00000000000000000,
+    +2.48895240458437740,
+    +2.38357088905551100,
+    +3.62266555792289950,
+    +1.00000000000000000,
   ],
   orbitControls: null,
   transformControls: null,
@@ -132,7 +146,7 @@ export const useEditor = create<
 >(
   subscribeWithSelector(
     persist(
-      (set, get) => ({
+      (set, get, api) => ({
         ...initialState,
         set,
         uploadFile: async () => {
@@ -152,12 +166,11 @@ export const useEditor = create<
                     newMesh.scale.copy(m.scale)
                     newMesh.rotation.copy(m.rotation)
                     newMesh.applyMatrix4(m.matrix)
-                    // newMesh.matrix.copy(m.matrix)
                     newMesh.updateMatrix()
                     return newMesh
                   }) as Mesh[]
 
-                const group = new Group(stripExtension(file.name))
+                const group = new Group(stripExtension(file.name)).addToDefaultScene(api as Editor)
 
                 for (const mesh of meshes) {
                   group.add(mesh)
