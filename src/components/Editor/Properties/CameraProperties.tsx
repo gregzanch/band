@@ -1,5 +1,5 @@
-import { LevaPanel } from "@/components/Leva"
-import { Store } from "../../Leva/store"
+import { LevaPanel } from "@/components/Editor/Leva"
+import { Store } from "../Leva/store"
 import { useEffect, useRef } from "react"
 import { Box } from "@/components/Shared/Box"
 

@@ -60,7 +60,7 @@ import useTheme from "@/state/theme"
 import { LayerMap } from "@/components/Editor/Objects/types"
 import { Mesh } from "./Objects/Mesh/Mesh"
 import { Group } from "./Objects/Group/Group"
-import { useControls } from "../Leva"
+import { useControls } from "./Leva"
 
 function FrameBufferThing() {
   const target = useFBO({ multisample: true, samples: 8, stencilBuffer: false })
