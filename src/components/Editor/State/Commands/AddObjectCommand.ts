@@ -18,26 +18,20 @@ class AddObjectCommand extends Command {
 
   execute() {
     // this.editor.addObject(this.object)
-    switch (this.object.type) {
-      case ObjectType.SOURCE:
-        this.editor.getState().signals.sourceAdded.dispatch(this.object)
-        break
-      case ObjectType.RECEIVER:
-        this.editor.getState().signals.receiverAdded.dispatch(this.object)
-        break
-    }
+    this.editor.getState().signals.objectAdded.dispatch(this.object)
     // this.editor.select(this.object)
   }
 
   undo() {
-    switch (this.object.type) {
-      case ObjectType.SOURCE:
-        this.editor.getState().signals.sourceRemoved.dispatch(this.object)
-        break
-      case ObjectType.RECEIVER:
-        this.editor.getState().signals.receiverRemoved.dispatch(this.object)
-        break
-    }
+    this.editor.getState().signals.objectRemoved.dispatch(this.object)
+    // switch (this.object.type) {
+    //   case ObjectType.SOURCE:
+    //     this.editor.getState().signals.objectRemoved.dispatch(this.object)
+    //     break
+    //   case ObjectType.RECEIVER:
+    //     this.editor.getState().signals.receiverRemoved.dispatch(this.object)
+    //     break
+    // }
     // this.editor.removeObject(this.object)
     // this.editor.deselect()
   }

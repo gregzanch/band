@@ -190,21 +190,13 @@ function SceneGraphItem({ item, selected, level = 1 }: SceneGraphItemProps) {
 }
 
 export default function SceneGraph() {
-  const sources = useEditor((state) => state.sources)
-  const receivers = useEditor((state) => state.receivers)
-  const meshes = useEditor((state) => state.meshes)
+  const objects = useEditor((state) => state.objects)
   const selectedObject = useEditor((state) => state.selectedObject)
 
   return (
     <Box fillHeight>
-      {Object.entries(sources).map(([id, source]) => (
-        <SceneGraphItem key={id} item={source} selected={selectedObject?.current?.uuid === id} />
-      ))}
-      {Object.entries(receivers).map(([id, receiver]) => (
-        <SceneGraphItem key={id} item={receiver} selected={selectedObject?.current?.uuid === id} />
-      ))}
-      {Object.entries(meshes).map(([id, mesh]) => (
-        <SceneGraphItem key={id} item={mesh} selected={selectedObject?.current?.uuid === id} />
+      {Object.entries(objects).map(([id, object]) => (
+        <SceneGraphItem key={id} item={object} selected={selectedObject?.current?.uuid === id} />
       ))}
     </Box>
   )

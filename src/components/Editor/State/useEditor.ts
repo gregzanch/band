@@ -19,6 +19,7 @@ import { Signal } from "./Signal"
 
 import { History } from "./History"
 import { omit } from "@/helpers/object"
+import { BandObject } from "../Objects"
 
 export type EditorColors = {
   canvasBackground: Color
@@ -61,18 +62,20 @@ type EditorState = {
   transformControls: any
   selectedObject: any
   scene: Scene | null
+
   sources: Record<string, Source>
   receivers: Record<string, Receiver>
   meshes: Record<string, Mesh | Group>
+
+  objects: Record<string, BandObject>
+
   colors: EditorColors
   orientationHelperMarginX: number
   transformType: "translate" | "rotate" | "scale"
 
   signals: {
-    sourceAdded: Signal
-    sourceRemoved: Signal
-    receiverAdded: Signal
-    receiverRemoved: Signal
+    objectAdded: Signal
+    objectRemoved: Signal
     objectSelected: Signal
     pointerMissed: Signal
     historyChanged: Signal
@@ -119,15 +122,14 @@ const initialState: EditorState = {
   sources: {},
   receivers: {},
   meshes: {},
+  objects: {},
   colors: EditorColorMap.get(useTheme.getState().theme || darkTheme),
   orientationHelperMarginX: 380,
   transformType: "translate",
 
   signals: {
-    sourceAdded: new Signal(),
-    sourceRemoved: new Signal(),
-    receiverAdded: new Signal(),
-    receiverRemoved: new Signal(),
+    objectAdded: new Signal(),
+    objectRemoved: new Signal(),
     objectSelected: new Signal(),
     pointerMissed: new Signal(),
     historyChanged: new Signal(),
@@ -192,9 +194,8 @@ export const useEditor = create<
                 }
 
                 set({
-                  meshes: {
-                    ...get().meshes,
-                    // ...meshes,
+                  objects: {
+                    ...get().objects,
                     [group.uuid]: group as Group,
                   },
                 })
@@ -244,34 +245,18 @@ useEditor.setState({
 
 export const getSignals = () => useEditor.getState().signals
 
-getSignals().sourceAdded.add((source: Source) => {
+getSignals().objectAdded.add((object: BandObject) => {
   useEditor.setState((state) => ({
-    sources: {
-      ...state.sources,
-      [source.uuid]: source,
+    objects: {
+      ...state.objects,
+      [object.uuid]: object,
     },
   }))
 })
 
-getSignals().sourceRemoved.add((source: Source) => {
+getSignals().objectRemoved.add((object: BandObject) => {
   useEditor.setState((state) => ({
-    sources: omit([source.uuid], state.sources),
-  }))
-})
-
-getSignals().receiverAdded.add((receiver: Receiver) => {
-  useEditor.setState((state) => ({
-    receivers: {
-      ...state.receivers,
-      [receiver.uuid]: receiver,
-    },
-  }))
-})
-
-
-getSignals().receiverRemoved.add((receiver: Receiver) => {
-  useEditor.setState((state) => ({
-    receivers: omit([receiver.uuid], state.receivers),
+    objects: omit([object.uuid], state.objects),
   }))
 })
 

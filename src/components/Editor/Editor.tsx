@@ -1,10 +1,10 @@
 import hotkeys from "hotkeys-js"
 import { useRef, useEffect, Suspense } from "react"
-import { OrbitControls, TransformControls, useFBO, Box, softShadows, Stats } from "@react-three/drei"
+import { OrbitControls, TransformControls, softShadows, Stats } from "@react-three/drei"
 import { Floor, Lights, Ground, Shadows } from "@/components/Editor/Overlays"
 
 import { PerspectiveCamera as PerspectiveCameraImpl, Color } from "three"
-import { Canvas, useThree, useFrame } from "@react-three/fiber"
+import { Canvas, useThree } from "@react-three/fiber"
 
 import useEditor, { EditorColorMap } from "@/components/Editor/State/useEditor"
 
@@ -13,15 +13,9 @@ import { objectPropertiesStore } from "@/components/Editor/Properties/ObjectProp
 
 import { useHotkeys } from "react-hotkeys-hook"
 
-import MeshComponent from "./Objects/Mesh/MeshComponent"
-
 import { MenuHotkeys, ActionMap } from "@/components/Editor/MainMenu"
 import { ObjectType } from "@/components/Editor/Objects/types"
-import GroupComponent from "./Objects/Group/GroupComponent"
 
-// import { Outline, OutlineEffectOptions, OutlineProvider } from "@/components/canvas/Effects/useOutline"
-
-// import { Bloom, , Noise, SMAA, SSAO } from "@react-three/postprocessing"
 import { EffectComposer, Outline } from "@/components/Editor/Effects"
 import { OutlineEffect, BlendFunction, EffectComposer as EffectComposerImpl } from "postprocessing"
 
@@ -29,35 +23,7 @@ import { GizmoHelper } from "@/components/Editor/Gizmos/GizmoHelper"
 import { GizmoViewport } from "@/components/Editor/Gizmos/GizmoViewport"
 import { darkTheme, theme } from "@/styles/stitches.config"
 import useTheme from "@/state/theme"
-import { Mesh } from "./Objects/Mesh/Mesh"
-import { Group } from "./Objects/Group/Group"
 import { useControls } from "./Leva"
-
-function FrameBufferThing() {
-  const target = useFBO({ multisample: true, samples: 8, stencilBuffer: false })
-  const boxRef = useRef()
-  const { scene, camera } = useThree()
-  useFrame((state) => {
-    if (boxRef.current) {
-      //@ts-ignore
-      boxRef.current.visible = false
-    }
-    state.gl.setRenderTarget(target)
-    state.gl.clear()
-    // state.gl.clearTarget(target, 0x000000, false, false)
-    state.gl.render(scene, camera)
-    state.gl.setRenderTarget(null)
-    if (boxRef.current) {
-      //@ts-ignore
-      boxRef.current.visible = true
-    }
-  })
-  return (
-    <Box args={[3, 3, 3]} ref={boxRef}>
-      <meshStandardMaterial attach='material' map={target.texture} />
-    </Box>
-  )
-}
 
 function Effects() {
   const outlineRef = useRef<OutlineEffect>()
@@ -114,7 +80,10 @@ const Controls = () => {
   useControls(
     {
       fov: {
+        label: "fov",
+        hint: "Field of View",
         value: 50,
+
         onChange: (value) => {
           // @ts-ignore
           control?.current.object.fov = value
@@ -313,15 +282,15 @@ function Editor(props) {
     }, 500)
   }, [])
 
-  const sources = useEditor((state) => state.sources)
-  const receivers = useEditor((state) => state.receivers)
-  const meshes = useEditor((state) => state.meshes)
+  const objects = useEditor((state) => state.objects)
   const debug = useEditor((state) => state.debug)
 
   const { fogDistance } = useControls(
     {
       fogDistance: {
+        label: "fog",
         value: 75,
+        step: 1,
       },
     },
     { store: cameraPropertiesStore }
@@ -362,46 +331,24 @@ function Editor(props) {
         secondary={colors.floorSecondary.getHex()}
       />
       <Ground color={colors.ground.getHex()} size={100} segments={100} />
-      {Object.entries(sources).map(([id, source]) => (
+
+      {Object.entries(objects).map(([id, object]) => (
         <primitive
           key={id}
-          object={source}
+          object={object}
           onClick={(e) => {
-            useEditor.getState().signals.objectSelected.dispatch(source)
+            useEditor.getState().signals.objectSelected.dispatch(object)
             e.stopPropagation()
+          }}
+          onDoubleClick={(e) => {
+            if (object.type === ObjectType.GROUP) {
+              useEditor.getState().signals.objectSelected.dispatch(e.object)
+              e.stopPropagation()
+            }
           }}
         />
       ))}
 
-      {Object.entries(receivers).map(([id, receiver]) => (
-        <primitive
-          key={id}
-          object={receiver}
-          onClick={(e) => {
-            useEditor.getState().signals.objectSelected.dispatch(receiver)
-            e.stopPropagation()
-          }}
-        />
-      ))}
-      {Object.entries(meshes).map(([id, mesh]) =>
-        mesh.type === ObjectType.GROUP ? (
-          // <GroupComponent key={id} item={mesh as Group} />
-          <primitive
-            key={id}
-            object={mesh}
-            onDoubleClick={(e) => {
-              useEditor.getState().signals.objectSelected.dispatch(e.object)
-              e.stopPropagation()
-            }}
-            onClick={(e) => {
-              useEditor.getState().signals.objectSelected.dispatch(mesh)
-              e.stopPropagation()
-            }}
-          />
-        ) : (
-          <MeshComponent key={id} item={mesh as Mesh} />
-        )
-      )}
       <Shadows />
 
       <Effects />
