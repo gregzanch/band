@@ -1,9 +1,18 @@
 import { Box } from "@/components/shared/Box"
 import CameraProperties from "@/components/Editor/Properties/CameraProperties"
 import ObjectProperties from "@/components/Editor/Properties/ObjectProperties"
+import HistoryPanel from "@/components/Editor/HistoryPanel"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/shared/Accordion"
 import { ResizeBar } from "./ResizeBar"
 import { SidebarPanel } from "./SidebarPanel"
+import {
+  ScrollArea,
+  ScrollAreaCorner,
+  ScrollAreaScrollbar,
+  ScrollAreaThumb,
+  ScrollAreaViewport,
+} from "@/components/shared/ScrollArea"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shared/Tabs"
 
 export function RightSidebar() {
   return (
@@ -22,29 +31,25 @@ export function RightSidebar() {
         }}
       >
         <ResizeBar side='left' />
-        <Box
-          css={{
-            mb: "$2",
-          }}
-        >
-          <Accordion type='single' collapsible={false} defaultValue='object_properties'>
-            <AccordionItem value='object_properties'>
-              <AccordionTrigger hideChevron>Object Properties</AccordionTrigger>
-              <AccordionContent>
-                <ObjectProperties />
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </Box>
 
-        <Accordion type='single' defaultValue='camera_properties' collapsible>
-          <AccordionItem value='camera_properties'>
-            <AccordionTrigger>Camera Properties</AccordionTrigger>
-            <AccordionContent>
+        <Box css={{ mb: "$2" }}>
+          <Tabs defaultValue='object'>
+            <TabsList aria-label='Control panel'>
+              <TabsTrigger value='object'>Object</TabsTrigger>
+              <TabsTrigger value='scene'>Scene</TabsTrigger>
+              <TabsTrigger value='project'>Project</TabsTrigger>
+            </TabsList>
+            <TabsContent value='object'>
+              <ObjectProperties />
+            </TabsContent>
+            <TabsContent value='scene'>
               <CameraProperties />
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+            </TabsContent>
+            <TabsContent value='project'>
+              <HistoryPanel />
+            </TabsContent>
+          </Tabs>
+        </Box>
       </Box>
     </SidebarPanel>
   )

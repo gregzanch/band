@@ -1,7 +1,7 @@
 import { css, styled } from "@/styles/stitches.config"
 
 export const panelStyles = css({
-  backgroundColor: "$panel",
+  backgroundColor: "$slate3",
   borderRadius: "$3",
   boxShadow: "$colors$shadowLight 0px 10px 38px -10px, $colors$shadowDark 0px 10px 20px -15px",
   variants: {

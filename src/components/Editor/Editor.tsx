@@ -3,7 +3,7 @@ import { useRef, useEffect, Suspense } from "react"
 import { OrbitControls, TransformControls, softShadows, Stats } from "@react-three/drei"
 import { Floor, Lights, Ground, Shadows } from "@/components/Editor/Overlays"
 
-import { PerspectiveCamera as PerspectiveCameraImpl, Color } from "three"
+import { PerspectiveCamera as PerspectiveCameraImpl, Color, Vector3, Euler } from "three"
 import { Canvas, useThree } from "@react-three/fiber"
 
 import useEditor, { EditorColorMap } from "@/components/Editor/State/useEditor"
@@ -24,6 +24,9 @@ import { GizmoViewport } from "@/components/Editor/Gizmos/GizmoViewport"
 import { darkTheme, theme } from "@/styles/stitches.config"
 import useTheme from "@/state/theme"
 import { useControls } from "./Leva"
+import { SetPositionCommand } from "./State/Commands/SetPositionCommand"
+import { SetRotationCommand } from "./State/Commands/SetRotationCommand"
+import { SetScaleCommand } from "./State/Commands/SetScaleCommand"
 
 function Effects() {
   const outlineRef = useRef<OutlineEffect>()
@@ -100,9 +103,7 @@ const Controls = () => {
       transformControls.current.visible = false
       useEditor.setState({ transformControls: transformControls.current })
       const { current: controls } = transformControls
-      const callback = (event) => {
-        control.current.enabled = !event.value
-      }
+
       const changeCallback = (event) => {
         if (event.target.mode === "translate" && objectPropertiesStore.getData()["position"]) {
           const { x, y, z } = objectPropertiesStore.get("position")
@@ -147,9 +148,58 @@ const Controls = () => {
           }
         }
       }
+
+      const callback = (event) => {
+        control.current.enabled = !event.value
+      }
+
+      let objectPositionOnDown: Vector3
+      let objectRotationOnDown: Euler
+      let objectScaleOnDown: Vector3
+
+      const handleMouseDown = () => {
+        const object = controls.object
+        objectPositionOnDown = object.position.clone()
+        objectRotationOnDown = object.rotation.clone()
+        objectScaleOnDown = object.scale.clone()
+      }
+
+      const handleMouseUp = () => {
+        const object = controls.object
+        if (object !== undefined) {
+          switch (controls.getMode()) {
+            case "translate":
+              if (!objectPositionOnDown.equals(object.position)) {
+                useEditor
+                  .getState()
+                  .history.execute(new SetPositionCommand(useEditor, object, object.position, objectPositionOnDown))
+              }
+              break
+            case "rotate":
+              if (!objectRotationOnDown.equals(object.rotation)) {
+                useEditor
+                  .getState()
+                  .history.execute(new SetRotationCommand(useEditor, object, object.rotation, objectRotationOnDown))
+              }
+              break
+            case "scale":
+              if (!objectScaleOnDown.equals(object.scale)) {
+                useEditor
+                  .getState()
+                  .history.execute(new SetScaleCommand(useEditor, object, object.scale, objectScaleOnDown))
+              }
+              break
+          }
+        }
+      }
+
+      controls.addEventListener("mouseDown", handleMouseDown)
+      controls.addEventListener("mouseUp", handleMouseUp)
       controls.addEventListener("objectChange", changeCallback)
       controls.addEventListener("dragging-changed", callback)
       return () => {
+        controls.removeEventListener("mouseDown", handleMouseDown)
+        controls.removeEventListener("mouseUp", handleMouseUp)
         controls.removeEventListener("objectChange", changeCallback)
         controls.removeEventListener("dragging-changed", callback)
       }
@@ -216,8 +266,8 @@ function OrientationGizmo() {
   )
 }
 
-// Soft shadows are expensive, uncomment and refresh when it's too slow
-softShadows()
+// TODO: Soft shadows are expensive, uncomment and refresh when it's too slow
+// softShadows()
 
 function Editor(props) {
   const colors = useEditor((state) => state.colors)

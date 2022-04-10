@@ -43,11 +43,7 @@ export function LeftSidebar() {
           }}
         />
 
-        <Box
-          css={{
-            mb: "$2",
-          }}
-        >
+        <Box css={{ mb: "$2" }}>
           <Accordion type='single' collapsible={false} defaultValue='scene_graph'>
             <AccordionItem
               value='scene_graph'

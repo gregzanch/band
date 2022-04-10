@@ -76,6 +76,7 @@ type EditorState = {
   signals: {
     objectAdded: Signal
     objectRemoved: Signal
+    objectChanged: Signal
     objectSelected: Signal
     pointerMissed: Signal
     historyChanged: Signal
@@ -130,6 +131,7 @@ const initialState: EditorState = {
   signals: {
     objectAdded: new Signal(),
     objectRemoved: new Signal(),
+    objectChanged: new Signal(),
     objectSelected: new Signal(),
     pointerMissed: new Signal(),
     historyChanged: new Signal(),

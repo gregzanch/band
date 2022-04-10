@@ -360,16 +360,17 @@ function EmptySelection() {
   return (
     <Box
       css={{
-        backgroundColor: "var(--leva-colors-elevation2)",
+        backgroundColor: "$slate2",
         py: "0.5rem",
       }}
     >
       <Text
+        size='1'
         css={{
           textAlign: "center",
-          fontSize: "11px",
-          opacity: "0.25",
-          color: "var(--leva-colors-highlight2)",
+          // opacity: "0.25",
+          fontFamily: "$mono",
+          color: "$highlight1",
         }}
       >
         Nothing Selected
