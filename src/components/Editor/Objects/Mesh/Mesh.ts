@@ -14,57 +14,81 @@ import {
   EdgesGeometry,
   LineBasicMaterial,
   LineSegments,
-} from "three"
-import { Editor } from "../../State/useEditor"
-import { ObjectType } from "../types"
+  MeshStandardMaterial,
+} from "three";
+import useEditor, { Editor } from "../../State/useEditor";
+import { ObjectType } from "../types";
+
+const defaultMaterial = new MeshPhongMaterial({
+  color: 0x999b9d,
+  specular: 0xffffff,
+  shininess: 0.2,
+  reflectivity: 0.5,
+  transparent: true,
+  opacity: 0.25,
+  side: DoubleSide,
+  wireframe: false,
+});
 
 export class Mesh extends ThreeMesh {
-  type: ObjectType.MESH
+  type: ObjectType.MESH;
+  material: Material;
+  originalMaterial: Material;
+  private _wireframe: boolean;
+  edges: LineSegments<EdgesGeometry, LineBasicMaterial>;
+  constructor(name: string, geometry: BufferGeometry, material?: Material) {
+    super(geometry, material || defaultMaterial.clone());
+    this.originalMaterial = this.material;
 
-  constructor(
-    name: string,
-    geometry: BufferGeometry,
-    material = new MeshPhongMaterial({
-      color: 0x999b9d,
-      specular: 0xffffff,
-      shininess: 0.2,
-      reflectivity: 0.5,
-      transparent: true,
-      opacity: 0.25,
-      side: DoubleSide,
-      wireframe: false,
-    })
-  ) {
-    super(geometry, material)
+    this.name = name;
 
-    this.name = name
+    this.type = ObjectType.MESH;
 
-    this.type = ObjectType.MESH
+    this.matrixAutoUpdate = true;
 
-    this.matrixAutoUpdate = true
+    this.castShadow = true;
+    this.receiveShadow = true;
 
-    this.castShadow = true
-    this.receiveShadow = true
+    this.edges = new LineSegments(new EdgesGeometry(this.geometry), new LineBasicMaterial({ color: 0x7a8082 }));
+    this.edges.material.polygonOffset = true;
+    this.edges.material.polygonOffsetFactor = 0.1;
+    this.edges.castShadow = false;
+    this.edges.receiveShadow = false;
+    this.edges.raycast = () => null;
+    this.add(this.edges);
 
-    const lineSegments = new LineSegments(new EdgesGeometry(this.geometry), new LineBasicMaterial({ color: 0x000000 }))
-    lineSegments.material.polygonOffset = true
-    lineSegments.material.polygonOffsetFactor = -0.1
-    lineSegments.castShadow = false
-    lineSegments.receiveShadow = false
-    lineSegments.raycast = () => null
-    this.add(lineSegments)
+    this.wireframe = false;
     // this.update()
   }
 
   addToDefaultScene(editor: Editor) {
-    const { scene } = editor.getState()
-    scene && scene.add(this)
-    return this
+    const { scene } = editor.getState();
+    scene && scene.add(this);
+    return this;
+  }
+
+  get wireframe() {
+    return this._wireframe;
+  }
+
+  set wireframe(visible: boolean) {
+    this._wireframe = visible;
+    if (visible) {
+      const wireframeMaterial = useEditor.getState().editorMaterials.wireframe;
+      this.material = wireframeMaterial;
+      this.edges.material.color.set(wireframeMaterial.color);
+    } else {
+      this.material = this.originalMaterial;
+      this.children[0].visible = true;
+      this.edges.material.color.set(0x7a8082);
+    }
   }
 
   // dispose() {
   //   this.geometry.dispose()
   //   ensureArray(this.material).forEach((material) => material.dispose())
+  //   this.edges.geometry.dispose()
+  //   this.edges.material.dispose();
   // }
 
   // update() {

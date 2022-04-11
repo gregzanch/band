@@ -111,13 +111,14 @@ export const StyledInputWrapper = styled('div', {
   },
 })
 
-export const StyledLabel = styled('label', {
-  fontWeight: '$label',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-  '& > svg': {
-    display: 'block', // fixes svg vertical misalignment
+export const StyledLabel = styled("label", {
+  fontWeight: "$label",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  userSelect: "none",
+  whiteSpace: "nowrap",
+  "& > svg": {
+    display: "block", // fixes svg vertical misalignment
   },
 })
 

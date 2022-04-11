@@ -7,32 +7,32 @@ import { Group } from "../Objects/Group/Group"
 import { Mesh } from "../Objects/Mesh/Mesh"
 import { openFilePicker } from "@/helpers/dom/openFilePicker"
 import { GLTFLoader } from "@/components/Editor/Loaders/GLTFLoader"
-import { BufferAttribute, Color, Group as ThreeGroup, Mesh as ThreeMesh, Box3, Scene } from "three"
-import { nanoid } from "nanoid"
-import { stripExtension } from "@/helpers/string"
-import { darkTheme, lightTheme } from "@/styles/stitches.config"
-import { useTheme } from "@/state/theme"
+import { Color, Box3, Scene, Material, MeshStandardMaterial, DoubleSide } from "three";
+import { stripExtension } from "@/helpers/string";
+import { darkTheme, lightTheme } from "@/styles/stitches.config";
+import { useTheme } from "@/state/theme";
 
-import { slateDark } from "@radix-ui/colors"
-import React from "react"
-import { Signal } from "./Signal"
+import { slateDark } from "@radix-ui/colors";
+import React from "react";
+import { Signal } from "./Signal";
 
-import { History } from "./History"
-import { omit } from "@/helpers/object"
-import { BandObject } from "../Objects"
+import { History } from "./History";
+import { omit } from "@/helpers/object";
+import { BandObject } from "../Objects";
 
 export type EditorColors = {
-  canvasBackground: Color
-  fog: Color
-  ground: Color
-  floorPrimary: Color
-  floorSecondary: Color
-  ambientLight: Color
-  spotLight: Color
-  directionalLight: Color
-}
+  canvasBackground: Color;
+  fog: Color;
+  ground: Color;
+  floorPrimary: Color;
+  floorSecondary: Color;
+  ambientLight: Color;
+  spotLight: Color;
+  directionalLight: Color;
+  wireframe: Color;
+};
 
-export const EditorColorMap = new Map<typeof darkTheme | typeof lightTheme, EditorColors>()
+export const EditorColorMap = new Map<typeof darkTheme | typeof lightTheme, EditorColors>();
 
 EditorColorMap.set(lightTheme, {
   canvasBackground: new Color().setStyle(lightTheme.colors.elevation0.value),
@@ -43,7 +43,8 @@ EditorColorMap.set(lightTheme, {
   ambientLight: new Color().setStyle(lightTheme.colors.elevation0.value),
   spotLight: new Color().setStyle(lightTheme.colors.elevation0.value),
   directionalLight: new Color().setStyle(lightTheme.colors.elevation0.value),
-})
+  wireframe: new Color(0xf9bd15),
+});
 
 EditorColorMap.set(darkTheme, {
   canvasBackground: new Color(0x0d0d0d),
@@ -54,52 +55,59 @@ EditorColorMap.set(darkTheme, {
   ambientLight: new Color().setStyle(lightTheme.colors.elevation0.value),
   spotLight: new Color().setStyle(lightTheme.colors.elevation0.value),
   directionalLight: new Color().setStyle(lightTheme.colors.elevation0.value),
-})
+  wireframe: new Color(0xf9bd15),
+});
 
 type EditorState = {
-  cameraMatrix: number[]
-  orbitControls: any
-  transformControls: any
-  selectedObject: any
-  selection: BandObject[]
-  scene: Scene | null
+  resetSymbol: Symbol;
+  cameraMatrix: number[];
+  orbitControls: any;
+  transformControls: any;
 
-  sources: Record<string, Source>
-  receivers: Record<string, Receiver>
-  meshes: Record<string, Mesh | Group>
+  selection: BandObject[];
+  scene: Scene | null;
 
-  objects: Record<string, BandObject>
+  objects: Record<string, BandObject>;
+  materials: Record<string, Material>;
+  editorMaterials: {
+    wireframe: MeshStandardMaterial;
+  };
+  // acousticMaterials: Record<string, AcousticMaterial>
 
-  colors: EditorColors
-  orientationHelperMarginX: number
-  transformType: "translate" | "rotate" | "scale"
+  colors: EditorColors;
+  orientationHelperMarginX: number;
+  transformType: "translate" | "rotate" | "scale";
 
   signals: {
-    objectAdded: Signal
-    objectRemoved: Signal
-    objectChanged: Signal
-    objectSelected: Signal
-    pointerMissed: Signal
-    historyChanged: Signal
-    sceneGraphChanged: Signal
-  }
+    objectAdded: Signal;
+    objectRemoved: Signal;
+    objectChanged: Signal;
+    objectSelected: Signal;
+    pointerMissed: Signal;
+    historyChanged: Signal;
+    sceneGraphChanged: Signal;
+  };
 
-  debug: boolean
+  debug: boolean;
 
-  history: History | null
+  history: History | null;
 
-  // method: () => void
-}
+  sources: Record<string, Source>; // TODO remove deprecated
+  receivers: Record<string, Receiver>; // TODO remove deprecated
+  meshes: Record<string, Mesh | Group>; // TODO remove deprecated
+  selectedObject: any; // TODO remove deprecated
+};
 
 type EditorReducers = {
-  uploadFile: () => Promise<void>
-  uploadFileFromUrl: (url: string) => Promise<void>
-  set: SetState<EditorState & EditorReducers>
-  calculateBounds: () => any
-  initialize: () => void
-}
+  uploadFile: () => Promise<void>;
+  uploadFileFromUrl: (url: string) => Promise<void>;
+  set: SetState<EditorState & EditorReducers>;
+  calculateBounds: () => any;
+  initialize: () => void;
+};
 
 const initialState: EditorState = {
+  resetSymbol: Symbol(),
   // prettier-ignore
   cameraMatrix: [
     +0.82421503295086050,
@@ -121,13 +129,25 @@ const initialState: EditorState = {
   ],
   orbitControls: null,
   transformControls: null,
-  selectedObject: null,
+
   selection: [],
   scene: null,
-  sources: {},
-  receivers: {},
-  meshes: {},
+
   objects: {},
+  materials: {},
+  editorMaterials: {
+    wireframe: new MeshStandardMaterial({
+      color: EditorColorMap.get(useTheme.getState().theme || darkTheme).wireframe,
+      emissive: EditorColorMap.get(useTheme.getState().theme || darkTheme).wireframe,
+      metalness: 1,
+      roughness: 1,
+      transparent: false,
+      depthTest: true,
+      side: DoubleSide,
+      wireframe: true,
+    }),
+  },
+
   colors: EditorColorMap.get(useTheme.getState().theme || darkTheme),
   orientationHelperMarginX: 380,
   transformType: "translate",
@@ -145,20 +165,25 @@ const initialState: EditorState = {
   debug: false,
 
   history: null,
-}
+
+  selectedObject: null, // TODO remove deprecated
+  sources: {}, // TODO remove deprecated
+  receivers: {}, // TODO remove deprecated
+  meshes: {}, // TODO remove deprecated
+};
 
 function isNumber(val: any): val is number {
-  return typeof val === "number" && !isNaN(val)
+  return typeof val === "number" && !isNaN(val);
 }
 
 function numberOr(val: any, def: number) {
-  return isNumber(val) ? val : def
+  return isNumber(val) ? val : def;
 }
 
 const vectorMin = (vecA: number[], vecB: number[]) =>
-  vecA.map((_, i) => Math.min(numberOr(vecA[i], Infinity), numberOr(vecB[i], Infinity)))
+  vecA.map((_, i) => Math.min(numberOr(vecA[i], Infinity), numberOr(vecB[i], Infinity)));
 const vectorMax = (vecA: number[], vecB: number[]) =>
-  vecA.map((_, i) => Math.max(numberOr(vecA[i], -Infinity), numberOr(vecB[i], -Infinity)))
+  vecA.map((_, i) => Math.max(numberOr(vecA[i], -Infinity), numberOr(vecB[i], -Infinity)));
 
 export const useEditor = create<
   EditorState & EditorReducers,
@@ -173,67 +198,69 @@ export const useEditor = create<
         ...initialState,
         set,
         uploadFile: async () => {
-          const files = await openFilePicker({ multiple: true, accept: ".gltf" })
+          const files = await openFilePicker({ multiple: true, accept: ".gltf" });
           for (const file of files) {
-            const reader = new FileReader()
-            reader.readAsArrayBuffer(file)
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(file);
             reader.onloadend = async (e) => {
               if (reader.readyState === reader.DONE) {
-                const parsed = await new GLTFLoader().parseAsync(reader.result, "")
-                const group = parsed.scene
-                group.name = stripExtension(file.name)
-                group.addToDefaultScene(api as Editor)
+                const parsed = await new GLTFLoader().parseAsync(reader.result, "");
+                const group = parsed.scene;
+                group.name = stripExtension(file.name);
+                group.addToDefaultScene(api as Editor);
 
                 set({
                   objects: {
                     ...get().objects,
                     [group.uuid]: group as Group,
                   },
-                })
+                });
               }
-            }
+            };
           }
         },
         uploadFileFromUrl: async (url: string) => {
-          const buffer = await fetch(url).then((res) => res.arrayBuffer())
-          const parsed = await new GLTFLoader().parseAsync(buffer, "")
-          const group = parsed.scene
-          group.name = stripExtension(url.split("/").slice(-1)[0])
-          group.addToDefaultScene(api as Editor)
+          const buffer = await fetch(url).then((res) => res.arrayBuffer());
+          const parsed = await new GLTFLoader().parseAsync(buffer, "");
+          console.log(parsed);
+          const group = parsed.scene;
+          group.name = stripExtension(url.split("/").slice(-1)[0]);
+          group.addToDefaultScene(api as Editor);
 
           set({
             objects: {
               ...get().objects,
               [group.uuid]: group as Group,
             },
-          })
+          });
         },
         calculateBounds: () => {
-          const { sources, receivers, meshes } = get()
-          let min = [Infinity, Infinity, Infinity]
-          let max = [-Infinity, -Infinity, -Infinity]
+          const { sources, receivers, meshes } = get();
+          let min = [Infinity, Infinity, Infinity];
+          let max = [-Infinity, -Infinity, -Infinity];
           for (const [id, source] of Object.entries(sources)) {
-            min = vectorMin(source.position.toArray(), min)
-            max = vectorMax(source.position.toArray(), max)
+            min = vectorMin(source.position.toArray(), min);
+            max = vectorMax(source.position.toArray(), max);
           }
           for (const [id, receiver] of Object.entries(receivers)) {
-            min = vectorMin(receiver.position.toArray(), min)
-            max = vectorMax(receiver.position.toArray(), max)
+            min = vectorMin(receiver.position.toArray(), min);
+            max = vectorMax(receiver.position.toArray(), max);
           }
           for (const [id, mesh] of Object.entries(meshes)) {
-            const aabb = new Box3()
-            aabb.setFromObject(mesh)
-            min = vectorMin(aabb.min.toArray(), min)
-            max = vectorMax(aabb.max.toArray(), max)
+            const aabb = new Box3();
+            aabb.setFromObject(mesh);
+            min = vectorMin(aabb.min.toArray(), min);
+            max = vectorMax(aabb.max.toArray(), max);
           }
-          return { min, max }
+          return { min, max };
         },
         initialize: () => {
           set({
             ...initialState,
             //@ts-ignore
             history: new History(api),
-          })
+            resetSymbol: Symbol(),
+          });
         },
 
         // method: () => {},
@@ -247,7 +274,7 @@ export const useEditor = create<
       }
     )
   )
-)
+);
 export type Editor = typeof useEditor
 export default useEditor
 

@@ -87,6 +87,7 @@ const Controls = () => {
   const transformControls = useRef(null)
   const selection = useEditor((state) => state.selection)
   const transformType = useEditor((state) => state.transformType)
+  const resetSymbol = useEditor((state) => state.resetSymbol);
 
   const three = useThree()
 
@@ -95,8 +96,12 @@ const Controls = () => {
   }, [three.raycaster])
 
   useEffect(() => {
-    useEditor.setState({ scene: three.scene })
-  }, [three.scene])
+    useEditor.setState({
+      scene: three.scene,
+      transformControls: transformControls.current,
+      orbitControls: control.current,
+    });
+  }, [three.scene, resetSymbol]);
 
   useControls(
     {
@@ -242,6 +247,7 @@ const Controls = () => {
       controlValue.removeEventListener("end", onEnd)
     }
   }, [control])
+
   return (
     <>
       {selection.length > 0 && (
@@ -295,7 +301,8 @@ function Editor(props) {
       (store) => store.theme,
       (theme) => {
         if (EditorColorMap.has(theme)) {
-          useEditor.setState({ colors: EditorColorMap.get(theme) })
+          // TODO change wireframe color?
+          useEditor.setState({ colors: EditorColorMap.get(theme) });
         }
       },
       {
@@ -311,7 +318,7 @@ function Editor(props) {
       transformControls.enabled = false
       transformControls.visible = false
     } else {
-      useEditor.setState({ selectedObject: null })
+      useEditor.setState({ selection: [] });
     }
   })
 
@@ -349,7 +356,7 @@ function Editor(props) {
       console.clear()
       const { initialize, uploadFileFromUrl, history } = useEditor.getState()
       initialize()
-      uploadFileFromUrl("/models/room2.gltf")
+      uploadFileFromUrl("/models/room2cm.gltf");
       history.execute(
         new AddObjectCommand(useEditor, new Source("New Source", [5, 2, 6], 0x44a273).addToDefaultScene(useEditor))
       )
@@ -387,17 +394,15 @@ function Editor(props) {
       style={{ backgroundColor: `#${colors.canvasBackground.getHexString()}` }}
       onPointerMissed={(e) => {
         // useEditor.getState().signals.pointerMissed.dispatch()
-        const { transformControls } = useEditor.getState()
+        const { transformControls } = useEditor.getState();
         if (transformControls && transformControls.enabled) {
-          console.log("pointer missed && enabled")
-          transformControls.enabled = false
-          transformControls.visible = false
+          transformControls.enabled = false;
+          transformControls.visible = false;
         } else {
           // useEditor.setState({ selectedObject: null })
-          console.log("pointer missed && not enabled")
-          useEditor.setState((prev) => ({ selection: e.shiftKey ? prev.selection : [] }))
+          useEditor.setState((prev) => ({ selection: e.shiftKey ? prev.selection : [] }));
         }
-        e.stopPropagation()
+        e.stopPropagation();
       }}
     >
       <OrientationGizmo />
@@ -419,32 +424,28 @@ function Editor(props) {
           key={id}
           object={object}
           onPointerDown={(e) => {
-            pointerDownRef.current = e.camera.position.clone()
+            pointerDownRef.current = e.camera.position.clone();
           }}
           onClick={(e) => {
             const cameraMoved =
               pointerDownRef.current &&
-              e.camera.position.distanceToSquared(pointerDownRef.current) > CAMERA_MOVE_THRESHOLD
+              e.camera.position.distanceToSquared(pointerDownRef.current) > CAMERA_MOVE_THRESHOLD;
 
             if (!cameraMoved) {
-              const obj = e.intersections[0].object
+              const obj = e.intersections[0].object;
               useEditor.getState().signals.objectSelected.dispatch(obj, {
                 meta: e.nativeEvent.metaKey,
                 shift: e.nativeEvent.shiftKey,
-              })
-              e.stopPropagation()
+              });
+              e.stopPropagation();
             }
-            pointerDownRef.current = null
+            pointerDownRef.current = null;
           }}
-          // onDoubleClick={(e) => {
-          //   if (object.type === ObjectType.GROUP) {
-          //     useEditor.getState().signals.objectSelected.dispatch(e.object, {
-          //       meta: e.nativeEvent.metaKey,
-          //       shift: e.nativeEvent.shiftKey,
-          //     })
-          //     e.stopPropagation()
-          //   }
-          // }}
+          onDoubleClick={(e) => {
+            const obj = e.intersections[0].object;
+            Object.assign(window, { obj });
+            console.log(obj);
+          }}
         />
       ))}
 
@@ -453,7 +454,7 @@ function Editor(props) {
       <Effects />
       {debug && <Stats className='editor-stats' />}
     </Canvas>
-  )
+  );
 }
 
 export default Editor

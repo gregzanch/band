@@ -5,7 +5,7 @@ import { ObjectType } from "../types"
 export class Source extends Mesh<SphereGeometry, MeshPhongMaterial> {
   type: ObjectType.SOURCE
   color: ColorRepresentation
-
+  material: MeshPhongMaterial
   constructor(name: string, position: [number, number, number] = [0, 0, 0], color: ColorRepresentation = 0x44a273) {
     const geometry = new SphereGeometry(0.5, 16, 16)
     const material = new MeshPhongMaterial({

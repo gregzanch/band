@@ -1603,8 +1603,8 @@ function createDefaultMaterial(cache) {
       roughness: 1,
       transparent: false,
       depthTest: true,
-      side: FrontSide,
-    })
+      side: DoubleSide,
+    });
   }
 
   return cache["DefaultMaterial"]

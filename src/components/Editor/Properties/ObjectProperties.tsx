@@ -8,16 +8,20 @@ import { ObjectType } from "@/components/Editor/Objects/types"
 import { BandObject } from "../Objects"
 import { intersection } from "@/helpers/set"
 import { Vector3Tuple } from "three"
+import { Schema } from "../Leva/types";
+import { Receiver } from "../Objects/Receiver/Receiver";
+import { Mesh } from "../Objects/Mesh/Mesh";
+import { Source } from "../Objects/Source/Source";
 
-export const objectPropertiesStore = new Store()
+export const objectPropertiesStore = new Store();
 
 function ReceiverProperties({ uuid }) {
-  const selectedObject = useEditor((state) => state.selection[state.selection.length - 1])
-  const initialRef = useRef(false)
+  const selectedObject = useEditor((state) => state.selection[state.selection.length - 1]);
+  const initialRef = useRef(false);
 
   useEffect(() => {
-    initialRef.current = false
-  }, [uuid])
+    initialRef.current = false;
+  }, [uuid]);
 
   const [, set] = useControls(
     () => ({
@@ -29,12 +33,12 @@ function ReceiverProperties({ uuid }) {
         value: selectedObject.name || "",
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.name = value
+            selectedObject.name = value;
             useEditor.setState((state) => ({
               objects: {
                 ...state.objects,
               },
-            }))
+            }));
           }
         },
       },
@@ -47,7 +51,7 @@ function ReceiverProperties({ uuid }) {
         lock: true,
         onChange: (value: [number, number, number]) => {
           if (initialRef.current !== false) {
-            selectedObject.scale.set(...value)
+            selectedObject.scale.set(...value);
           }
         },
       },
@@ -68,14 +72,14 @@ function ReceiverProperties({ uuid }) {
         },
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.position.set(value.x, value.y, value.z)
+            selectedObject.position.set(value.x, value.y, value.z);
           }
         },
       },
     }),
     { store: objectPropertiesStore },
     [selectedObject, uuid]
-  )
+  );
 
   useEffect(() => {
     set({
@@ -87,20 +91,20 @@ function ReceiverProperties({ uuid }) {
       },
       scale: selectedObject.scale.toArray(),
       name: selectedObject.name,
-    })
-    initialRef.current = true
-  }, [selectedObject, set, uuid])
+    });
+    initialRef.current = true;
+  }, [selectedObject, set, uuid]);
 
-  return null
+  return null;
 }
 
 function SourceProperties({ uuid }) {
-  const selectedObject = useEditor((state) => state.selection[state.selection.length - 1])
-  const initialRef = useRef(false)
+  const selectedObject = useEditor((state) => state.selection[state.selection.length - 1]);
+  const initialRef = useRef(false);
 
   useEffect(() => {
-    initialRef.current = false
-  }, [uuid])
+    initialRef.current = false;
+  }, [uuid]);
 
   const [, set] = useControls(
     () => ({
@@ -112,12 +116,12 @@ function SourceProperties({ uuid }) {
         value: selectedObject.name || "",
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.name = value
+            selectedObject.name = value;
             useEditor.setState((state) => ({
               objects: {
                 ...state.objects,
               },
-            }))
+            }));
           }
         },
       },
@@ -130,7 +134,7 @@ function SourceProperties({ uuid }) {
         lock: true,
         onChange: (value: [number, number, number]) => {
           if (initialRef.current !== false) {
-            selectedObject.scale.set(...value)
+            selectedObject.scale.set(...value);
           } else {
             // console.log("skipping scale", selectedObject?.userData?.name)
           }
@@ -153,7 +157,7 @@ function SourceProperties({ uuid }) {
         },
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.position.set(value.x, value.y, value.z)
+            selectedObject.position.set(value.x, value.y, value.z);
           } else {
             // console.log("skipping position", selectedObject?.userData?.name)
           }
@@ -162,7 +166,7 @@ function SourceProperties({ uuid }) {
     }),
     { store: objectPropertiesStore },
     [selectedObject, uuid]
-  )
+  );
 
   useEffect(() => {
     set({
@@ -174,23 +178,23 @@ function SourceProperties({ uuid }) {
       },
       scale: selectedObject.scale.toArray(),
       name: selectedObject.name,
-    })
-    initialRef.current = true
-  }, [selectedObject, set, uuid])
+    });
+    initialRef.current = true;
+  }, [selectedObject, set, uuid]);
 
-  return null
+  return null;
 }
 
 function MeshProperties({ uuid, selectedObject }) {
   // const selectedObject = useEditor((state) => state.selectedObject?.current)
   // const selectedObject = useEditor.getState().selectedObject?.current
-  const initialRef = useRef(false)
+  const initialRef = useRef(false);
   // console.log(selectedObject?.userData?.type)
 
   useEffect(() => {
     // console.log("setting initial to false")
-    initialRef.current = false
-  }, [uuid])
+    initialRef.current = false;
+  }, [uuid]);
 
   // console.log("initialRef.current", initialRef.current, selectedObject?.userData?.name)
 
@@ -204,12 +208,12 @@ function MeshProperties({ uuid, selectedObject }) {
         value: selectedObject.name || "",
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.name = value
+            selectedObject.name = value;
             useEditor.setState((state) => ({
               objects: {
                 ...state.objects,
               },
-            }))
+            }));
           }
         },
       },
@@ -222,7 +226,7 @@ function MeshProperties({ uuid, selectedObject }) {
         lock: true,
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.scale.set(...value)
+            selectedObject.scale.set(...value);
           } else {
             // console.log("skipping scale", selectedObject?.userData?.name)
           }
@@ -245,7 +249,7 @@ function MeshProperties({ uuid, selectedObject }) {
         },
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.position.set(value.x, value.y, value.z)
+            selectedObject.position.set(value.x, value.y, value.z);
           } else {
             // console.log("skipping position", selectedObject?.userData?.name)
           }
@@ -254,7 +258,7 @@ function MeshProperties({ uuid, selectedObject }) {
     }),
     { store: objectPropertiesStore },
     [selectedObject, uuid]
-  )
+  );
 
   useEffect(() => {
     set({
@@ -266,19 +270,19 @@ function MeshProperties({ uuid, selectedObject }) {
       },
       scale: selectedObject.scale.toArray(),
       name: selectedObject.name,
-    })
-    initialRef.current = true
-  }, [selectedObject, set, uuid])
+    });
+    initialRef.current = true;
+  }, [selectedObject, set, uuid]);
 
-  return null
+  return null;
 }
 
 function GroupProperties({ uuid, selectedObject }) {
-  const initialRef = useRef(false)
+  const initialRef = useRef(false);
 
   useEffect(() => {
-    initialRef.current = false
-  }, [uuid])
+    initialRef.current = false;
+  }, [uuid]);
 
   const [, set] = useControls(
     () => ({
@@ -290,12 +294,12 @@ function GroupProperties({ uuid, selectedObject }) {
         value: selectedObject.name || "",
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.name = value
+            selectedObject.name = value;
             useEditor.setState((state) => ({
               objects: {
                 ...state.objects,
               },
-            }))
+            }));
           }
         },
       },
@@ -308,7 +312,7 @@ function GroupProperties({ uuid, selectedObject }) {
         lock: true,
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.scale.set(...value)
+            selectedObject.scale.set(...value);
           } else {
             // console.log("skipping scale", selectedObject?.userData?.name)
           }
@@ -331,7 +335,7 @@ function GroupProperties({ uuid, selectedObject }) {
         },
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selectedObject.position.set(value.x, value.y, value.z)
+            selectedObject.position.set(value.x, value.y, value.z);
           } else {
             // console.log("skipping position", selectedObject?.userData?.name)
           }
@@ -340,7 +344,7 @@ function GroupProperties({ uuid, selectedObject }) {
     }),
     { store: objectPropertiesStore },
     [selectedObject, uuid]
-  )
+  );
 
   useEffect(() => {
     set({
@@ -352,11 +356,11 @@ function GroupProperties({ uuid, selectedObject }) {
       },
       scale: selectedObject.scale.toArray(),
       name: selectedObject.name,
-    })
-    initialRef.current = true
-  }, [selectedObject, set, uuid])
+    });
+    initialRef.current = true;
+  }, [selectedObject, set, uuid]);
 
-  return null
+  return null;
 }
 
 function EmptySelection() {
@@ -379,7 +383,7 @@ function EmptySelection() {
         Nothing Selected
       </Text>
     </Box>
-  )
+  );
 }
 
 enum ObjectInputs {
@@ -424,126 +428,146 @@ const InputSetMap = {
 }
 
 function averageVectors(vectors: Vector3Tuple[]): Vector3Tuple {
-  const arr = vectors[0]
+  const arr = vectors[0];
   for (let i = 1; i < vectors.length; i++) {
     for (let j = 0; j < 3; j++) {
-      arr[j] = arr[j] + vectors[i][j]
+      arr[j] = arr[j] + vectors[i][j];
     }
   }
-  return arr.map((x) => x / vectors.length) as Vector3Tuple
+  return arr.map((x) => x / vectors.length) as Vector3Tuple;
 }
 
 const InputBuildMap = {
-  [ObjectInputs.TYPE]: (selection, initialRef) => {
-    const types = [...new Set(selection.map((object) => object.type))]
-    const value = types.length > 1 ? "Mixed" : types[0]
+  [ObjectInputs.TYPE]: (selection: BandObject[], initialRef) => {
+    const types = [...new Set(selection.map((object) => object.type))];
+    const value = types.length > 1 ? "Mixed" : types[0];
     return {
       type: {
         value,
         editable: false,
       },
-    }
+    };
   },
-  [ObjectInputs.NAME]: (selection, initialRef) => {
-    const multiple = selection.length > 1
+  [ObjectInputs.NAME]: (selection: BandObject[], initialRef) => {
+    const multiple = selection.length > 1;
     return {
       name: {
         value: multiple ? "Mixed" : selection[0].name,
         disabled: multiple,
         onChange: (value) => {
           if (initialRef.current !== false) {
-            selection[0].name = value
+            selection[0].name = value;
             useEditor.setState((state) => ({
               objects: {
                 ...state.objects,
               },
-            }))
+            }));
           }
         },
       },
-    }
+    };
   },
-  [ObjectInputs.POSITION]: (selection, initialRef) => {
-    const multiple = selection.length > 1
+  [ObjectInputs.POSITION]: (selection: BandObject[], initialRef) => {
+    const multiple = selection.length > 1;
     return {
       position: {
         value: multiple
           ? averageVectors(selection.map((obj) => obj.position.toArray()))
           : selection[0].position.toArray(),
         disabled: multiple,
-        onChange: (value) => {
+        onChange: (value: Vector3Tuple) => {
           if (initialRef.current !== false) {
-            selection[0].position.set(...value)
+            selection[0].position.set(...value);
           }
         },
       },
-    }
+    };
   },
-}
+  [ObjectInputs.WIREFRAME]: (selection: Array<Mesh>, initialRef): Schema => {
+    return {
+      wireframe: {
+        value: selection.at(-1).wireframe,
+        onChange: (value: boolean) => {
+          if (initialRef.current !== false) {
+            for (const obj of selection) {
+              obj.wireframe = value;
+            }
+          }
+        },
+      },
+    };
+  },
+};
 
 const InputValueMap = {
-  [ObjectInputs.TYPE]: (selection) => {
-    const types = [...new Set(selection.map((object) => object.type))]
-    const value = types.length > 1 ? "Mixed" : types[0]
+  [ObjectInputs.TYPE]: (selection: BandObject[]) => {
+    const types = [...new Set(selection.map((object) => object.type))];
+    const value = types.length > 1 ? "Mixed" : types[0];
     return {
       type: value,
-    }
+    };
   },
-  [ObjectInputs.NAME]: (selection) => {
-    const multiple = selection.length > 1
+  [ObjectInputs.NAME]: (selection: BandObject[]) => {
+    const multiple = selection.length > 1;
     return {
       name: multiple ? "Mixed" : selection[0].name,
-    }
+    };
   },
-  [ObjectInputs.POSITION]: (selection) => {
-    const multiple = selection.length > 1
+  [ObjectInputs.POSITION]: (selection: BandObject[]) => {
+    const multiple = selection.length > 1;
     return {
       position: multiple
         ? averageVectors(selection.map((obj) => obj.position.toArray()))
         : selection[0].position.toArray(),
-    }
+    };
   },
-}
+  [ObjectInputs.WIREFRAME]: (selection: Array<Mesh>) => {
+    return {
+      wireframe: selection.at(-1).wireframe,
+    };
+  },
+};
 
-function getInputIntersection(selection: BandObject[]) {
+function getInputIntersection(selection: BandObject[]): Set<ObjectInputs> {
   return [...new Set(selection.map((object) => object.type))]
     .map((type) => InputSetMap[type])
-    .reduce((acc, curr) => intersection(acc, curr))
+    .reduce((acc, curr, index) => intersection(index === 0 ? curr : acc, curr), new Set());
 }
 
 function SelectedObjectSwitcher() {
-  const selection = useEditor((state) => state.selection)
+  const selection = useEditor((state) => state.selection);
 
-  const initialRef = useRef(false)
+  const initialRef = useRef(false);
 
   useEffect(() => {
-    initialRef.current = false
-  }, [selection])
+    initialRef.current = false;
+  }, [selection]);
 
-  const inputs = useMemo(() => [...getInputIntersection(selection)], [selection])
+  const inputs = useMemo(() => [...getInputIntersection(selection)], [selection]);
 
   const [, set] = useControls(
     () => {
+      console.log("new control schema ran");
       return inputs
         .filter((input) => InputBuildMap[input])
         .map((input) => InputBuildMap[input](selection, initialRef))
-        .reduce((acc, curr) => ({ ...acc, ...curr }), {})
+        .reduce((acc, curr) => ({ ...acc, ...curr }), {});
     },
     { store: objectPropertiesStore },
-    [selection]
-  )
+    [inputs, selection]
+  );
 
   useEffect(() => {
+    console.log("set effect ran");
     const initialValues = inputs
       .filter((input) => InputValueMap[input])
       .map((input) => InputValueMap[input](selection))
-      .reduce((acc, curr) => ({ ...acc, ...curr }), {})
-    console.log(initialValues)
-    set(initialValues)
-    initialRef.current = true
-  }, [inputs, selection, set])
+      .reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    set(initialValues);
+    initialRef.current = true;
+  }, [inputs, selection, set]);
 
-  return null
+  return null;
 }
 
 export default function ObjectProperties() {
