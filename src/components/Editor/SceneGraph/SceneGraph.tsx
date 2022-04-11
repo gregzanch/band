@@ -89,18 +89,17 @@ function getIndent(level: number) {
 function SceneGraphGroupContainer({ item, selected, level = 1 }: SceneGraphItemProps<Group>) {
   const [open, setOpen] = useState(true)
   const Icon = IconMap[item.type]
-  const selectedObject = useEditor((state) => state.selectedObject)
+  const selection = useEditor((state) => state.selection)
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <SceneGraphItemContainer
         css={getIndent(level)}
         selected={selected}
-        onClick={() => {
-          const { scene } = useEditor.getState()
-          const itemRef = scene.getObjectByProperty("uuid", item.uuid)
-          if (itemRef) {
-            useEditor.setState({ selectedObject: { current: itemRef } })
-          }
+        onClick={(e) => {
+          useEditor.getState().signals.objectSelected.dispatch(item, {
+            meta: e.metaKey,
+            shift: e.shiftKey,
+          })
         }}
       >
         <StyledCollapsibleTrigger>
@@ -114,6 +113,7 @@ function SceneGraphGroupContainer({ item, selected, level = 1 }: SceneGraphItemP
             cursor: "pointer",
             color: "inherit",
             fontFamily: "inherit",
+            userSelect: "none",
           }}
         >
           {item.name}
@@ -121,12 +121,7 @@ function SceneGraphGroupContainer({ item, selected, level = 1 }: SceneGraphItemP
       </SceneGraphItemContainer>
       <CollapsibleContent>
         {item.children.map((child) => (
-          <SceneGraphItem
-            level={level + 1}
-            key={child.uuid}
-            item={child}
-            selected={selectedObject?.current?.uuid === child?.uuid}
-          />
+          <SceneGraphItem level={level + 1} key={child.uuid} item={child} selected={selection.includes(child)} />
         ))}
       </CollapsibleContent>
     </Collapsible>
@@ -143,8 +138,11 @@ function SceneGraphItem({ item, selected, level = 1 }: SceneGraphItemProps) {
       <SceneGraphItemContainer
         css={getIndent(level)}
         selected={selected}
-        onClick={() => {
-          useEditor.getState().signals.objectSelected.dispatch(item)
+        onClick={(e) => {
+          useEditor.getState().signals.objectSelected.dispatch(item, {
+            meta: e.metaKey,
+            shift: e.shiftKey,
+          })
         }}
       >
         <Icon size={15} />
@@ -155,6 +153,7 @@ function SceneGraphItem({ item, selected, level = 1 }: SceneGraphItemProps) {
             cursor: "pointer",
             color: "inherit",
             fontFamily: "inherit",
+            userSelect: "none",
           }}
         >
           {item.name}
@@ -168,18 +167,7 @@ function SceneGraphItem({ item, selected, level = 1 }: SceneGraphItemProps) {
       <ContextMenuContent sideOffset={5} dir='ltr' outline>
         <ContextMenuItem
           onClick={() => {
-            const { scene } = useEditor.getState()
-            const itemRef = scene.getObjectByProperty("uuid", item.uuid)
-            if (itemRef) {
-              console.groupCollapsed(`(${item.type}) "${item.name}"`)
-              console.group("State Data")
-              console.log(item)
-              console.groupEnd()
-              console.group("Three Data")
-              console.log(itemRef)
-              console.groupEnd()
-              console.groupEnd()
-            }
+            console.log(item)
           }}
         >
           Show in Console
@@ -191,12 +179,12 @@ function SceneGraphItem({ item, selected, level = 1 }: SceneGraphItemProps) {
 
 export default function SceneGraph() {
   const objects = useEditor((state) => state.objects)
-  const selectedObject = useEditor((state) => state.selectedObject)
+  const selection = useEditor((state) => state.selection)
 
   return (
     <Box fillHeight>
       {Object.entries(objects).map(([id, object]) => (
-        <SceneGraphItem key={id} item={object} selected={selectedObject?.current?.uuid === id} />
+        <SceneGraphItem key={id} item={object} selected={selection.includes(object)} />
       ))}
     </Box>
   )

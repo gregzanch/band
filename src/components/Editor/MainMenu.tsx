@@ -46,7 +46,7 @@ enum MenuAction {
 }
 
 export const MenuHotkeys = {
-  [MenuAction.NEW]: "command+n",
+  [MenuAction.NEW]: "alt+n",
   [MenuAction.OPEN]: "command+o",
   [MenuAction.SAVE]: "command+s",
   [MenuAction.IMPORT]: "command+i",
@@ -185,6 +185,7 @@ type ActionFunction = (item?: GenericMenuItem | MenuCheckboxItem, checked?: bool
 
 export const ActionMap: Record<MenuAction, ActionFunction> = {
   [MenuAction.NEW]: async (item?: MenuItem) => {
+    useEditor.getState().initialize()
     return Promise.resolve(true)
   },
   [MenuAction.OPEN]: async (item?: MenuItem) => {

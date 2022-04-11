@@ -6,7 +6,7 @@ import { Receiver } from "../Objects/Receiver/Receiver"
 import { Group } from "../Objects/Group/Group"
 import { Mesh } from "../Objects/Mesh/Mesh"
 import { openFilePicker } from "@/helpers/dom/openFilePicker"
-import { GLTFLoader } from "three-stdlib"
+import { GLTFLoader } from "@/components/Editor/Loaders/GLTFLoader"
 import { BufferAttribute, Color, Group as ThreeGroup, Mesh as ThreeMesh, Box3, Scene } from "three"
 import { nanoid } from "nanoid"
 import { stripExtension } from "@/helpers/string"
@@ -61,6 +61,7 @@ type EditorState = {
   orbitControls: any
   transformControls: any
   selectedObject: any
+  selection: BandObject[]
   scene: Scene | null
 
   sources: Record<string, Source>
@@ -92,8 +93,10 @@ type EditorState = {
 
 type EditorReducers = {
   uploadFile: () => Promise<void>
+  uploadFileFromUrl: (url: string) => Promise<void>
   set: SetState<EditorState & EditorReducers>
   calculateBounds: () => any
+  initialize: () => void
 }
 
 const initialState: EditorState = {
@@ -119,6 +122,7 @@ const initialState: EditorState = {
   orbitControls: null,
   transformControls: null,
   selectedObject: null,
+  selection: [],
   scene: null,
   sources: {},
   receivers: {},
@@ -176,24 +180,9 @@ export const useEditor = create<
             reader.onloadend = async (e) => {
               if (reader.readyState === reader.DONE) {
                 const parsed = await new GLTFLoader().parseAsync(reader.result, "")
-                //@ts-ignore
-                const meshes = parsed.scene.children
-                  .filter((x) => x.type === "Mesh")
-                  .map((m) => {
-                    const newMesh = new Mesh(m.name, m.geometry.clone())
-                    newMesh.position.copy(m.position)
-                    newMesh.scale.copy(m.scale)
-                    newMesh.rotation.copy(m.rotation)
-                    newMesh.applyMatrix4(m.matrix)
-                    newMesh.updateMatrix()
-                    return newMesh
-                  }) as Mesh[]
-
-                const group = new Group(stripExtension(file.name)).addToDefaultScene(api as Editor)
-
-                for (const mesh of meshes) {
-                  group.add(mesh)
-                }
+                const group = parsed.scene
+                group.name = stripExtension(file.name)
+                group.addToDefaultScene(api as Editor)
 
                 set({
                   objects: {
@@ -204,6 +193,20 @@ export const useEditor = create<
               }
             }
           }
+        },
+        uploadFileFromUrl: async (url: string) => {
+          const buffer = await fetch(url).then((res) => res.arrayBuffer())
+          const parsed = await new GLTFLoader().parseAsync(buffer, "")
+          const group = parsed.scene
+          group.name = stripExtension(url.split("/").slice(-1)[0])
+          group.addToDefaultScene(api as Editor)
+
+          set({
+            objects: {
+              ...get().objects,
+              [group.uuid]: group as Group,
+            },
+          })
         },
         calculateBounds: () => {
           const { sources, receivers, meshes } = get()
@@ -224,6 +227,13 @@ export const useEditor = create<
             max = vectorMax(aabb.max.toArray(), max)
           }
           return { min, max }
+        },
+        initialize: () => {
+          set({
+            ...initialState,
+            //@ts-ignore
+            history: new History(api),
+          })
         },
 
         // method: () => {},
@@ -262,7 +272,20 @@ getSignals().objectRemoved.add((object: BandObject) => {
   }))
 })
 
-getSignals().objectSelected.add((object: any) => {
-  const selectedObject = object ? { current: object } : null
-  useEditor.setState({ selectedObject })
+getSignals().objectSelected.add((object: BandObject, { meta, shift }) => {
+  const currentSelection = useEditor.getState().selection
+  let selection: BandObject[]
+  if (shift) {
+    if (currentSelection.includes(object)) {
+      selection = currentSelection.filter((obj) => obj !== object)
+    } else {
+      selection = [...currentSelection, object]
+    }
+  } else {
+    selection = [object]
+  }
+  useEditor.setState({ selection })
+
+  // const selectedObject = object ? { current: object } : null
+  // useEditor.setState({ selectedObject })
 })

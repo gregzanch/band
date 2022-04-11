@@ -20,7 +20,7 @@ export function Ground({ size = 100, segments = 100, color = 0xb3b3b3 }: GroundP
     <Plane
       args={[size, size, segments, segments]}
       receiveShadow
-      castShadow
+      // castShadow
       rotation={[-Math.PI / 2, 0, 0]}
       position={[0, 0, 0]}
       layers={LayerMap.ENVIRONMENT}

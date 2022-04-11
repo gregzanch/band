@@ -27,12 +27,36 @@ import { useControls } from "./Leva"
 import { SetPositionCommand } from "./State/Commands/SetPositionCommand"
 import { SetRotationCommand } from "./State/Commands/SetRotationCommand"
 import { SetScaleCommand } from "./State/Commands/SetScaleCommand"
+import { AddObjectCommand } from "./State/Commands/AddObjectCommand"
+import { Source } from "./Objects/Source/Source"
+import { Receiver } from "./Objects/Receiver/Receiver"
+import { BandObject } from "./Objects"
+import { Group } from "./Objects/Group/Group"
+import { Mesh } from "./Objects/Mesh/Mesh"
+
+const CAMERA_MOVE_THRESHOLD = 1
+
+function isBandObject(obj: any): obj is BandObject {
+  return [Group, Mesh, Receiver, Source].some((ObjClass) => obj instanceof ObjClass)
+}
+
+function unwrapSelection(selection: BandObject[]): BandObject[] {
+  return selection.reduce((acc, curr) => {
+    if (curr.type === ObjectType.GROUP) {
+      //@ts-ignore
+      return [...acc, ...unwrapSelection(curr.children.filter((child) => isBandObject(child)))]
+    } else {
+      return [...acc, curr]
+    }
+  }, [])
+}
 
 function Effects() {
   const outlineRef = useRef<OutlineEffect>()
   const composerRef = useRef<EffectComposerImpl>()
   const { gl, camera, scene } = useThree()
-  const selectedObject = useEditor((state) => state.selectedObject)
+  // const selectedObject = useEditor((state) => state.selectedObject)
+  const selection = useEditor((state) => state.selection)
 
   return (
     <Suspense fallback={null}>
@@ -43,13 +67,7 @@ function Effects() {
           pulseSpeed={0.0}
           visibleEdgeColor={0xffcc00}
           hiddenEdgeColor={0xffcc00}
-          selection={
-            selectedObject
-              ? selectedObject.current.type === ObjectType.GROUP
-                ? [...selectedObject.current.children]
-                : [selectedObject.current]
-              : undefined
-          }
+          selection={selection.length > 0 ? unwrapSelection(selection) : undefined}
           blur
           //@ts-ignore
           ref={outlineRef}
@@ -67,7 +85,7 @@ function onEnd({ target }) {
 const Controls = () => {
   const control = useRef(null)
   const transformControls = useRef(null)
-  const selectedObject = useEditor((state) => state.selectedObject)
+  const selection = useEditor((state) => state.selection)
   const transformType = useEditor((state) => state.transformType)
 
   const three = useThree()
@@ -107,20 +125,20 @@ const Controls = () => {
       const changeCallback = (event) => {
         if (event.target.mode === "translate" && objectPropertiesStore.getData()["position"]) {
           const { x, y, z } = objectPropertiesStore.get("position")
-          if (!selectedObject.current) {
+          if (selection.length === 0) {
             return
           }
           if (
-            selectedObject.current.position.x !== x ||
-            selectedObject.current.position.y !== y ||
-            selectedObject.current.position.z !== z
+            selection[selection.length - 1].position.x !== x ||
+            selection[selection.length - 1].position.y !== y ||
+            selection[selection.length - 1].position.z !== z
           ) {
             objectPropertiesStore.setValueAtPath(
               "position",
               {
-                x: selectedObject.current.position.x,
-                y: selectedObject.current.position.y,
-                z: selectedObject.current.position.z,
+                x: selection[selection.length - 1].position.x,
+                y: selection[selection.length - 1].position.y,
+                z: selection[selection.length - 1].position.z,
               },
               false
             )
@@ -128,20 +146,20 @@ const Controls = () => {
         }
         if (event.target.mode === "scale" && objectPropertiesStore.getData()["scale"]) {
           const { x, y, z } = objectPropertiesStore.get("scale")
-          if (!selectedObject.current) {
+          if (selection.length === 0) {
             return
           }
           if (
-            selectedObject.current.scale.x !== x ||
-            selectedObject.current.scale.y !== y ||
-            selectedObject.current.scale.z !== z
+            selection[selection.length - 1].scale.x !== x ||
+            selection[selection.length - 1].scale.y !== y ||
+            selection[selection.length - 1].scale.z !== z
           ) {
             objectPropertiesStore.setValueAtPath(
               "scale",
               {
-                x: selectedObject.current.scale.x,
-                y: selectedObject.current.scale.y,
-                z: selectedObject.current.scale.z,
+                x: selection[selection.length - 1].scale.x,
+                y: selection[selection.length - 1].scale.y,
+                z: selection[selection.length - 1].scale.z,
               },
               false
             )
@@ -204,7 +222,7 @@ const Controls = () => {
         controls.removeEventListener("dragging-changed", callback)
       }
     }
-  }, [selectedObject])
+  }, [selection])
 
   useEffect(() => {
     const controlValue = control?.current
@@ -226,7 +244,7 @@ const Controls = () => {
   }, [control])
   return (
     <>
-      {selectedObject && (
+      {selection.length > 0 && (
         <TransformControls
           ref={transformControls}
           castShadow={false}
@@ -237,7 +255,7 @@ const Controls = () => {
           showX
           showY
           showZ
-          object={selectedObject}
+          object={{ current: selection[selection.length - 1] }}
         />
       )}
       <OrbitControls ref={control} enableDamping={false} makeDefault />
@@ -326,9 +344,18 @@ function Editor(props) {
   }, [])
 
   useEffect(() => {
-    Object.assign(window, { useEditor, darkTheme, theme, Color })
+    Object.assign(window, { useEditor, darkTheme, theme, Color, Vector3 })
     setTimeout(() => {
       console.clear()
+      const { initialize, uploadFileFromUrl, history } = useEditor.getState()
+      initialize()
+      uploadFileFromUrl("/models/room2.gltf")
+      history.execute(
+        new AddObjectCommand(useEditor, new Source("New Source", [5, 2, 6], 0x44a273).addToDefaultScene(useEditor))
+      )
+      history.execute(
+        new AddObjectCommand(useEditor, new Receiver("New Receiver", [0, 4, 0], 0xe5732a).addToDefaultScene(useEditor))
+      )
     }, 500)
   }, [])
 
@@ -346,6 +373,8 @@ function Editor(props) {
     { store: cameraPropertiesStore }
   )
 
+  const pointerDownRef = useRef(null)
+
   return (
     <Canvas
       mode='concurrent'
@@ -360,10 +389,13 @@ function Editor(props) {
         // useEditor.getState().signals.pointerMissed.dispatch()
         const { transformControls } = useEditor.getState()
         if (transformControls && transformControls.enabled) {
+          console.log("pointer missed && enabled")
           transformControls.enabled = false
           transformControls.visible = false
         } else {
-          useEditor.setState({ selectedObject: null })
+          // useEditor.setState({ selectedObject: null })
+          console.log("pointer missed && not enabled")
+          useEditor.setState((prev) => ({ selection: e.shiftKey ? prev.selection : [] }))
         }
         e.stopPropagation()
       }}
@@ -386,16 +418,33 @@ function Editor(props) {
         <primitive
           key={id}
           object={object}
-          onClick={(e) => {
-            useEditor.getState().signals.objectSelected.dispatch(object)
-            e.stopPropagation()
+          onPointerDown={(e) => {
+            pointerDownRef.current = e.camera.position.clone()
           }}
-          onDoubleClick={(e) => {
-            if (object.type === ObjectType.GROUP) {
-              useEditor.getState().signals.objectSelected.dispatch(e.object)
+          onClick={(e) => {
+            const cameraMoved =
+              pointerDownRef.current &&
+              e.camera.position.distanceToSquared(pointerDownRef.current) > CAMERA_MOVE_THRESHOLD
+
+            if (!cameraMoved) {
+              const obj = e.intersections[0].object
+              useEditor.getState().signals.objectSelected.dispatch(obj, {
+                meta: e.nativeEvent.metaKey,
+                shift: e.nativeEvent.shiftKey,
+              })
               e.stopPropagation()
             }
+            pointerDownRef.current = null
           }}
+          // onDoubleClick={(e) => {
+          //   if (object.type === ObjectType.GROUP) {
+          //     useEditor.getState().signals.objectSelected.dispatch(e.object, {
+          //       meta: e.nativeEvent.metaKey,
+          //       shift: e.nativeEvent.shiftKey,
+          //     })
+          //     e.stopPropagation()
+          //   }
+          // }}
         />
       ))}
 

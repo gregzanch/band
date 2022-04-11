@@ -1,15 +1,18 @@
 import useEditor from "@/components/Editor/State/useEditor"
 import { LevaPanel, useControls } from "@/components/Editor/Leva"
 import { Store } from "../Leva/store"
-import { useEffect, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import { Text } from "@/components/shared/Text"
 import { Box } from "@/components/shared/Box"
 import { ObjectType } from "@/components/Editor/Objects/types"
+import { BandObject } from "../Objects"
+import { intersection } from "@/helpers/set"
+import { Vector3Tuple } from "three"
 
 export const objectPropertiesStore = new Store()
 
 function ReceiverProperties({ uuid }) {
-  const selectedObject = useEditor((state) => state.selectedObject?.current)
+  const selectedObject = useEditor((state) => state.selection[state.selection.length - 1])
   const initialRef = useRef(false)
 
   useEffect(() => {
@@ -28,8 +31,8 @@ function ReceiverProperties({ uuid }) {
           if (initialRef.current !== false) {
             selectedObject.name = value
             useEditor.setState((state) => ({
-              receivers: {
-                ...state.receivers,
+              objects: {
+                ...state.objects,
               },
             }))
           }
@@ -42,7 +45,7 @@ function ReceiverProperties({ uuid }) {
           step: 0.1,
         },
         lock: true,
-        onChange: (value) => {
+        onChange: (value: [number, number, number]) => {
           if (initialRef.current !== false) {
             selectedObject.scale.set(...value)
           }
@@ -92,7 +95,7 @@ function ReceiverProperties({ uuid }) {
 }
 
 function SourceProperties({ uuid }) {
-  const selectedObject = useEditor((state) => state.selectedObject?.current)
+  const selectedObject = useEditor((state) => state.selection[state.selection.length - 1])
   const initialRef = useRef(false)
 
   useEffect(() => {
@@ -111,8 +114,8 @@ function SourceProperties({ uuid }) {
           if (initialRef.current !== false) {
             selectedObject.name = value
             useEditor.setState((state) => ({
-              sources: {
-                ...state.sources,
+              objects: {
+                ...state.objects,
               },
             }))
           }
@@ -125,7 +128,7 @@ function SourceProperties({ uuid }) {
           step: 0.1,
         },
         lock: true,
-        onChange: (value) => {
+        onChange: (value: [number, number, number]) => {
           if (initialRef.current !== false) {
             selectedObject.scale.set(...value)
           } else {
@@ -203,8 +206,8 @@ function MeshProperties({ uuid, selectedObject }) {
           if (initialRef.current !== false) {
             selectedObject.name = value
             useEditor.setState((state) => ({
-              meshes: {
-                ...state.meshes,
+              objects: {
+                ...state.objects,
               },
             }))
           }
@@ -289,8 +292,8 @@ function GroupProperties({ uuid, selectedObject }) {
           if (initialRef.current !== false) {
             selectedObject.name = value
             useEditor.setState((state) => ({
-              meshes: {
-                ...state.meshes,
+              objects: {
+                ...state.objects,
               },
             }))
           }
@@ -379,33 +382,178 @@ function EmptySelection() {
   )
 }
 
+enum ObjectInputs {
+  TYPE = "type",
+  POSITION = "position",
+  SCALE = "scale",
+  NAME = "name",
+  SHOW_NORMALS = "showNormals",
+  WIREFRAME = "wireframe",
+  MATERIAL = "material",
+}
+
+// prettier-ignore
+const InputSetMap = {
+  [ObjectType.SOURCE]: new Set([
+    ObjectInputs.TYPE,
+    ObjectInputs.NAME,
+    ObjectInputs.POSITION,
+    ObjectInputs.SCALE,
+  ]),
+  [ObjectType.RECEIVER]: new Set([
+    ObjectInputs.TYPE,
+    ObjectInputs.NAME,
+    ObjectInputs.POSITION,
+    ObjectInputs.SCALE,
+  ]),
+  [ObjectType.GROUP]: new Set([
+    ObjectInputs.TYPE,
+    ObjectInputs.NAME,
+    ObjectInputs.POSITION,
+    ObjectInputs.SCALE,
+  ]),
+  [ObjectType.MESH]:new Set([
+    ObjectInputs.TYPE,
+    ObjectInputs.NAME,
+    ObjectInputs.POSITION,
+    ObjectInputs.SCALE,
+    ObjectInputs.SHOW_NORMALS,
+    ObjectInputs.WIREFRAME,
+    ObjectInputs.MATERIAL,
+  ])
+}
+
+function averageVectors(vectors: Vector3Tuple[]): Vector3Tuple {
+  const arr = vectors[0]
+  for (let i = 1; i < vectors.length; i++) {
+    for (let j = 0; j < 3; j++) {
+      arr[j] = arr[j] + vectors[i][j]
+    }
+  }
+  return arr.map((x) => x / vectors.length) as Vector3Tuple
+}
+
+const InputBuildMap = {
+  [ObjectInputs.TYPE]: (selection, initialRef) => {
+    const types = [...new Set(selection.map((object) => object.type))]
+    const value = types.length > 1 ? "Mixed" : types[0]
+    return {
+      type: {
+        value,
+        editable: false,
+      },
+    }
+  },
+  [ObjectInputs.NAME]: (selection, initialRef) => {
+    const multiple = selection.length > 1
+    return {
+      name: {
+        value: multiple ? "Mixed" : selection[0].name,
+        disabled: multiple,
+        onChange: (value) => {
+          if (initialRef.current !== false) {
+            selection[0].name = value
+            useEditor.setState((state) => ({
+              objects: {
+                ...state.objects,
+              },
+            }))
+          }
+        },
+      },
+    }
+  },
+  [ObjectInputs.POSITION]: (selection, initialRef) => {
+    const multiple = selection.length > 1
+    return {
+      position: {
+        value: multiple
+          ? averageVectors(selection.map((obj) => obj.position.toArray()))
+          : selection[0].position.toArray(),
+        disabled: multiple,
+        onChange: (value) => {
+          if (initialRef.current !== false) {
+            selection[0].position.set(...value)
+          }
+        },
+      },
+    }
+  },
+}
+
+const InputValueMap = {
+  [ObjectInputs.TYPE]: (selection) => {
+    const types = [...new Set(selection.map((object) => object.type))]
+    const value = types.length > 1 ? "Mixed" : types[0]
+    return {
+      type: value,
+    }
+  },
+  [ObjectInputs.NAME]: (selection) => {
+    const multiple = selection.length > 1
+    return {
+      name: multiple ? "Mixed" : selection[0].name,
+    }
+  },
+  [ObjectInputs.POSITION]: (selection) => {
+    const multiple = selection.length > 1
+    return {
+      position: multiple
+        ? averageVectors(selection.map((obj) => obj.position.toArray()))
+        : selection[0].position.toArray(),
+    }
+  },
+}
+
+function getInputIntersection(selection: BandObject[]) {
+  return [...new Set(selection.map((object) => object.type))]
+    .map((type) => InputSetMap[type])
+    .reduce((acc, curr) => intersection(acc, curr))
+}
+
 function SelectedObjectSwitcher() {
-  const selectedObject = useEditor((state) => state.selectedObject)
-  if (selectedObject == null) {
-    return <EmptySelection />
-  }
-  const objectType = selectedObject?.current?.type
-  switch (objectType) {
-    case ObjectType.RECEIVER:
-      return <ReceiverProperties uuid={selectedObject?.current?.uuid} />
-    case ObjectType.SOURCE:
-      return <SourceProperties uuid={selectedObject?.current?.uuid} />
-    case ObjectType.MESH:
-      return <MeshProperties uuid={selectedObject?.current?.uuid} selectedObject={selectedObject?.current} />
-    case ObjectType.GROUP:
-      return <GroupProperties uuid={selectedObject?.current?.uuid} selectedObject={selectedObject?.current} />
-    default:
-      return null
-  }
+  const selection = useEditor((state) => state.selection)
+
+  const initialRef = useRef(false)
+
+  useEffect(() => {
+    initialRef.current = false
+  }, [selection])
+
+  const inputs = useMemo(() => [...getInputIntersection(selection)], [selection])
+
+  const [, set] = useControls(
+    () => {
+      return inputs
+        .filter((input) => InputBuildMap[input])
+        .map((input) => InputBuildMap[input](selection, initialRef))
+        .reduce((acc, curr) => ({ ...acc, ...curr }), {})
+    },
+    { store: objectPropertiesStore },
+    [selection]
+  )
+
+  useEffect(() => {
+    const initialValues = inputs
+      .filter((input) => InputValueMap[input])
+      .map((input) => InputValueMap[input](selection))
+      .reduce((acc, curr) => ({ ...acc, ...curr }), {})
+    console.log(initialValues)
+    set(initialValues)
+    initialRef.current = true
+  }, [inputs, selection, set])
+
+  return null
 }
 
 export default function ObjectProperties() {
   useEffect(() => {
     Object.assign(window, { objectPropertiesStore })
   }, [])
+  const selection = useEditor((state) => state.selection)
   return (
     <Box fillHeight id='object-properties'>
-      <SelectedObjectSwitcher />
+      {selection.length > 0 ? <SelectedObjectSwitcher /> : <EmptySelection />}
       <LevaPanel store={objectPropertiesStore} fill flat titleBar={false} hideCopyButton />
     </Box>
   )
