@@ -151,6 +151,7 @@ const InputBuildMap = {
         onChange: (value: Vector3Tuple) => {
           if (initialRef.current !== false) {
             selection[0].scale.set(...value);
+            typeof selection[0]["update"] === "function" && selection[0]["update"]();
           }
         },
       },

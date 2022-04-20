@@ -362,13 +362,27 @@ function Editor(props) {
       console.clear();
       const { initialize, uploadFileFromUrl, history } = useEditor.getState();
       initialize();
-      uploadFileFromUrl("/models/room2cm.gltf");
+      uploadFileFromUrl("models/raya/split-shoebox.gltf");
       history.execute(
-        new AddObjectCommand(useEditor, new Source("New Source", [5, 2, 6], 0x44a273).addToDefaultScene(useEditor))
+        new AddObjectCommand(
+          useEditor,
+          new Source("New Source", [2.75, 2, -3.75], 0x44a273).addToDefaultScene(useEditor)
+        )
       );
-      history.execute(
-        new AddObjectCommand(useEditor, new Receiver("New Receiver", [0, 4, 0], 0xe5732a).addToDefaultScene(useEditor))
-      );
+      const rec = new Receiver("New Receiver", [9, 1.5, -7], 0xe5732a).addToDefaultScene(useEditor);
+      rec.scale.set(0.5, 0.5, 0.5);
+      history.execute(new AddObjectCommand(useEditor, rec));
+
+      fetch("/api/materials/getAll")
+        .then((res) => res.json())
+        .then((res) => {
+          const group = Object.values(useEditor.getState().objects).find((item) => item.type === "Group");
+          for (const child of group.children) {
+            (child as Mesh).acousticMaterial = res[Math.floor(Math.random() * res.length)];
+          }
+        })
+        .catch(console.error);
+
     }, 500);
   }, []);
 

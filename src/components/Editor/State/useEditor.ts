@@ -7,7 +7,7 @@ import { Group } from "../Objects/Group/Group"
 import { Mesh } from "../Objects/Mesh/Mesh"
 import { openFilePicker } from "@/helpers/dom/openFilePicker"
 import { GLTFLoader } from "@/components/Editor/Loaders/GLTFLoader"
-import { Color, Box3, Scene, Material, MeshStandardMaterial, DoubleSide } from "three";
+import { Color, Box3, Scene, Material, MeshStandardMaterial, DoubleSide, Vector3, Matrix4 } from "three";
 import { stripExtension } from "@/helpers/string";
 import { darkTheme, lightTheme } from "@/styles/stitches.config";
 import { useTheme } from "@/state/theme";
@@ -19,6 +19,10 @@ import { Signal } from "./Signal";
 import { History } from "./History";
 import { omit } from "@/helpers/object";
 import { BandObject } from "../Objects";
+import { BandObjectExportExtension, GLTFExporter } from "../Exporters/GLTFExporter";
+import { saveString } from "@/helpers/io";
+import { NODE_TYPE, RayaParameters } from "../Exporters/Raya";
+import { nanoid } from "nanoid";
 
 export type EditorColors = {
   canvasBackground: Color;
@@ -107,6 +111,8 @@ type EditorReducers = {
   set: SetState<EditorState & EditorReducers>;
   calculateBounds: () => any;
   initialize: () => void;
+  exportGLTF: () => void;
+  exportRaya: (rayaParameters: RayaParameters, filename: string) => void;
 };
 
 const initialState: EditorState = {
@@ -239,6 +245,60 @@ export const useEditor = create<
               [group.uuid]: group as Group,
             },
           });
+        },
+        exportGLTF: async (filename: string = "scene.gltf") => {
+          const exports = Object.values(get().objects);
+          const animations = [];
+
+          // const { GLTFExporter } = await import( '../../examples/jsm/exporters/GLTFExporter.js' );
+
+          const exporter = new GLTFExporter();
+          exporter.register(function (writer) {
+            return new BandObjectExportExtension(writer, api);
+          });
+
+          exporter.parse(
+            exports,
+            function (result) {
+              saveString(JSON.stringify(result, undefined, 2), filename);
+            },
+            undefined,
+            { binary: false, animations: animations, embedImages: false }
+          );
+        },
+        exportRaya: async (rayaParameters: RayaParameters, filename: string = "scene.gltf") => {
+          const exports = Object.values(get().objects);
+          const animations = [];
+
+          // const { GLTFExporter } = await import( '../../examples/jsm/exporters/GLTFExporter.js' );
+
+          const exporter = new GLTFExporter();
+          exporter.register(function (writer) {
+            return new BandObjectExportExtension(writer, api);
+          });
+
+          exporter.parse(
+            exports,
+            function (result) {
+              result.scenes[0].extras = {
+                max_order: rayaParameters.max_order,
+                ray_count: rayaParameters.ray_count,
+              };
+              for (const node of result.nodes) {
+                if ([NODE_TYPE.SOURCE, NODE_TYPE.RECEIVER].includes(node.extras.node_type)) {
+                  const vec = new Vector3();
+                  vec.setFromMatrixPosition(new Matrix4().fromArray(node.matrix));
+                  node.translation = vec.toArray();
+                }
+              }
+              for (const mesh of result.meshes) {
+                mesh.name = mesh.name || nanoid(10);
+              }
+              saveString(JSON.stringify(result, undefined, 2), filename);
+            },
+            undefined,
+            { binary: false, animations: animations, embedImages: false }
+          );
         },
         calculateBounds: () => {
           const { sources, receivers, meshes } = get();

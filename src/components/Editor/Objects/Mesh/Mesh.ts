@@ -19,6 +19,7 @@ import {
 import useEditor, { Editor } from "../../State/useEditor";
 import { ObjectType } from "../types";
 import { Material as AcousticMaterial } from "@prisma/client";
+import { NODE_TYPE } from "../../Exporters/Raya";
 
 const defaultMaterial = new MeshPhongMaterial({
   color: 0x999b9d,
@@ -77,7 +78,53 @@ export class Mesh extends ThreeMesh {
     this.add(this.edges);
 
     this.wireframe = false;
+
+    this.userData = {
+      id: this.uuid,
+      name: this.name,
+      type: this.type,
+      node_type: NODE_TYPE.REFLECTOR,
+      active: 1,
+    };
+
     // this.update()
+  }
+
+  exportStack: Array<() => void> = [];
+
+  beforeParse() {
+    const edgesOriginalState = this.edges.visible;
+    this.edges.visible = false;
+    this.exportStack.push(() => (this.edges.visible = edgesOriginalState));
+
+    const originalMaterial = this.material;
+
+    this.material = this.material.clone();
+    this.material.side = DoubleSide;
+    this.material.name = this.acousticMaterial.name;
+    this.exportStack.push(() => (this.material = originalMaterial));
+    const frequencies = [...this.acousticMaterial.frequencies];
+    const alphas = [...this.acousticMaterial.absorption];
+    if (frequencies.at(-1) === 8000) {
+      frequencies.push(16000);
+      alphas.push(alphas.at(-1));
+    }
+
+    const keys = frequencies.map((freq) => `abs${freq}`);
+    const absorbtionData = {};
+    keys.forEach((key, i) => {
+      absorbtionData[key] = alphas[i];
+    });
+
+    this.material.userData = {
+      ...absorbtionData,
+    };
+  }
+
+  afterParse() {
+    while (this.exportStack.length > 0) {
+      this.exportStack.pop()();
+    }
   }
 
   addToDefaultScene(editor: Editor) {
@@ -111,10 +158,6 @@ export class Mesh extends ThreeMesh {
   // }
 
   // update() {
-  //   this.userData = {
-  //     id: this.uuid,
-  //     name: this.name,
-  //     type: this.type,
-  //   }
+
   // }
 }
