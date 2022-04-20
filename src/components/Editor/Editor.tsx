@@ -319,11 +319,11 @@ function Editor(props) {
   }, []);
 
   useHotkeys("esc", () => {
-    const { transformControls } = useEditor.getState();
+    const { transformControls, materialDialogOpen } = useEditor.getState();
     if (transformControls && transformControls.enabled) {
       transformControls.enabled = false;
       transformControls.visible = false;
-    } else {
+    } else if (!materialDialogOpen) {
       useEditor.setState({ selection: [] });
     }
   });

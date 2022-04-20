@@ -33,6 +33,9 @@ import { AbsorptionChart } from "./AbsorptionChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger, Separator } from "@/components/shared/Tabs";
 import { AbsorptionTable } from "./AbsorptionTable";
 import { useEventListener } from "@/hooks/useEventListener";
+import useEditor from "../State/useEditor";
+import { ObjectType } from "../Objects/types";
+import { Mesh } from "../Objects/Mesh/Mesh";
 
 // Best practice: You can move the below createContext() and createStore to a separate file(store.js) and import the Provider, useStore here/wherever you need.
 
@@ -179,6 +182,7 @@ function Search() {
     >
       <Fieldset noMargin>
         <Input
+          autoFocus={false}
           css={{ zIndex: "$max" }}
           id='search'
           type='search'
@@ -340,7 +344,7 @@ function MaterialList() {
     }
   }, [isLoadingMore, error, set, data]);
 
-  return searchResultsVisible ? (
+  return searchResultsVisible && !isEmpty ? (
     <StyledMaterialList
       id='material-list'
       direction='column'
@@ -454,6 +458,7 @@ function MaterialDetail() {
 function SearchComponent() {
   const set = useMaterialView((state) => state.set);
   const searchResultsVisible = useMaterialView((state) => state.searchResultsVisible);
+  const selection = useEditor((state) => state.selection);
 
   const ref = useRef(null);
 
@@ -479,6 +484,13 @@ function SearchComponent() {
     }
   });
 
+  useEffect(() => {
+    if (selection && selection.length === 1 && selection[0].type === ObjectType.MESH) {
+      const s = selection[0] as Mesh;
+      set({ selectedMaterial: s.acousticMaterial });
+    }
+  }, []);
+
   return (
     <Box
       ref={ref}
@@ -495,12 +507,45 @@ function SearchComponent() {
   );
 }
 
+function DialogActions() {
+  const selection = useEditor((state) => state.selection);
+  const selectedMaterial = useMaterialView((state) => state.selectedMaterial);
+  const canApply = selection && selection.length > 0 && selectedMaterial != null;
+  return (
+    <Flex fillWidth justify='end' gap='2'>
+      <Button
+        variant='gray'
+        onClick={() => {
+          useEditor.setState({ materialDialogOpen: false });
+        }}
+      >
+        Cancel
+      </Button>
+      <Button
+        variant='green'
+        disabled={!canApply}
+        onClick={(e) => {
+          selection
+            .filter((obj) => Object.prototype.hasOwnProperty.call(obj, "acousticMaterial"))
+            .forEach((obj: Mesh) => {
+              obj.acousticMaterial = selectedMaterial;
+            });
+          useEditor.getState().signals.objectAcousticMaterialChanged.dispatch(selectedMaterial);
+        }}
+      >
+        Apply
+      </Button>
+    </Flex>
+  );
+}
+
 export function MaterialView() {
   return (
     <Provider createStore={createStore}>
-      <Flex direction='column' justify='start' align='start' gap='1' css={{ width: "100%" }}>
+      <Flex direction='column' justify='start' align='start' gap='2' css={{ width: "100%" }}>
         <SearchComponent />
         <MaterialDetail />
+        <DialogActions />
       </Flex>
     </Provider>
   );

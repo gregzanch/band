@@ -86,6 +86,7 @@ type EditorState = {
     pointerMissed: Signal;
     historyChanged: Signal;
     sceneGraphChanged: Signal;
+    objectAcousticMaterialChanged: Signal;
   };
 
   debug: boolean;
@@ -164,6 +165,7 @@ const initialState: EditorState = {
     pointerMissed: new Signal(),
     historyChanged: new Signal(),
     sceneGraphChanged: new Signal(),
+    objectAcousticMaterialChanged: new Signal(),
   },
 
   debug: false,

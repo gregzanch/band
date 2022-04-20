@@ -43,13 +43,6 @@ export function RightSidebar() {
             </TabsList>
             <TabsContent value='object'>
               <ObjectProperties />
-              <Button
-                aria-label='Show materials'
-                variant='green'
-                onClick={() => useEditor.setState({ materialDialogOpen: true })}
-              >
-                Show Materials
-              </Button>
             </TabsContent>
             <TabsContent value='scene'>
               <CameraProperties />

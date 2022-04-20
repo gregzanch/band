@@ -18,6 +18,7 @@ import {
 } from "three";
 import useEditor, { Editor } from "../../State/useEditor";
 import { ObjectType } from "../types";
+import { Material as AcousticMaterial } from "@prisma/client";
 
 const defaultMaterial = new MeshPhongMaterial({
   color: 0x999b9d,
@@ -30,15 +31,33 @@ const defaultMaterial = new MeshPhongMaterial({
   wireframe: false,
 });
 
+const defaultAcousticMaterial = () =>
+  ({
+    id: 441,
+    createdAt: new Date(Date.parse("2022-03-31T20:44:25.773Z")),
+    updatedAt: new Date(Date.parse("2022-03-31T20:44:25.789Z")),
+    name: "Gypsum Board",
+    material: "Gypsum board, 1/2in thick",
+    manufacturer: "",
+    description: "",
+    source: "Egan",
+    tags: ["Ceilings", "Gypsum Board Ceilings"],
+    frequencies: [63, 125, 250, 500, 1000, 2000, 4000, 8000],
+    absorption: [0.05, 0.29, 0.1, 0.05, 0.04, 0.07, 0.09, 0.09],
+  } as AcousticMaterial);
+
 export class Mesh extends ThreeMesh {
   type: ObjectType.MESH;
   material: Material;
   originalMaterial: Material;
   private _wireframe: boolean;
   edges: LineSegments<EdgesGeometry, LineBasicMaterial>;
-  constructor(name: string, geometry: BufferGeometry, material?: Material) {
+  acousticMaterial: AcousticMaterial;
+  constructor(name: string, geometry: BufferGeometry, material?: Material, acousticMaterial?: AcousticMaterial) {
     super(geometry, material || defaultMaterial.clone());
     this.originalMaterial = this.material;
+
+    this.acousticMaterial = acousticMaterial || defaultAcousticMaterial();
 
     this.name = name;
 

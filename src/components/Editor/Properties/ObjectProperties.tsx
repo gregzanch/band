@@ -8,10 +8,12 @@ import { ObjectType } from "@/components/Editor/Objects/types"
 import { BandObject } from "../Objects"
 import { intersection } from "@/helpers/set"
 import { Vector3Tuple } from "three"
-import { Schema } from "../Leva/types";
+import { Schema, SpecialInputs } from "../Leva/types";
 import { Receiver } from "../Objects/Receiver/Receiver";
 import { Mesh } from "../Objects/Mesh/Mesh";
 import { Source } from "../Objects/Source/Source";
+import { button, buttonGroup } from "../Leva/helpers";
+import { Material as AcousticMaterial } from "@prisma/client";
 
 export const objectPropertiesStore = new Store();
 
@@ -168,6 +170,23 @@ const InputBuildMap = {
       },
     };
   },
+  [ObjectInputs.MATERIAL]: (selection: Array<Mesh>, initialRef): Schema => {
+    const names = [...new Set(selection.map((object) => object.acousticMaterial.name))];
+    const value = names.length > 1 ? "Mixed" : names[0];
+    return {
+      material: {
+        type: SpecialInputs.BUTTON_GROUP,
+        opts: {
+          label: "material",
+          opts: {
+            [value]: () => {
+              useEditor.setState({ materialDialogOpen: true });
+            },
+          },
+        },
+      },
+    };
+  },
 };
 
 const InputValueMap = {
@@ -202,6 +221,11 @@ const InputValueMap = {
     return {
       wireframe: selection.at(-1).wireframe,
     };
+  },
+  [ObjectInputs.MATERIAL]: (selection: Array<Mesh>) => {
+    const names = [...new Set(selection.map((object) => object.acousticMaterial.name))];
+    const value = names.length > 1 ? "Mixed" : names[0];
+    return {};
   },
 };
 
@@ -244,14 +268,43 @@ function SelectedObjectSwitcher() {
     initialRef.current = true;
   }, [inputs, selection, set]);
 
+  useEffect(() => {
+    const a = useEditor.getState().signals.objectAcousticMaterialChanged.add((newMaterial: AcousticMaterial) => {
+      objectPropertiesStore.disposePaths(["material"]);
+      //@ts-ignore
+      objectPropertiesStore.addData(
+        {
+          //@ts-ignore
+          material: {
+            key: "material",
+            label: "material",
+            type: SpecialInputs.BUTTON_GROUP,
+            opts: {
+              label: "material",
+              opts: {
+                [newMaterial.name]: () => {
+                  useEditor.setState({ materialDialogOpen: true });
+                },
+              },
+            },
+          },
+        },
+        false
+      );
+      return () => {
+        a.detach();
+      };
+    });
+  }, []);
+
   return null;
 }
 
 export default function ObjectProperties() {
   useEffect(() => {
-    Object.assign(window, { objectPropertiesStore })
-  }, [])
-  const selection = useEditor((state) => state.selection)
+    Object.assign(window, { objectPropertiesStore, buttonGroup });
+  }, []);
+  const selection = useEditor((state) => state.selection);
   return (
     <Box id='object-properties'>
       {selection.length > 0 ? <SelectedObjectSwitcher /> : <EmptySelection />}
