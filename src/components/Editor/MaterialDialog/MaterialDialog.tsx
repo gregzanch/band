@@ -38,31 +38,40 @@ export function MaterialDialog({}) {
       {transitions((styles, item) =>
         item ? (
           <>
-            <DialogContent forceMount asChild css={{ px: 0, boxShadow: "0px 0px 0px 2px $colors$slate7" }}>
+            <DialogContent
+              forceMount
+              asChild
+              css={{ minHeight: 400, boxShadow: "$floating1" }}
+              onEscapeKeyDown={(e) => {
+                if (document.querySelector("#material-list")) {
+                  e.preventDefault();
+                }
+              }}
+            >
               <animated.div style={styles}>
-                <Box>
+                <Box css={{ mb: "$2" }}>
                   <DialogTitle>Materials</DialogTitle>
                 </Box>
-                <ScrollArea css={{ mx: "2%", width: "96%", height: 300 }}>
-                  <ScrollAreaViewport>
-                    <MaterialView />
-                  </ScrollAreaViewport>
-                  <ScrollAreaScrollbar orientation='vertical'>
-                    <ScrollAreaThumb />
-                  </ScrollAreaScrollbar>
-                </ScrollArea>
+                {/* <ScrollArea css={{ mx: "$4", width: "calc(100% - $4 - $4)", height: "85vh" }}> */}
+                {/* <ScrollAreaViewport> */}
+                <MaterialView />
+                {/* </ScrollAreaViewport> */}
+                {/* <ScrollAreaScrollbar orientation='vertical'> */}
+                {/* <ScrollAreaThumb /> */}
+                {/* </ScrollAreaScrollbar> */}
+                {/* </ScrollArea> */}
                 <DialogCloseButton asChild>
                   <IconButton variant='ghost'>
                     <Cross1Icon />
                   </IconButton>
                 </DialogCloseButton>
-                <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
+                {/* <Flex css={{ marginTop: 25, justifyContent: "flex-end" }}>
                   <DialogClose>
                     <Button aria-label='Close' variant='green'>
                       Save changes
                     </Button>
                   </DialogClose>
-                </Flex>
+                </Flex> */}
               </animated.div>
             </DialogContent>
           </>

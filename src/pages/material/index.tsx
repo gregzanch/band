@@ -30,8 +30,8 @@ const Page = () => {
   globalStyles();
 
   return (
-    <Flex justify='center' align='center' css={{ width: "100vw", height: "100vh" }}>
-      <Box css={{ width: "70vw" }}>
+    <Flex justify='center' align='start' css={{ width: "100vw", height: "100vh", mt: "$8" }}>
+      <Box css={{ width: "400px" }}>
         <MaterialView />
       </Box>
     </Flex>

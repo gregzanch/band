@@ -5,13 +5,13 @@ import { ResponsiveBar } from "@nivo/bar";
 
 const NivoThemeMap = {
   [darkTheme]: {
-    background: darkTheme.colors.slate3.computedValue,
+    background: "transparent",
     textColor: darkTheme.colors.slate11.computedValue,
     fontSize: 11,
     axis: {
       domain: {
         line: {
-          stroke: darkTheme.colors.slate12.computedValue,
+          stroke: darkTheme.colors.slate10.computedValue,
           strokeWidth: 1,
         },
       },
@@ -23,7 +23,7 @@ const NivoThemeMap = {
       },
       ticks: {
         line: {
-          stroke: darkTheme.colors.slate12.computedValue,
+          stroke: darkTheme.colors.slate10.computedValue,
           strokeWidth: 1,
         },
         text: {
@@ -34,7 +34,7 @@ const NivoThemeMap = {
     },
     grid: {
       line: {
-        stroke: darkTheme.colors.slate9.computedValue,
+        stroke: darkTheme.colors.slate7.computedValue,
         strokeWidth: 1,
       },
     },
@@ -100,7 +100,7 @@ const NivoThemeMap = {
     },
   },
   [lightTheme]: {
-    background: lightTheme.colors.gray1.computedValue,
+    background: "transparent",
     textColor: lightTheme.colors.hiContrast.computedValue,
     fontSize: 11,
     axis: {
@@ -211,8 +211,8 @@ export function AbsorptionChart({ data }) {
       theme={NivoThemeMap[theme]}
       keys={["absorption"]}
       indexBy='frequency'
-      margin={{ top: 40, right: 10, bottom: 50, left: 70 }}
-      padding={0.3}
+      margin={{ top: 40, right: 10, bottom: 50, left: 40 }}
+      padding={0.1}
       valueScale={{ type: "linear" }}
       indexScale={{ type: "band", round: true }}
       colors={{ scheme: "nivo" }}
@@ -268,14 +268,14 @@ export function AbsorptionChart({ data }) {
         renderTick: () => null,
         ariaHidden: true,
       }}
-      axisLeft={{
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: 0,
-        legend: "Absorption",
-        legendPosition: "middle",
-        legendOffset: -60,
-      }}
+      // axisLeft={{
+      //   tickSize: 5,
+      //   tickPadding: 5,
+      //   tickRotation: 0,
+      //   legend: "Absorption",
+      //   legendPosition: "middle",
+      //   legendOffset: -60,
+      // }}
       minValue={0}
       maxValue={1}
       labelSkipWidth={12}

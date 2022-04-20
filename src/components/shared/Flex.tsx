@@ -95,6 +95,11 @@ export const Flex = styled("div", {
         width: "100%",
       },
     },
+    fillHeight: {
+      true: {
+        height: "100%",
+      },
+    },
   },
   defaultVariants: {
     direction: "row",
@@ -102,5 +107,6 @@ export const Flex = styled("div", {
     justify: "start",
     wrap: "noWrap",
     fillWidth: false,
+    fillHeight: false,
   },
 });

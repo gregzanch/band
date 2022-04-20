@@ -2,6 +2,7 @@ import { Box } from "@/components/shared/Box";
 import { Flex } from "@/components/shared/Flex";
 import { Text } from "@/components/shared/Text";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import { css, styled } from "@/styles/stitches.config";
 import { Fragment, memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import useSWRInfinite from "swr/infinite";
@@ -29,6 +30,10 @@ import createContext from "zustand/context";
 import { usePrevious } from "@/hooks/usePrevious";
 import { AbsorptionChart } from "./AbsorptionChart";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger, Separator } from "@/components/shared/Tabs";
+import { AbsorptionTable } from "./AbsorptionTable";
+import { useEventListener } from "@/hooks/useEventListener";
+
 // Best practice: You can move the below createContext() and createStore to a separate file(store.js) and import the Provider, useStore here/wherever you need.
 
 type MaterialViewStore = {
@@ -38,6 +43,7 @@ type MaterialViewStore = {
   setSelectedMaterial: (mat: any) => void;
   materials: any[];
   set: SetState<MaterialViewStore>;
+  searchResultsVisible: boolean;
 };
 
 const { Provider, useStore: useMaterialView } = createContext<MaterialViewStore>();
@@ -52,6 +58,7 @@ const createStore = () =>
         setSelectedMaterial: (mat: any) => set({ selectedMaterial: mat }),
         materials: [],
         set,
+        searchResultsVisible: false,
       } as MaterialViewStore)
   );
 
@@ -130,19 +137,21 @@ const Input = styled("input", {
   lineHeight: 1,
   color: "$highlight2",
   backgroundColor: "$slate2",
-  boxShadow: "0px 0px 0px 1px $colors$slate7",
+  boxShadow: "inset 0px 0px 0px 1px $colors$slate7",
   height: 35,
 
-  "&:focus": { boxShadow: "0px 0px 0px 2px $colors$slate7", color: "$hiContrast" },
+  "&:focus": { boxShadow: "inset 0px 0px 0px 2px $colors$slate7", color: "$hiContrast" },
 });
 
 const Form = styled("form", {
-  width: "100%",
+  width: "400px",
+  zIndex: "$max",
 });
 
 function Search() {
   const setQuery = useMaterialView((state) => state.setQuery);
   const set = useMaterialView((state) => state.set);
+  const searchResultsVisible = useMaterialView((state) => state.searchResultsVisible);
   const [value, setValue] = useState("");
 
   const changeHandler = useCallback(
@@ -170,13 +179,24 @@ function Search() {
     >
       <Fieldset noMargin>
         <Input
+          css={{ zIndex: "$max" }}
           id='search'
           type='search'
           placeholder='Search...'
           value={value}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              set({ searchResultsVisible: false });
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          }}
           onChange={(e) => {
             setValue(e.target.value);
             debouncedChangeHandler(e);
+          }}
+          onFocus={(e) => {
+            set((prev) => ({ searchResultsVisible: true }));
           }}
         />
       </Fieldset>
@@ -194,18 +214,6 @@ function MaterialItem({ material, query }) {
   const htmlstring = useMemo(() => {
     const htmlstr = materialString.replace(new RegExp(`(${escapeRegExp(query)})`, "gim"), `<mark>$1</mark>`);
     return htmlstr;
-    // const parser = new DOMParser();
-    // const doc2 = parser.parseFromString(htmlstr, "text/html");
-    // const innerHtml = [...doc2.body.childNodes]
-    //   .map((node) => {
-    //     if (node.nodeType === Node.TEXT_NODE) {
-    //       return `<span>${node.textContent}</span>`;
-    //     }
-    //     return node["outerHTML"];
-    //   })
-    //   .join("\n");
-
-    // return innerHtml;
   }, [materialString, query]);
 
   return (
@@ -256,11 +264,19 @@ const MenuContent = styled(MenuPrimitive.Content, contentStyle);
 const MenuItem = styled(MenuPrimitive.Content, baseItemCss, itemCss);
 
 const StyledMaterialList = styled(Flex, panelStyles, {
-  width: "100%",
-  height: "200px",
-  maxHeight: "200px",
+  width: "400px",
+
+  height: "150px",
+  maxHeight: "150px",
   backgroundColor: "$slate2",
-  boxShadow: "0px 0px 0px 1px $colors$slate7",
+  borderTopRightRadius: "0",
+  borderTopLeftRadius: "0",
+  // boxShadow: "0px 0px 0px 1px $colors$slate7",
+  boxShadow: "$level2",
+  position: "absolute",
+  transform: "translateY(-$radii$2)",
+  pt: "$radii$2",
+  zIndex: "$4",
 });
 
 function EmptyList() {
@@ -279,10 +295,11 @@ function MaterialResultTable() {
 
   return (
     <Table aria-label='Search results'>
-      <Tbody>
+      <Tbody role='listbox'>
         {materials.map((material, index) => (
           <Tr
-            role='row'
+            role='option'
+            // role='row'
             aria-selected={selectedMaterial && selectedMaterial.id === material.id}
             selectable
             key={material.id}
@@ -291,7 +308,7 @@ function MaterialResultTable() {
               console.log(material);
             }}
           >
-            <Td>
+            <Td align='start'>
               <MaterialItem material={material} query={query} />
             </Td>
           </Tr>
@@ -304,6 +321,7 @@ function MaterialResultTable() {
 function MaterialList() {
   const query = useMaterialView((state) => state.query);
   const set = useMaterialView((state) => state.set);
+  const searchResultsVisible = useMaterialView((state) => state.searchResultsVisible);
 
   const { data, error, mutate, size, setSize, isValidating } = useSWRInfinite(
     (index) => `/api/materials/search?query=${query}&page=${index}&count=${PAGE_SIZE}`,
@@ -322,8 +340,24 @@ function MaterialList() {
     }
   }, [isLoadingMore, error, set, data]);
 
-  return (
-    <StyledMaterialList direction='column' justify='start' align='start'>
+  return searchResultsVisible ? (
+    <StyledMaterialList
+      id='material-list'
+      direction='column'
+      justify='start'
+      align='start'
+      // onKeyDown={(e) => {
+      //   console.log(e);
+      // }}
+      // onKeyDownCapture={(e) => {
+      //   if (e.key === "Escape") {
+      //     console.log("bx");
+      //     set({ searchResultsVisible: false });
+      //     e.preventDefault();
+      //     e.stopPropagation();
+      //   }
+      // }}
+    >
       <ScrollArea
         css={{ width: "100%", height: "100%" }}
         onScroll={(e) => {
@@ -347,7 +381,7 @@ function MaterialList() {
         {/* <ScrollAreaCorner /> */}
       </ScrollArea>
     </StyledMaterialList>
-  );
+  ) : null;
 }
 
 function Manufacturer({ material }) {
@@ -382,8 +416,10 @@ function MaterialDetail() {
   return material ? (
     <Flex css={{ flexDirection: "column", gap: "$2", width: "100%" }}>
       <Flex direction='row' fillWidth justify='between'>
-        <Flex direction='row' gap='1' align='end'>
-          <Text bold>{material.name}</Text>
+        <Flex direction='column' gap='1' align='start' css={{ flexWrap: "wrap" }}>
+          <Text bold wrap>
+            {material.name}
+          </Text>
           <MaterialTags material={material} />
         </Flex>
         <Manufacturer material={material} />
@@ -395,19 +431,75 @@ function MaterialDetail() {
       <Text wrap css={{ fontWeight: "300" }} size='2'>
         {material.description}
       </Text>
-      <Box css={{ height: 200, maxWidth: 400 }}>
-        <AbsorptionChart data={absorptionData} />
+      <Box css={{ maxWidth: 400 }}>
+        <Tabs defaultValue='chart' css={{ height: "auto" }}>
+          <TabsList>
+            <TabsTrigger value='chart'>Chart</TabsTrigger>
+            <TabsTrigger value='table'>Table</TabsTrigger>
+          </TabsList>
+          <TabsContent value='chart'>
+            <Box css={{ height: 200, maxWidth: 400 }}>
+              <AbsorptionChart data={absorptionData} />
+            </Box>
+          </TabsContent>
+          <TabsContent value='table'>
+            <AbsorptionTable data={absorptionData} />
+          </TabsContent>
+        </Tabs>
       </Box>
     </Flex>
   ) : null;
+}
+
+function SearchComponent() {
+  const set = useMaterialView((state) => state.set);
+  const searchResultsVisible = useMaterialView((state) => state.searchResultsVisible);
+
+  const ref = useRef(null);
+
+  const handleClickOutside = () => {
+    // Your custom logic here
+    set({ searchResultsVisible: false });
+    console.log("clicked outside");
+  };
+
+  const handleClickInside = () => {
+    // Your custom logic here
+    set({ searchResultsVisible: true });
+    console.log("clicked inside");
+  };
+
+  useOnClickOutside(ref, handleClickOutside);
+
+  useEventListener("keydown", (e) => {
+    if (e.key === "Escape" && searchResultsVisible) {
+      set({ searchResultsVisible: false });
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  });
+
+  return (
+    <Box
+      ref={ref}
+      onClick={handleClickInside}
+      fillWidth
+
+      // onBlur={(e) => {
+      //   set((prev) => ({ searchResultsVisible: false }));
+      // }}
+    >
+      <Search />
+      <MaterialList />
+    </Box>
+  );
 }
 
 export function MaterialView() {
   return (
     <Provider createStore={createStore}>
       <Flex direction='column' justify='start' align='start' gap='1' css={{ width: "100%" }}>
-        <Search />
-        <MaterialList />
+        <SearchComponent />
         <MaterialDetail />
       </Flex>
     </Provider>
