@@ -33,43 +33,41 @@ const StyledContent = styled(DialogPrimitive.Content, panelStyles, {
   left: "50%",
   transform: "translate(-50%, -50%)",
   minWidth: 200,
+  width: "85vw",
   maxHeight: "85vh",
   padding: "$4",
   marginTop: "-5vh",
-  // animation: `${fadeIn} 125ms linear, ${moveDown} 125ms cubic-bezier(0.22, 1, 0.36, 1)`,
-
-  // Among other things, prevents text alignment inconsistencies when dialog can't be centered in the viewport evenly.
-  // Affects animated and non-animated dialogs alike.
+  zIndex: "$max",
   willChange: "transform",
-
   "&:focus": {
     outline: "none",
   },
-})
+});
 
 const StyledCloseButton = styled(DialogPrimitive.Close, {
   position: "absolute",
   top: "$2",
   right: "$2",
-})
+});
 
-type DialogContentPrimitiveProps = React.ComponentProps<typeof DialogPrimitive.Content>
-type DialogContentProps = DialogContentPrimitiveProps & { css?: CSS }
+export const DialogContent = StyledContent;
 
-export const DialogContent = React.forwardRef<React.ElementRef<typeof StyledContent>, DialogContentProps>(
-  ({ children, ...props }, forwardedRef) => (
-    <StyledContent {...props} ref={forwardedRef}>
-      {children}
-      <StyledCloseButton asChild>
-        <IconButton variant='ghost'>
-          <Cross1Icon />
-        </IconButton>
-      </StyledCloseButton>
-    </StyledContent>
-  )
-)
+export const DialogTrigger = DialogPrimitive.Trigger;
+export const DialogCloseButton = StyledCloseButton;
+export const DialogClose = DialogPrimitive.Close;
 
-export const DialogTrigger = DialogPrimitive.Trigger
-export const DialogClose = DialogPrimitive.Close
-export const DialogTitle = DialogPrimitive.Title
-export const DialogDescription = DialogPrimitive.Description
+export const DialogTitle = styled(DialogPrimitive.Title, {
+  color: "$hiContrast",
+  fontWeight: 400,
+  display: "inherit",
+  fontFamily: "$untitled",
+  fontSize: "$4",
+  fontVariantNumeric: "tabular-nums",
+  cursor: "default",
+  whiteSpace: "nowrap",
+});
+
+export const DialogDescription = styled(DialogPrimitive.Description, {
+  color: "$hiContrast",
+});
+export const DialogOverlay = StyledOverlay;

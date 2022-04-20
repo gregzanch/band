@@ -15,6 +15,19 @@ export const Text = styled("p", {
   whiteSpace: "nowrap",
 
   variants: {
+    bold: {
+      true: { fontWeight: 500 },
+    },
+    inline: {
+      true: {
+        display: "inline",
+      },
+    },
+
+    wrap: {
+      true: { whiteSpace: "normal" },
+    },
+
     size: {
       "1": {
         fontSize: "$1",
@@ -53,50 +66,11 @@ export const Text = styled("p", {
       },
     },
     variant: {
-      red: {
-        color: "$red11",
-      },
-      crimson: {
-        color: "$crimson11",
-      },
-      pink: {
-        color: "$pink11",
-      },
-      purple: {
-        color: "$purple11",
-      },
-      violet: {
-        color: "$violet11",
-      },
-      indigo: {
-        color: "$indigo11",
-      },
-      blue: {
-        color: "$blue11",
-      },
-      cyan: {
-        color: "$cyan11",
-      },
-      teal: {
-        color: "$teal11",
-      },
-      green: {
-        color: "$green11",
-      },
-      lime: {
-        color: "$lime11",
-      },
       yellow: {
         color: "$yellow11",
       },
       orange: {
         color: "$orange11",
-      },
-      gold: {
-        color: "$gold11",
-      },
-      bronze: {
-        color: "$bronze11",
       },
       gray: {
         color: "$slate11",
@@ -104,6 +78,9 @@ export const Text = styled("p", {
       contrast: {
         color: "$hiContrast",
       },
+    },
+    faded: {
+      true: { color: "$loContrast" },
     },
     gradient: {
       true: {
@@ -116,17 +93,6 @@ export const Text = styled("p", {
   },
   compoundVariants: [
     {
-      variant: "red",
-      gradient: "true",
-      css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $red11, $crimson11)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
-    {
       variant: "crimson",
       gradient: "true",
       css: {
@@ -137,105 +103,7 @@ export const Text = styled("p", {
         WebkitTextFillColor: "transparent",
       },
     },
-    {
-      variant: "pink",
-      gradient: "true",
-      css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $pink11, $purple11)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
-    {
-      variant: "purple",
-      gradient: "true",
-      css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $purple11, $violet11)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
-    {
-      variant: "violet",
-      gradient: "true",
-      css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $violet11, $indigo11)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
-    {
-      variant: "indigo",
-      gradient: "true",
-      css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $indigo11, $blue11)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
-    {
-      variant: "blue",
-      gradient: "true",
-      css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $blue11, $cyan11)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
-    {
-      variant: "cyan",
-      gradient: "true",
-      css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $cyan11, $teal11)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
-    {
-      variant: "teal",
-      gradient: "true",
-      css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $teal11, $green11)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
-    {
-      variant: "green",
-      gradient: "true",
-      css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $green11, $lime11)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
-    {
-      variant: "lime",
-      gradient: "true",
-      css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $lime11, $yellow11)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
+
     {
       variant: "yellow",
       gradient: "true",
@@ -257,39 +125,7 @@ export const Text = styled("p", {
         },
       },
     },
-    {
-      variant: "orange",
-      gradient: "true",
-      css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $orange11, $red11)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
-    {
-      variant: "gold",
-      gradient: "true",
-      css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $gold11, $gold9)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
-    {
-      variant: "bronze",
-      gradient: "true",
-      css: {
-        backgroundClip: "text",
-        color: "transparent",
-        background: "-webkit-linear-gradient(top right, $bronze11, $bronze9)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
+
     {
       variant: "gray",
       gradient: "true",
@@ -317,4 +153,4 @@ export const Text = styled("p", {
     size: "3",
     variant: "contrast",
   },
-})
+});

@@ -77,23 +77,20 @@ function Effects() {
   )
 }
 
-function onEnd({ target }) {
-  const camera = target.object as PerspectiveCameraImpl
-  useEditor.setState({ cameraMatrix: camera.matrix.toArray() })
-}
+
 
 const Controls = () => {
-  const control = useRef(null)
-  const transformControls = useRef(null)
-  const selection = useEditor((state) => state.selection)
-  const transformType = useEditor((state) => state.transformType)
+  const control = useRef(null);
+  const transformControls = useRef(null);
+  const selection = useEditor((state) => state.selection);
+  const transformType = useEditor((state) => state.transformType);
   const resetSymbol = useEditor((state) => state.resetSymbol);
 
-  const three = useThree()
+  const three = useThree();
 
   useEffect(() => {
-    three.raycaster.layers.enableAll()
-  }, [three.raycaster])
+    three.raycaster.layers.enableAll();
+  }, [three.raycaster]);
 
   useEffect(() => {
     useEditor.setState({
@@ -112,26 +109,26 @@ const Controls = () => {
 
         onChange: (value) => {
           // @ts-ignore
-          control?.current.object.fov = value
-          control?.current.object.updateProjectionMatrix()
+          control?.current.object.fov = value;
+          control?.current.object.updateProjectionMatrix();
         },
       },
     },
     { store: cameraPropertiesStore }
-  )
+  );
 
   useEffect(() => {
     if (transformControls.current) {
-      transformControls.current.enabled = false
-      transformControls.current.visible = false
-      useEditor.setState({ transformControls: transformControls.current })
-      const { current: controls } = transformControls
+      transformControls.current.enabled = false;
+      transformControls.current.visible = false;
+      useEditor.setState({ transformControls: transformControls.current });
+      const { current: controls } = transformControls;
 
       const changeCallback = (event) => {
         if (event.target.mode === "translate" && objectPropertiesStore.getData()["position"]) {
-          const { x, y, z } = objectPropertiesStore.get("position")
+          const { x, y, z } = objectPropertiesStore.get("position");
           if (selection.length === 0) {
-            return
+            return;
           }
           if (
             selection[selection.length - 1].position.x !== x ||
@@ -146,13 +143,13 @@ const Controls = () => {
                 z: selection[selection.length - 1].position.z,
               },
               false
-            )
+            );
           }
         }
         if (event.target.mode === "scale" && objectPropertiesStore.getData()["scale"]) {
-          const { x, y, z } = objectPropertiesStore.get("scale")
+          const { x, y, z } = objectPropertiesStore.get("scale");
           if (selection.length === 0) {
-            return
+            return;
           }
           if (
             selection[selection.length - 1].scale.x !== x ||
@@ -167,86 +164,95 @@ const Controls = () => {
                 z: selection[selection.length - 1].scale.z,
               },
               false
-            )
+            );
           }
         }
-      }
+      };
 
       const callback = (event) => {
-        control.current.enabled = !event.value
-      }
+        control.current.enabled = !event.value;
+      };
 
-      let objectPositionOnDown: Vector3
-      let objectRotationOnDown: Euler
-      let objectScaleOnDown: Vector3
+      let objectPositionOnDown: Vector3;
+      let objectRotationOnDown: Euler;
+      let objectScaleOnDown: Vector3;
 
       const handleMouseDown = () => {
-        const object = controls.object
-        objectPositionOnDown = object.position.clone()
-        objectRotationOnDown = object.rotation.clone()
-        objectScaleOnDown = object.scale.clone()
-      }
+        const object = controls.object;
+        objectPositionOnDown = object.position.clone();
+        objectRotationOnDown = object.rotation.clone();
+        objectScaleOnDown = object.scale.clone();
+      };
 
       const handleMouseUp = () => {
-        const object = controls.object
+        const object = controls.object;
         if (object !== undefined) {
           switch (controls.getMode()) {
             case "translate":
               if (!objectPositionOnDown.equals(object.position)) {
                 useEditor
                   .getState()
-                  .history.execute(new SetPositionCommand(useEditor, object, object.position, objectPositionOnDown))
+                  .history.execute(new SetPositionCommand(useEditor, object, object.position, objectPositionOnDown));
               }
-              break
+              break;
             case "rotate":
               if (!objectRotationOnDown.equals(object.rotation)) {
                 useEditor
                   .getState()
-                  .history.execute(new SetRotationCommand(useEditor, object, object.rotation, objectRotationOnDown))
+                  .history.execute(new SetRotationCommand(useEditor, object, object.rotation, objectRotationOnDown));
               }
-              break
+              break;
             case "scale":
               if (!objectScaleOnDown.equals(object.scale)) {
                 useEditor
                   .getState()
-                  .history.execute(new SetScaleCommand(useEditor, object, object.scale, objectScaleOnDown))
+                  .history.execute(new SetScaleCommand(useEditor, object, object.scale, objectScaleOnDown));
               }
-              break
+              break;
           }
         }
-      }
+      };
 
-      controls.addEventListener("mouseDown", handleMouseDown)
-      controls.addEventListener("mouseUp", handleMouseUp)
-      controls.addEventListener("objectChange", changeCallback)
-      controls.addEventListener("dragging-changed", callback)
+      controls.addEventListener("mouseDown", handleMouseDown);
+      controls.addEventListener("mouseUp", handleMouseUp);
+      controls.addEventListener("objectChange", changeCallback);
+      controls.addEventListener("dragging-changed", callback);
       return () => {
-        controls.removeEventListener("mouseDown", handleMouseDown)
-        controls.removeEventListener("mouseUp", handleMouseUp)
-        controls.removeEventListener("objectChange", changeCallback)
-        controls.removeEventListener("dragging-changed", callback)
-      }
+        controls.removeEventListener("mouseDown", handleMouseDown);
+        controls.removeEventListener("mouseUp", handleMouseUp);
+        controls.removeEventListener("objectChange", changeCallback);
+        controls.removeEventListener("dragging-changed", callback);
+      };
     }
-  }, [selection])
+  }, [selection]);
 
   useEffect(() => {
-    const controlValue = control?.current
+    const controlValue = control?.current;
+    const onEnd = ({ target }) => {
+      const camera = target.object as PerspectiveCameraImpl;
+      useEditor.setState({ cameraMatrix: camera.matrix.toArray() });
+      const newFogDistance = Math.max(camera.position.length() * 2, 75);
+      const currentFogDistance = cameraPropertiesStore.get("fogDistance");
+      if (currentFogDistance !== newFogDistance) {
+        cameraPropertiesStore.setValueAtPath("fogDistance", newFogDistance, true);
+      }
+    };
     if (controlValue) {
       // controlValue.layers.enable(LayerMap.TRANSFORM_CONTROLS)
-      useEditor.setState({ orbitControls: controlValue })
+      useEditor.setState({ orbitControls: controlValue });
       // dom.current.style['touch-action'] = 'none'
-      const camera = controlValue.object as PerspectiveCameraImpl
-      camera.layers.enableAll()
+      const camera = controlValue.object as PerspectiveCameraImpl;
+      camera.layers.enableAll();
       // camera.layers.enable(LayerMap.TRANSFORM_CONTROLS)
-      const matrix = useEditor.getState().cameraMatrix
-      camera.matrix.fromArray(matrix)
-      camera.matrix.decompose(camera.position, camera.quaternion, camera.scale)
-      controlValue.addEventListener("end", onEnd)
+      const matrix = useEditor.getState().cameraMatrix;
+      camera.matrix.fromArray(matrix);
+      camera.matrix.decompose(camera.position, camera.quaternion, camera.scale);
+      controlValue.addEventListener("end", onEnd);
     }
     return () => {
-      controlValue.removeEventListener("end", onEnd)
-    }
-  }, [control])
+      controlValue.removeEventListener("end", onEnd);
+    };
+  }, [control]);
 
   return (
     <>
@@ -266,13 +272,13 @@ const Controls = () => {
       )}
       <OrbitControls ref={control} enableDamping={false} makeDefault />
     </>
-  )
-}
+  );
+};
 
 function OrientationGizmo() {
-  const { camera } = useThree()
+  const { camera } = useThree();
 
-  const x = useEditor((state) => state.orientationHelperMarginX)
+  const x = useEditor((state) => state.orientationHelperMarginX);
 
   return (
     <GizmoHelper
@@ -282,19 +288,19 @@ function OrientationGizmo() {
       renderPriority={2}
       castShadow={false}
       onUpdate={() => {
-        camera.up.set(0, 1, 0)
+        camera.up.set(0, 1, 0);
       }}
     >
       <GizmoViewport axisColors={["#ED3D59", "#80AF00", "#488FEA"]} labelColor='black' />
     </GizmoHelper>
-  )
+  );
 }
 
 // TODO: Soft shadows are expensive, uncomment and refresh when it's too slow
 // softShadows()
 
 function Editor(props) {
-  const colors = useEditor((state) => state.colors)
+  const colors = useEditor((state) => state.colors);
 
   useEffect(() => {
     const unsub = useTheme.subscribe(
@@ -308,66 +314,66 @@ function Editor(props) {
       {
         fireImmediately: true,
       }
-    )
-    return unsub
-  }, [])
+    );
+    return unsub;
+  }, []);
 
   useHotkeys("esc", () => {
-    const { transformControls } = useEditor.getState()
+    const { transformControls } = useEditor.getState();
     if (transformControls && transformControls.enabled) {
-      transformControls.enabled = false
-      transformControls.visible = false
+      transformControls.enabled = false;
+      transformControls.visible = false;
     } else {
       useEditor.setState({ selection: [] });
     }
-  })
+  });
 
   useHotkeys("m", (keyboardEvent, hotkeysEvent) => {
     // console.log(keyboardEvent, hotkeysEvent)
-    const { transformControls } = useEditor.getState()
+    const { transformControls } = useEditor.getState();
     if (transformControls) {
-      transformControls.enabled = true
-      transformControls.visible = true
+      transformControls.enabled = true;
+      transformControls.visible = true;
     }
-  })
+  });
 
   useEffect(() => {
     Object.entries(MenuHotkeys).forEach(([action, hotkey]) => {
       hotkeys(hotkey, () => {
         if (ActionMap[action]) {
-          ActionMap[action]()
-          return false
+          ActionMap[action]();
+          return false;
         }
-      })
-    })
+      });
+    });
 
     return () => {
       Object.entries(MenuHotkeys).forEach(([action, hotkey]) => {
         if (ActionMap[action]) {
-          hotkeys.unbind(hotkey, ActionMap[action])
+          hotkeys.unbind(hotkey, ActionMap[action]);
         }
-      })
-    }
-  }, [])
+      });
+    };
+  }, []);
 
   useEffect(() => {
-    Object.assign(window, { useEditor, darkTheme, theme, Color, Vector3 })
+    Object.assign(window, { useEditor, darkTheme, theme, Color, Vector3 });
     setTimeout(() => {
-      console.clear()
-      const { initialize, uploadFileFromUrl, history } = useEditor.getState()
-      initialize()
+      console.clear();
+      const { initialize, uploadFileFromUrl, history } = useEditor.getState();
+      initialize();
       uploadFileFromUrl("/models/room2cm.gltf");
       history.execute(
         new AddObjectCommand(useEditor, new Source("New Source", [5, 2, 6], 0x44a273).addToDefaultScene(useEditor))
-      )
+      );
       history.execute(
         new AddObjectCommand(useEditor, new Receiver("New Receiver", [0, 4, 0], 0xe5732a).addToDefaultScene(useEditor))
-      )
-    }, 500)
-  }, [])
+      );
+    }, 500);
+  }, []);
 
-  const objects = useEditor((state) => state.objects)
-  const debug = useEditor((state) => state.debug)
+  const objects = useEditor((state) => state.objects);
+  const debug = useEditor((state) => state.debug);
 
   const { fogDistance } = useControls(
     {
@@ -378,9 +384,9 @@ function Editor(props) {
       },
     },
     { store: cameraPropertiesStore }
-  )
+  );
 
-  const pointerDownRef = useRef(null)
+  const pointerDownRef = useRef(null);
 
   return (
     <Canvas
@@ -391,7 +397,7 @@ function Editor(props) {
         antialias: true,
         stencil: true,
       }}
-      style={{ backgroundColor: `#${colors.canvasBackground.getHexString()}` }}
+      style={{ backgroundColor: `#${colors.canvasBackground.getHexString()}`, userSelect: "none" }}
       onPointerMissed={(e) => {
         // useEditor.getState().signals.pointerMissed.dispatch()
         const { transformControls } = useEditor.getState();

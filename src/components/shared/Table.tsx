@@ -47,7 +47,7 @@ export const Th = styled("th", {
 })
 
 export const Td = styled("td", {
-  py: "$2",
+  // py: "$2",
   borderBottom: "1px solid $gray4",
   fontSize: "$2",
   variants: {
@@ -75,7 +75,7 @@ export const Td = styled("td", {
     align: "start",
     border: "solid",
   },
-})
+});
 
 export const Thead = styled("thead", {
   [`& ${Th}`]: {

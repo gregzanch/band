@@ -8,6 +8,7 @@ import { Box } from "@/components/shared/Box"
 import { useEffect } from "react"
 import { globalCss, darkTheme, lightTheme } from "@/styles/stitches.config"
 import useTheme from "@/state/theme"
+import { MaterialDialog } from "@/components/Editor/MaterialDialog/MaterialDialog";
 
 const globalStyles = globalCss({
   html: { width: "100%", height: "100%", margin: 0, padding: 0 },
@@ -15,25 +16,26 @@ const globalStyles = globalCss({
   "#__next": { width: "100%", height: "100%", margin: 0, padding: 0 },
   ".csr-container": { width: "100%", height: "100%", margin: 0, padding: 0 },
   ".editor-stats": { bottom: "$2", right: "$2", top: "unset !important", left: "unset !important" },
-})
+});
 
 export default function EditorPage() {
-  const currTheme = useTheme((state) => state.theme)
+  const currTheme = useTheme((state) => state.theme);
 
   useEffect(() => {
-    Object.assign(window, { useTheme })
-    document.body.classList.remove(lightTheme, darkTheme)
-    document.body.classList.add(currTheme)
-  }, [currTheme])
+    Object.assign(window, { useTheme });
+    document.body.classList.remove(lightTheme, darkTheme);
+    document.body.classList.add(currTheme);
+  }, [currTheme]);
 
-  globalStyles()
+  globalStyles();
 
   return (
     <>
       <EditorToolbar />
       <LeftSidebar />
       <RightSidebar />
+      <MaterialDialog />
       <Editor />
     </>
-  )
+  );
 }

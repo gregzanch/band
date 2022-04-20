@@ -92,6 +92,8 @@ type EditorState = {
 
   history: History | null;
 
+  materialDialogOpen: boolean;
+
   sources: Record<string, Source>; // TODO remove deprecated
   receivers: Record<string, Receiver>; // TODO remove deprecated
   meshes: Record<string, Mesh | Group>; // TODO remove deprecated
@@ -151,6 +153,8 @@ const initialState: EditorState = {
   colors: EditorColorMap.get(useTheme.getState().theme || darkTheme),
   orientationHelperMarginX: 380,
   transformType: "translate",
+
+  materialDialogOpen: false,
 
   signals: {
     objectAdded: new Signal(),

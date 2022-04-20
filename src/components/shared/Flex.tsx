@@ -90,11 +90,17 @@ export const Flex = styled("div", {
         gap: "$9",
       },
     },
+    fillWidth: {
+      true: {
+        width: "100%",
+      },
+    },
   },
   defaultVariants: {
     direction: "row",
     align: "stretch",
     justify: "start",
     wrap: "noWrap",
+    fillWidth: false,
   },
-})
+});

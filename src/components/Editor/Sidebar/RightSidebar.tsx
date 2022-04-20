@@ -13,6 +13,8 @@ import {
   ScrollAreaViewport,
 } from "@/components/shared/ScrollArea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shared/Tabs"
+import { Button } from "@/components/shared/Button";
+import useEditor from "../State/useEditor";
 
 export function RightSidebar() {
   return (
@@ -41,6 +43,13 @@ export function RightSidebar() {
             </TabsList>
             <TabsContent value='object'>
               <ObjectProperties />
+              <Button
+                aria-label='Show materials'
+                variant='green'
+                onClick={() => useEditor.setState({ materialDialogOpen: true })}
+              >
+                Show Materials
+              </Button>
             </TabsContent>
             <TabsContent value='scene'>
               <CameraProperties />
@@ -52,5 +61,5 @@ export function RightSidebar() {
         </Box>
       </Box>
     </SidebarPanel>
-  )
+  );
 }

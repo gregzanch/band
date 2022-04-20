@@ -1,26 +1,49 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import prisma from "../../../../lib/prisma"
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" })
+const parsePage = (param: string | string[]): number => {
+  if (Array.isArray(param)) {
+    param = param[0];
   }
+  const parsed = parseInt(param);
+  return isNaN(parsed) ? 0 : parsed;
+};
+
+const first = <T>(val: T | T[]): T => (Array.isArray(val) ? val[0] : val);
+
+const parseIntQuery = (val: string) => {
+  const parsed = parseInt(val);
+  if (isNaN(parsed)) {
+    throw new Error(`could not parse 'count' parameter, got ${val}`);
+  }
+  return parsed;
+};
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { query } = req.body
+    const query = first(req.query.query) || "";
+    const page = parsePage(req.query.page);
+    const count = parseIntQuery(first(req.query.count));
+
+    if (!query) {
+      return res.status(200).json([]);
+    }
     const materials = await prisma.material.findMany({
-      take: 10,
+      take: count,
+      skip: count * page,
       where: {
         material: {
           contains: query,
+          mode: "insensitive",
         },
       },
-    })
-    res.status(200).json(materials)
+    });
+    res.status(200).json(materials);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({
       error: "Search material failed",
-      message: error.msg,
-    })
+      message: error.message,
+    });
   }
 }

@@ -247,7 +247,7 @@ export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes
     fontSizes: {
       1: "11px",
       2: "12px",
-      3: "15px",
+      3: "14px",
       4: "17px",
       5: "19px",
       6: "21px",
@@ -395,11 +395,11 @@ export const { styled, css, theme, createTheme, getCssText, globalCss, keyframes
       backgroundClip: value,
     }),
   },
-})
+});
 
-export type CSS = Stitches.CSS<typeof config>
+export type CSS = Stitches.CSS<typeof config>;
 
-export const lightThemeMode = "light-theme"
+export const lightThemeMode = "light-theme";
 export const lightTheme = createTheme(lightThemeMode, {
   colors: {
     ...gray,
@@ -490,10 +490,9 @@ export const lightTheme = createTheme(lightThemeMode, {
     shadowLight: "hsl(206 22% 7% / 35%)",
     shadowDark: "hsl(206 22% 7% / 20%)",
   },
-})
+});
 
-
-export const darkThemeMode = "dark-theme"
+export const darkThemeMode = "dark-theme";
 export const darkTheme = createTheme(darkThemeMode, {
   colors: {
     ...grayDark,
@@ -572,7 +571,7 @@ export const darkTheme = createTheme(darkThemeMode, {
 
     // Semantic colors
     hiContrast: "$slate12",
-    loContrast: "$slate1",
+    loContrast: "$slate9",
     canvas: "hsl(0 0% 15%)",
     panel: "$elevation1",
     panelHi: "$slate4",
@@ -581,4 +580,5 @@ export const darkTheme = createTheme(darkThemeMode, {
     shadowLight: "hsl(206 22% 7% / 35%)",
     shadowDark: "hsl(206 22% 7% / 20%)",
   },
-})
+});
+
