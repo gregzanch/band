@@ -40,8 +40,10 @@ export function MaterialDialog({}) {
           <>
             <DialogContent forceMount asChild css={{ px: 0, boxShadow: "0px 0px 0px 2px $colors$slate7" }}>
               <animated.div style={styles}>
-                <DialogTitle>Materials</DialogTitle>
-                <ScrollArea css={{ width: "100%", height: 300 }}>
+                <Box>
+                  <DialogTitle>Materials</DialogTitle>
+                </Box>
+                <ScrollArea css={{ mx: "2%", width: "96%", height: 300 }}>
                   <ScrollAreaViewport>
                     <MaterialView />
                   </ScrollAreaViewport>
