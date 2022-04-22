@@ -9,6 +9,7 @@ import { useEffect } from "react"
 import { globalCss, darkTheme, lightTheme } from "@/styles/stitches.config"
 import useTheme from "@/state/theme"
 import { MaterialDialog } from "@/components/Editor/MaterialDialog/MaterialDialog";
+import { RaytracerSolverAlert } from "@/components/Editor/Alerts/RaytracerSolverAlert";
 
 const globalStyles = globalCss({
   html: { width: "100%", height: "100%", margin: 0, padding: 0 },
@@ -35,6 +36,7 @@ export default function EditorPage() {
       <LeftSidebar />
       <RightSidebar />
       <MaterialDialog />
+      <RaytracerSolverAlert />
       <Editor />
     </>
   );

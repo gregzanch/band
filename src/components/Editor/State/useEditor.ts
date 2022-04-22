@@ -98,6 +98,7 @@ type EditorState = {
   history: History | null;
 
   materialDialogOpen: boolean;
+  raytracerSolverAlertOpen: boolean;
 
   sources: Record<string, Source>; // TODO remove deprecated
   receivers: Record<string, Receiver>; // TODO remove deprecated
@@ -113,6 +114,7 @@ type EditorReducers = {
   initialize: () => void;
   exportGLTF: () => void;
   exportRaya: (rayaParameters: RayaParameters, filename: string) => void;
+  getRayaModelFile: (rayaParameters: RayaParameters, filename: string) => Promise<File>;
 };
 
 const initialState: EditorState = {
@@ -162,6 +164,7 @@ const initialState: EditorState = {
   transformType: "translate",
 
   materialDialogOpen: false,
+  raytracerSolverAlertOpen: false,
 
   signals: {
     objectAdded: new Signal(),
@@ -299,6 +302,44 @@ export const useEditor = create<
             undefined,
             { binary: false, animations: animations, embedImages: false }
           );
+        },
+        getRayaModelFile: async (rayaParameters: RayaParameters, filename: string = "scene.gltf") => {
+          const exports = Object.values(get().objects);
+          const animations = [];
+
+          // const { GLTFExporter } = await import( '../../examples/jsm/exporters/GLTFExporter.js' );
+
+          const exporter = new GLTFExporter();
+          exporter.register(function (writer) {
+            return new BandObjectExportExtension(writer, api);
+          });
+
+          return new Promise<File>((resolve, reject) => {
+            exporter.parse(
+              exports,
+              function (result) {
+                result.scenes[0].extras = {
+                  max_order: rayaParameters.max_order,
+                  ray_count: rayaParameters.ray_count,
+                };
+                for (const node of result.nodes) {
+                  if ([NODE_TYPE.SOURCE, NODE_TYPE.RECEIVER].includes(node.extras.node_type)) {
+                    const vec = new Vector3();
+                    vec.setFromMatrixPosition(new Matrix4().fromArray(node.matrix));
+                    node.translation = vec.toArray();
+                  }
+                }
+                for (const mesh of result.meshes) {
+                  mesh.name = mesh.name || nanoid(10);
+                }
+                const file = new File([JSON.stringify(result, undefined, 2)], filename);
+                resolve(file);
+                // saveString(JSON.stringify(result, undefined, 2), filename);
+              },
+              undefined,
+              { binary: false, animations: animations, embedImages: false }
+            );
+          });
         },
         calculateBounds: () => {
           const { sources, receivers, meshes } = get();

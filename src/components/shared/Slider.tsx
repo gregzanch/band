@@ -34,7 +34,7 @@ const SliderThumb = styled(SliderPrimitive.Thumb, {
   width: 15,
   height: 15,
   outline: "none",
-  opacity: "0",
+  opacity: 0.85,
   backgroundColor: "white",
   boxShadow: "0 0 1px rgba(0,0,0,.3), 0 1px 4px rgba(0,0,0,.15)",
   borderRadius: "$round",
@@ -58,7 +58,7 @@ const SliderThumb = styled(SliderPrimitive.Thumb, {
       transform: "scale(2)",
     },
   },
-})
+});
 
 export const StyledSlider = styled(SliderPrimitive.Root, {
   position: "relative",
@@ -85,7 +85,7 @@ export const StyledSlider = styled(SliderPrimitive.Root, {
       },
     },
   },
-})
+});
 
 type SliderPrimitiveProps = React.ComponentProps<typeof SliderPrimitive.Root>
 type SliderProps = SliderPrimitiveProps & { css?: CSS }

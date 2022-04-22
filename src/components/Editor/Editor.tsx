@@ -33,30 +33,31 @@ import { Receiver } from "./Objects/Receiver/Receiver"
 import { BandObject } from "./Objects"
 import { Group } from "./Objects/Group/Group"
 import { Mesh } from "./Objects/Mesh/Mesh"
+import { makeLoopedArray } from "@/helpers/array";
 
-const CAMERA_MOVE_THRESHOLD = 1
+const CAMERA_MOVE_THRESHOLD = 1;
 
 function isBandObject(obj: any): obj is BandObject {
-  return [Group, Mesh, Receiver, Source].some((ObjClass) => obj instanceof ObjClass)
+  return [Group, Mesh, Receiver, Source].some((ObjClass) => obj instanceof ObjClass);
 }
 
 function unwrapSelection(selection: BandObject[]): BandObject[] {
   return selection.reduce((acc, curr) => {
     if (curr.type === ObjectType.GROUP) {
       //@ts-ignore
-      return [...acc, ...unwrapSelection(curr.children.filter((child) => isBandObject(child)))]
+      return [...acc, ...unwrapSelection(curr.children.filter((child) => isBandObject(child)))];
     } else {
-      return [...acc, curr]
+      return [...acc, curr];
     }
-  }, [])
+  }, []);
 }
 
 function Effects() {
-  const outlineRef = useRef<OutlineEffect>()
-  const composerRef = useRef<EffectComposerImpl>()
-  const { gl, camera, scene } = useThree()
+  const outlineRef = useRef<OutlineEffect>();
+  const composerRef = useRef<EffectComposerImpl>();
+  const { gl, camera, scene } = useThree();
   // const selectedObject = useEditor((state) => state.selectedObject)
-  const selection = useEditor((state) => state.selection)
+  const selection = useEditor((state) => state.selection);
 
   return (
     <Suspense fallback={null}>
@@ -74,10 +75,8 @@ function Effects() {
         />
       </EffectComposer>
     </Suspense>
-  )
+  );
 }
-
-
 
 const Controls = () => {
   const control = useRef(null);
@@ -362,27 +361,30 @@ function Editor(props) {
       console.clear();
       const { initialize, uploadFileFromUrl, history } = useEditor.getState();
       initialize();
-      uploadFileFromUrl("models/raya/split-shoebox.gltf");
+      uploadFileFromUrl("models/raya/split-strange.gltf");
       history.execute(
         new AddObjectCommand(
           useEditor,
-          new Source("New Source", [2.75, 2, -3.75], 0x44a273).addToDefaultScene(useEditor)
+          new Source("New Source", [-2.15, 1.85, -5.5], 0x44a273).addToDefaultScene(useEditor)
         )
       );
-      const rec = new Receiver("New Receiver", [9, 1.5, -7], 0xe5732a).addToDefaultScene(useEditor);
+      const rec = new Receiver("New Receiver", [7.4, 2.87, -10.2], 0xe5732a).addToDefaultScene(useEditor);
       rec.scale.set(0.5, 0.5, 0.5);
       history.execute(new AddObjectCommand(useEditor, rec));
 
+      // const matIds = makeLoopedArray([147, 401, 285, 376, 472, 600]);
+      const matIds = makeLoopedArray([
+        147, 401, 37, 376, 472, 600, 31, 401, 420, 376, 472, 600, 285, 285, 472, 376, 523, 523, 523,
+      ]);
       fetch("/api/materials/getAll")
         .then((res) => res.json())
         .then((res) => {
           const group = Object.values(useEditor.getState().objects).find((item) => item.type === "Group");
           for (const child of group.children) {
-            (child as Mesh).acousticMaterial = res[Math.floor(Math.random() * res.length)];
+            (child as Mesh).acousticMaterial = res[matIds.next().value - 1];
           }
         })
         .catch(console.error);
-
     }, 500);
   }, []);
 

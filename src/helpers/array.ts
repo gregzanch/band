@@ -4,3 +4,12 @@ export function ensureArray<T>(item: T | T[]): T[] {
   }
   return [item]
 }
+
+export function* makeLoopedArray<T>(arr: T[]) {
+  let i = 0;
+  while (true) {
+    yield arr[i];
+    i = (i + 1) % arr.length;
+  }
+  return arr[i];
+}

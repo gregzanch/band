@@ -30,6 +30,7 @@ enum MenuAction {
   NEW = "new",
   OPEN = "open",
   SAVE = "save",
+  RAYTRACE = "raytrace",
   IMPORT = "import",
   UNDO = "undo",
   REDO = "redo",
@@ -58,9 +59,10 @@ export const MenuHotkeys = {
   [MenuAction.PASTE]: "command+v",
   [MenuAction.ADD_SOURCE]: "alt+s",
   [MenuAction.ADD_RECEIVER]: "alt+r",
+  [MenuAction.RAYTRACE]: "shift+alt+r",
   [MenuAction.TOGGLE_THEME]: "shift+command+d",
   [MenuAction.DEBUG]: "shift+command+i",
-}
+};
 
 enum MenuType {
   MENU_ITEM = "menu-item",
@@ -74,68 +76,68 @@ enum MenuType {
 }
 
 type MenuItem = {
-  type: MenuType.MENU_ITEM
-  title: string
-  disabled?: boolean
-  key?: string
-  action: MenuAction
-  id: string
-}
+  type: MenuType.MENU_ITEM;
+  title: string;
+  disabled?: boolean;
+  key?: string;
+  action: MenuAction;
+  id: string;
+};
 
 type MenuCheckboxItem = {
-  type: MenuType.MENU_CHECKBOX_ITEM
-  title: string
-  checked: boolean
-  disabled?: boolean
-  key?: string
-  action: MenuAction
-  id: string
-}
+  type: MenuType.MENU_CHECKBOX_ITEM;
+  title: string;
+  checked: boolean;
+  disabled?: boolean;
+  key?: string;
+  action: MenuAction;
+  id: string;
+};
 
 type MenuRadioItem = {
-  type: MenuType.MENU_RADIO_ITEM
-  title: string
-  value: string
-  disabled?: boolean
-  key?: string
-  action: MenuAction
-  id: string
-}
+  type: MenuType.MENU_RADIO_ITEM;
+  title: string;
+  value: string;
+  disabled?: boolean;
+  key?: string;
+  action: MenuAction;
+  id: string;
+};
 
 type MenuRadioGroup = {
-  type: MenuType.MENU_RADIO_GROUP
-  title: string
-  value: string
-  options: MenuRadioItem[]
-  id: string
-}
+  type: MenuType.MENU_RADIO_GROUP;
+  title: string;
+  value: string;
+  options: MenuRadioItem[];
+  id: string;
+};
 
 type MenuItemTrigger = {
-  type: MenuType.MENU_ITEM_TRIGGER
-  title: string
-  disabled?: boolean
-  id: string
-}
+  type: MenuType.MENU_ITEM_TRIGGER;
+  title: string;
+  disabled?: boolean;
+  id: string;
+};
 
 type MenuDivider = {
-  type: MenuType.MENU_DIVIDER
-  id: string
-}
+  type: MenuType.MENU_DIVIDER;
+  id: string;
+};
 
 type MenuLabel = {
-  type: MenuType.MENU_LABEL
-  value: string
-  id: string
-}
+  type: MenuType.MENU_LABEL;
+  value: string;
+  id: string;
+};
 
-type GenericMenuItem = MenuItem | MenuCheckboxItem | MenuRadioGroup | MenuDivider | MenuLabel | Menu
+type GenericMenuItem = MenuItem | MenuCheckboxItem | MenuRadioGroup | MenuDivider | MenuLabel | Menu;
 
 type Menu = {
-  type: MenuType.MENU
-  trigger: MenuItemTrigger
-  items: Array<GenericMenuItem>
-  id: string
-}
+  type: MenuType.MENU;
+  trigger: MenuItemTrigger;
+  items: Array<GenericMenuItem>;
+  id: string;
+};
 
 enum ControlKeys {
   COMMAND = "command",
@@ -149,18 +151,18 @@ const KeyMap = {
   [ControlKeys.SHIFT]: "⇧",
   [ControlKeys.ALT]: "⌥",
   [ControlKeys.CONTROL]: "⌃",
-}
+};
 
 function formatKeyboardShortcut(keyCombination: string) {
-  const entries = Object.entries(ControlKeys)
+  const entries = Object.entries(ControlKeys);
   for (const [id, key] of entries) {
-    keyCombination = keyCombination.replaceAll(new RegExp(key, "gim"), KeyMap[key]).toUpperCase()
+    keyCombination = keyCombination.replaceAll(new RegExp(key, "gim"), KeyMap[key]).toUpperCase();
   }
-  return keyCombination.split("+")
+  return keyCombination.split("+");
 }
 
 function menuHasItemState(items: GenericMenuItem[]) {
-  return items.some((item) => [MenuType.MENU_CHECKBOX_ITEM, MenuType.MENU_RADIO_GROUP].includes(item.type))
+  return items.some((item) => [MenuType.MENU_CHECKBOX_ITEM, MenuType.MENU_RADIO_GROUP].includes(item.type));
 }
 
 function MenuComponent({ menu, hasItemState }: { menu: Menu; hasItemState: boolean }) {
@@ -178,85 +180,90 @@ function MenuComponent({ menu, hasItemState }: { menu: Menu; hasItemState: boole
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
 
-type ActionFunction = (item?: GenericMenuItem | MenuCheckboxItem, checked?: boolean) => Promise<boolean>
+type ActionFunction = (item?: GenericMenuItem | MenuCheckboxItem, checked?: boolean) => Promise<boolean>;
 
 export const ActionMap: Record<MenuAction, ActionFunction> = {
   [MenuAction.NEW]: async (item?: MenuItem) => {
-    useEditor.getState().initialize()
-    return Promise.resolve(true)
+    useEditor.getState().initialize();
+    return Promise.resolve(true);
   },
   [MenuAction.OPEN]: async (item?: MenuItem) => {
-    return Promise.resolve(true)
+    return Promise.resolve(true);
   },
   [MenuAction.SAVE]: async (item?: MenuItem) => {
-    return Promise.resolve(true)
+    return Promise.resolve(true);
+  },
+  [MenuAction.RAYTRACE]: async (item?: MenuItem) => {
+    console.log("raytrace");
+    useEditor.setState({ raytracerSolverAlertOpen: true });
+    return Promise.resolve(true);
   },
   [MenuAction.IMPORT]: async (item?: MenuItem) => {
-    const { uploadFile } = useEditor.getState()
-    await uploadFile()
-    return Promise.resolve(true)
+    const { uploadFile } = useEditor.getState();
+    await uploadFile();
+    return Promise.resolve(true);
   },
   [MenuAction.UNDO]: async (item?: MenuItem) => {
-    useEditor.getState().history.undo()
-    return Promise.resolve(true)
+    useEditor.getState().history.undo();
+    return Promise.resolve(true);
   },
   [MenuAction.REDO]: async (item?: MenuItem) => {
-    useEditor.getState().history.redo()
-    return Promise.resolve(true)
+    useEditor.getState().history.redo();
+    return Promise.resolve(true);
   },
   [MenuAction.DUPLICATE]: async (item?: MenuItem) => {
-    return Promise.resolve(true)
+    return Promise.resolve(true);
   },
   [MenuAction.CUT]: async (item?: MenuItem) => {
-    return Promise.resolve(true)
+    return Promise.resolve(true);
   },
   [MenuAction.COPY]: async (item?: MenuItem) => {
-    return Promise.resolve(true)
+    return Promise.resolve(true);
   },
   [MenuAction.PASTE]: async (item?: MenuItem) => {
-    return Promise.resolve(true)
+    return Promise.resolve(true);
   },
   [MenuAction.ADD_SOURCE]: async (item?: MenuItem) => {
-    const { history } = useEditor.getState()
+    const { history } = useEditor.getState();
     history.execute(
       new AddObjectCommand(useEditor, new Source("New Source", [0, 2, 0], 0x44a273).addToDefaultScene(useEditor))
-    )
-    return Promise.resolve(true)
+    );
+    return Promise.resolve(true);
   },
   [MenuAction.ADD_RECEIVER]: async (item?: MenuItem) => {
-    const { history } = useEditor.getState()
+    const { history } = useEditor.getState();
     history.execute(
       new AddObjectCommand(useEditor, new Receiver("New Receiver", [0, 2, 0], 0xe5732a).addToDefaultScene(useEditor))
-    )
+    );
 
-    return Promise.resolve(true)
+    return Promise.resolve(true);
   },
 
   [MenuAction.TOGGLE_UI]: async (item?: MenuCheckboxItem, checked?: boolean) => {
-    return Promise.resolve(true)
+    return Promise.resolve(true);
   },
   [MenuAction.DEBUG]: async (item?: MenuCheckboxItem, checked?: boolean) => {
     useEditor.setState((prev) => ({
       debug: !prev.debug,
-    }))
-    return Promise.resolve(true)
+    }));
+    return Promise.resolve(true);
   },
   [MenuAction.TOGGLE_THEME]: async (item?: MenuCheckboxItem, checked?: boolean) => {
-    const { theme: currTheme, set } = useTheme.getState()
-    set({ theme: currTheme === darkTheme ? lightTheme : darkTheme })
-    return Promise.resolve(true)
+    const { theme: currTheme, set } = useTheme.getState();
+    set({ theme: currTheme === darkTheme ? lightTheme : darkTheme });
+    return Promise.resolve(true);
   },
 
   [MenuAction.OPEN_DOCUMENTATION]: async (item?: MenuItem) => {
-    return Promise.resolve(true)
+    return Promise.resolve(true);
   },
-}
+};
 
 function ConnectedMenuCheckboxItemComponent({ item, hasItemState }: { item: MenuCheckboxItem; hasItemState: boolean }) {
-  const [checked, setChecked] = useState(item.checked)
+  const [checked, setChecked] = useState(item.checked);
 
   useEffect(() => {
     switch (item.id) {
@@ -264,33 +271,33 @@ function ConnectedMenuCheckboxItemComponent({ item, hasItemState }: { item: Menu
         const unsub = useTheme.subscribe(
           (store) => store.theme,
           (theme) => {
-            setChecked(theme === darkTheme)
+            setChecked(theme === darkTheme);
           },
           {
             fireImmediately: true,
           }
-        )
+        );
         return () => {
-          unsub()
-        }
+          unsub();
+        };
       }
 
       case "view.debug": {
         const unsub = useEditor.subscribe(
           (store) => store.debug,
           (debug) => {
-            setChecked(debug)
+            setChecked(debug);
           },
           {
             fireImmediately: true,
           }
-        )
+        );
         return () => {
-          unsub()
-        }
+          unsub();
+        };
       }
     }
-  }, [item.id])
+  }, [item.id]);
 
   return (
     <DropdownMenuCheckboxItem
@@ -306,13 +313,13 @@ function ConnectedMenuCheckboxItemComponent({ item, hasItemState }: { item: Menu
         </DropdownMenuRightSlot>
       )}
     </DropdownMenuCheckboxItem>
-  )
+  );
 }
 
 function MenuItemComponent({ item, hasItemState }: { item: GenericMenuItem; hasItemState: boolean }) {
   switch (item.type) {
     case MenuType.MENU: {
-      return <MenuComponent menu={item} hasItemState={hasItemState} />
+      return <MenuComponent menu={item} hasItemState={hasItemState} />;
     }
     case MenuType.MENU_ITEM: {
       return (
@@ -328,10 +335,10 @@ function MenuItemComponent({ item, hasItemState }: { item: GenericMenuItem; hasI
             </DropdownMenuRightSlot>
           )}
         </DropdownMenuItem>
-      )
+      );
     }
     case MenuType.MENU_CHECKBOX_ITEM: {
-      return <ConnectedMenuCheckboxItemComponent item={item} hasItemState={hasItemState} />
+      return <ConnectedMenuCheckboxItemComponent item={item} hasItemState={hasItemState} />;
     }
     case MenuType.MENU_RADIO_GROUP: {
       return (
@@ -341,19 +348,19 @@ function MenuItemComponent({ item, hasItemState }: { item: GenericMenuItem; hasI
               <DropdownMenuRadioItem key={option.id} hasItemState value={option.title} disabled={option.disabled}>
                 {option.title}
               </DropdownMenuRadioItem>
-            )
+            );
           })}
         </DropdownMenuRadioGroup>
-      )
+      );
     }
     case MenuType.MENU_DIVIDER: {
-      return <DropdownMenuSeparator />
+      return <DropdownMenuSeparator />;
     }
     case MenuType.MENU_LABEL: {
-      return <DropdownMenuLabel>{item.value}</DropdownMenuLabel>
+      return <DropdownMenuLabel>{item.value}</DropdownMenuLabel>;
     }
     default:
-      return null
+      return null;
   }
 }
 
@@ -367,7 +374,7 @@ const menu = (id: string, title: string, items: GenericMenuItem[], disabled = fa
     id: `${id}::TRIGGER`,
   },
   items,
-})
+});
 
 const menuItem = (id: string, title: string, action: MenuAction, key?: string, disabled = false): MenuItem => ({
   type: MenuType.MENU_ITEM,
@@ -376,7 +383,7 @@ const menuItem = (id: string, title: string, action: MenuAction, key?: string, d
   disabled,
   action,
   id,
-})
+});
 
 const menuCheckboxItem = (
   id: string,
@@ -393,12 +400,12 @@ const menuCheckboxItem = (
   action,
   id,
   checked,
-})
+});
 
 const menuDivider = (id: string): MenuDivider => ({
   type: MenuType.MENU_DIVIDER,
   id,
-})
+});
 
 const MainMenuConfig: Array<GenericMenuItem> = [
   menu("file", "File", [
@@ -425,13 +432,17 @@ const MainMenuConfig: Array<GenericMenuItem> = [
     menuItem("add.receiver", "Receiver", MenuAction.ADD_RECEIVER, MenuHotkeys[MenuAction.ADD_RECEIVER]),
   ]),
 
+  menu("solve", "Solve", [
+    menuItem("solve.raytrace", "Raytrace", MenuAction.RAYTRACE, MenuHotkeys[MenuAction.RAYTRACE]),
+  ]),
+
   menu("view", "View", [
     menuCheckboxItem("view.dark_mode", "Dark Mode", MenuAction.TOGGLE_THEME, MenuHotkeys[MenuAction.TOGGLE_THEME]),
     menuCheckboxItem("view.debug", "Debug", MenuAction.DEBUG, MenuHotkeys[MenuAction.DEBUG]),
   ]),
 
   menu("help", "Help", [menuItem("help.documentation", "Documentation", MenuAction.OPEN_DOCUMENTATION)]),
-]
+];
 
 export function MainMenu() {
   return (

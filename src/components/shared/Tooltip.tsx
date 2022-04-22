@@ -12,7 +12,8 @@ type TooltipProps = React.ComponentProps<typeof TooltipPrimitive.Root> &
   }
 
 const Content = styled(TooltipPrimitive.Content, {
-  backgroundColor: "$transparentPanel",
+  backgroundColor: "$toolTipBackground",
+  color: "$toolTipText",
   borderRadius: "$1",
   padding: "$1 $2",
 
@@ -24,25 +25,42 @@ const Content = styled(TooltipPrimitive.Content, {
       },
     },
   },
-})
+});
 
-export function Tooltip({ children, content, open, defaultOpen, onOpenChange, multiline, ...props }: TooltipProps) {
+export function Tooltip({
+  children,
+  content,
+  open,
+  defaultOpen,
+  onOpenChange,
+  multiline,
+  delayDuration,
+  ...props
+}: TooltipProps) {
   return (
-    <TooltipPrimitive.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+    <TooltipPrimitive.Root
+      delayDuration={delayDuration}
+      // open={open}
+      open={open}
+      defaultOpen
+      // defaultOpen={defaultOpen}
+      onOpenChange={onOpenChange}
+    >
       <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
 
-      <Content side='top' align='center' sideOffset={5} {...props} multiline={multiline}>
+      <Content side='left' align='end' sideOffset={5} {...props} multiline={multiline}>
         <Text
           size='1'
           as='p'
+          wrap={multiline}
           css={{
-            color: "$loContrast",
+            color: "$toolTipText",
             lineHeight: multiline ? "20px" : (undefined as any),
           }}
         >
           {content}
         </Text>
-        <Box css={{ color: "$transparentExtreme" }}>
+        <Box css={{ color: "$toolTipBackground" }}>
           <TooltipPrimitive.Arrow
             offset={5}
             width={11}
@@ -54,5 +72,5 @@ export function Tooltip({ children, content, open, defaultOpen, onOpenChange, mu
         </Box>
       </Content>
     </TooltipPrimitive.Root>
-  )
+  );
 }
