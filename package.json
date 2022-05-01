@@ -1,8 +1,8 @@
 {
-  "name": "react-three-next",
+  "name": "band",
   "version": "2.0.0",
   "authors": [
-    "Renaud ROHLINGER <https://twitter.com/onirenaud>"
+    "Greg Zanchelli"
   ],
   "license": "MIT",
   "private": true,
@@ -41,6 +41,7 @@
     "@react-three/fiber": "^7.0.26",
     "@react-three/postprocessing": "^2.3.1",
     "@stitches/react": "1.2.6",
+    "@tauri-apps/api": "^1.0.0-rc.4",
     "@types/lodash.debounce": "^4.0.7",
     "@types/lodash.merge": "^4.6.6",
     "@use-gesture/react": "^10.2.5",
@@ -70,6 +71,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^12.0.10",
+    "@tauri-apps/cli": "^1.0.0-rc.9",
     "@types/node": "^17.0.21",
     "@types/react": "^17.0.40",
     "@types/react-dom": "^17.0.13",
@@ -98,6 +100,7 @@
     "analyze": "ANALYZE=true next build",
     "start": "next start",
     "vercel-build": "prisma generate && prisma migrate deploy && next build",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "tauri": "tauri"
   }
 }

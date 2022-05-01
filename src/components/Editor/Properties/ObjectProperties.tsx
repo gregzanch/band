@@ -160,7 +160,7 @@ const InputBuildMap = {
   [ObjectInputs.WIREFRAME]: (selection: Array<Mesh>, initialRef): Schema => {
     return {
       wireframe: {
-        value: selection.at(-1).wireframe,
+        value: selection[selection.length - 1].wireframe,
         onChange: (value: boolean) => {
           if (initialRef.current !== false) {
             for (const obj of selection) {
@@ -220,7 +220,7 @@ const InputValueMap = {
   },
   [ObjectInputs.WIREFRAME]: (selection: Array<Mesh>) => {
     return {
-      wireframe: selection.at(-1).wireframe,
+      wireframe: selection[selection.length - 1].wireframe,
     };
   },
   [ObjectInputs.MATERIAL]: (selection: Array<Mesh>) => {
