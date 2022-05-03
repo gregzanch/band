@@ -1,5 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from "next"
-import prisma from "../../../../lib/prisma"
+import { allowCors } from "@/helpers/api/cors";
+import type { NextApiRequest, NextApiResponse } from "next";
+import prisma from "../../../../lib/prisma";
 
 const parsePage = (param: string | string[]): number => {
   if (Array.isArray(param)) {
@@ -19,7 +20,7 @@ const parseIntQuery = (val: string) => {
   return parsed;
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default allowCors(async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const query = first(req.query.query) || "";
     const page = parsePage(req.query.page);
@@ -46,4 +47,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       message: error.message,
     });
   }
-}
+});
