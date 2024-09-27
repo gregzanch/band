@@ -1,7 +1,6 @@
 //@ts-nocheck
 
-import { Group } from "../Objects/Group/Group"
-import { Mesh } from "../Objects/Mesh/Mesh"
+import { Group, Mesh } from "../Objects"
 
 import {
   AnimationClip,
@@ -1597,13 +1596,13 @@ const ALPHA_MODES = {
 function createDefaultMaterial(cache) {
   if (cache["DefaultMaterial"] === undefined) {
     cache["DefaultMaterial"] = new MeshStandardMaterial({
-      color: 0xffffff,
-      emissive: 0x000000,
-      metalness: 1,
+      color: 0x999b9d,
+      metalness: 0.1,
       roughness: 1,
-      transparent: false,
-      depthTest: true,
+      transparent: true,
+      opacity: 0.25,
       side: DoubleSide,
+      wireframe: false,
     });
   }
 

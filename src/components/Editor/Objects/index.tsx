@@ -1,18 +1,11 @@
-import SourceComponent from "./Source/SourceComponent"
-import { Source } from "./Source/Source"
-import ReceiverComponent from "./Receiver/ReceiverComponent"
-import { Receiver } from "./Receiver/Receiver"
-import MeshComponent from "./Mesh/MeshComponent"
-import { Mesh } from "./Mesh/Mesh"
-import GroupComponent from "./Group/GroupComponent"
-import { Group } from "./Group/Group"
-import { ObjectType } from "./types"
+import { Source } from "./Source";
+import { Receiver } from "./Receiver";
+import { Mesh } from "./Mesh";
+import { Group } from "./Group";
+import { ObjectType } from "./types";
 
-export const ComponentMap = {
-  [ObjectType.SOURCE]: SourceComponent,
-  [ObjectType.RECEIVER]: ReceiverComponent,
-  [ObjectType.MESH]: MeshComponent,
-  [ObjectType.GROUP]: GroupComponent,
-}
+export { Source, Receiver, Mesh, Group, ObjectType };
 
-export type BandObject = Source | Receiver | Mesh | Group
+export type BandObject = Source | Receiver | Mesh | Group;
+
+export { RenderObjects } from "./RenderObjects";

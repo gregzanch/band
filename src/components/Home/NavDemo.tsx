@@ -362,20 +362,19 @@ export const NavDemo = () => {
           <NavigationMenuTrigger>Features</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ContentList layout='one'>
-              {/* <ContentListItemCallout /> */}
-              <ContentListItem href='https://stitches.dev/' title='3D Editor'>
+              <ContentListItem href='/editor' title='3D Editor'>
                 Interactive 3D model editor
               </ContentListItem>
-              <ContentListItem href='https://stitches.dev/' title='Solvers'>
+              <ContentListItem href='#' title='Solvers'>
                 Diverse set of solvers
               </ContentListItem>
-              <ContentListItem href='https://stitches.dev/' title='Materials'>
+              <ContentListItem href='#' title='Materials'>
                 Comprehensive material library
               </ContentListItem>
-              <ContentListItem href='https://stitches.dev/' title='Projects'>
+              <ContentListItem href='#' title='Projects'>
                 Automatic project saving
               </ContentListItem>
-              <ContentListItem href='https://stitches.dev/' title='Results'>
+              <ContentListItem href='#' title='Results'>
                 Result visualization, auralization, and data export
               </ContentListItem>
             </ContentList>
@@ -383,33 +382,7 @@ export const NavDemo = () => {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ContentList layout='two'>
-              <ContentListItem title='Resource' href='#'>
-                Cool link desc here
-              </ContentListItem>
-              <ContentListItem title='Resource' href='#'>
-                Cool link desc here
-              </ContentListItem>
-              <ContentListItem title='Resource' href='#'>
-                Cool link desc here
-              </ContentListItem>
-              <ContentListItem title='Resource' href='#'>
-                Cool link desc here
-              </ContentListItem>
-              <ContentListItem title='Resource' href='#'>
-                Cool link desc here
-              </ContentListItem>
-              <ContentListItem title='Resource' href='#'>
-                Cool link desc here
-              </ContentListItem>
-            </ContentList>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuLink href='#'>Docs</NavigationMenuLink>
+          <NavigationMenuLink href='https://github.com/gregzanch/band'>Docs</NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
@@ -431,7 +404,7 @@ export const NavDemo = () => {
         <NavigationMenuViewport />
       </ViewportPosition>
     </NavigationMenu>
-  )
+  );
 }
 
 export default NavDemo

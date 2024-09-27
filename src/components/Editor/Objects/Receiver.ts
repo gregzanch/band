@@ -1,7 +1,7 @@
-import { ColorRepresentation, Mesh, MeshPhongMaterial, SphereGeometry, Color } from "three"
-import { NODE_TYPE } from "../../Exporters/Raya";
-import { Editor } from "../../State/useEditor";
-import { ObjectType } from "../types";
+import { ColorRepresentation, Mesh, MeshPhongMaterial, SphereGeometry, Color } from "three";
+import { NODE_TYPE } from "@/components/Editor/Exporters/Raya";
+import { Editor } from "@/components/Editor/State/useEditor";
+import { ObjectType } from "./types";
 
 export class Receiver extends Mesh<SphereGeometry, MeshPhongMaterial> {
   type: ObjectType.RECEIVER;

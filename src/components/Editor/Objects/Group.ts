@@ -1,7 +1,7 @@
-import { ColorRepresentation, Group as ThreeGroup, MeshPhongMaterial, SphereGeometry, Color } from "three"
-import { NODE_TYPE } from "../../Exporters/Raya";
-import { Editor } from "../../State/useEditor";
-import { ObjectType } from "../types";
+import { Group as ThreeGroup } from "three";
+import { NODE_TYPE } from "@/components/Editor/Exporters/Raya";
+import { Editor } from "@/components/Editor/State/useEditor";
+import { ObjectType } from "./types";
 
 export class Group extends ThreeGroup {
   type: ObjectType.GROUP;

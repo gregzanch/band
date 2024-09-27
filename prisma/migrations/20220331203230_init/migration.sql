@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Material" ALTER COLUMN "absorption" SET DATA TYPE DOUBLE PRECISION[];

@@ -22,8 +22,7 @@ import { IconButton } from "../shared/IconButton"
 import { Text } from "../shared/Text"
 import { darkTheme, lightTheme } from "@/styles/stitches.config"
 import useEditor, { getSignals } from "@/components/Editor/State/useEditor"
-import { Source } from "@/components/Editor/Objects/Source/Source"
-import { Receiver } from "@/components/Editor/Objects/Receiver/Receiver"
+import { Source, Receiver } from "@/components/Editor/Objects";
 import { AddObjectCommand } from "./State/Commands"
 
 enum MenuAction {

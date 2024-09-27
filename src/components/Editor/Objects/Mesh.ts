@@ -1,51 +1,40 @@
-import { ensureArray } from "@/helpers/array"
 import {
   Mesh as ThreeMesh,
-  MeshPhongMaterial,
   DoubleSide,
   BufferGeometry,
   Material,
-  MeshPhysicalMaterial,
-  MeshBasicMaterial,
-  AdditiveBlending,
-  MultiplyBlending,
-  NormalBlending,
-  SubtractiveBlending,
   EdgesGeometry,
   LineBasicMaterial,
   LineSegments,
   MeshStandardMaterial,
 } from "three";
-import useEditor, { Editor } from "../../State/useEditor";
-import { ObjectType } from "../types";
-import { Material as AcousticMaterial } from "@prisma/client";
-import { NODE_TYPE } from "../../Exporters/Raya";
+import useEditor, { Editor } from "@/components/Editor/State/useEditor";
+import { ObjectType } from "./types";
+import { NODE_TYPE } from "@/components/Editor/Exporters/Raya";
 
-const defaultMaterial = new MeshPhongMaterial({
+const defaultMaterial = new MeshStandardMaterial({
   color: 0x999b9d,
-  specular: 0xffffff,
-  shininess: 0.2,
-  reflectivity: 0.5,
+  metalness: 0.1,
+  roughness: 1,
   transparent: true,
   opacity: 0.25,
   side: DoubleSide,
   wireframe: false,
 });
 
-const defaultAcousticMaterial = () =>
-  ({
-    id: 441,
-    createdAt: new Date(Date.parse("2022-03-31T20:44:25.773Z")),
-    updatedAt: new Date(Date.parse("2022-03-31T20:44:25.789Z")),
-    name: "Gypsum Board",
-    material: "Gypsum board, 1/2in thick",
-    manufacturer: "",
-    description: "",
-    source: "Egan",
-    tags: ["Ceilings", "Gypsum Board Ceilings"],
-    frequencies: [63, 125, 250, 500, 1000, 2000, 4000, 8000],
-    absorption: [0.05, 0.29, 0.1, 0.05, 0.04, 0.07, 0.09, 0.09],
-  } as AcousticMaterial);
+const defaultAcousticMaterial = () => ({
+  id: 441,
+  createdAt: new Date(Date.parse("2022-03-31T20:44:25.773Z")),
+  updatedAt: new Date(Date.parse("2022-03-31T20:44:25.789Z")),
+  name: "Gypsum Board",
+  material: "Gypsum board, 1/2in thick",
+  manufacturer: "",
+  description: "",
+  source: "Egan",
+  tags: ["Ceilings", "Gypsum Board Ceilings"],
+  frequencies: [63, 125, 250, 500, 1000, 2000, 4000, 8000],
+  absorption: [0.05, 0.29, 0.1, 0.05, 0.04, 0.07, 0.09, 0.09],
+});
 
 export class Mesh extends ThreeMesh {
   type: ObjectType.MESH;
@@ -53,9 +42,10 @@ export class Mesh extends ThreeMesh {
   originalMaterial: Material;
   private _wireframe: boolean;
   edges: LineSegments<EdgesGeometry, LineBasicMaterial>;
-  acousticMaterial: AcousticMaterial;
-  constructor(name: string, geometry: BufferGeometry, material?: Material, acousticMaterial?: AcousticMaterial) {
+  acousticMaterial;
+  constructor(name: string, geometry: BufferGeometry, material?: Material, acousticMaterial?: any) {
     super(geometry, material || defaultMaterial.clone());
+    console.log(material);
     this.originalMaterial = this.material;
 
     this.acousticMaterial = acousticMaterial || defaultAcousticMaterial();
@@ -86,8 +76,6 @@ export class Mesh extends ThreeMesh {
       node_type: NODE_TYPE.REFLECTOR,
       active: 1,
     };
-
-    // this.update()
   }
 
   exportStack: Array<() => void> = [];

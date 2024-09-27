@@ -1,4 +1,3 @@
-export { Floor } from './Floor'
-export { Lights } from "./Lights"
-export { Ground } from "./Ground"
-export { Shadows } from "./Shadows"
+export { Floor } from "./Floor";
+export { Ground } from "./Ground";
+export { Shadows } from "./Shadows";

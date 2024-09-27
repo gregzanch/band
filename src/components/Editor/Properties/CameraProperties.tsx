@@ -5,14 +5,16 @@ import { Box } from "@/components/shared/Box"
 
 export const cameraPropertiesStore = new Store()
 
-export default function CameraProperties() {
+export function CameraProperties() {
   useEffect(() => {
-    Object.assign(window, { cameraPropertiesStore })
-  }, [])
+    Object.assign(window, { cameraPropertiesStore });
+  }, []);
   // debugger
   return (
     <Box fillHeight>
       <LevaPanel store={cameraPropertiesStore} fill flat titleBar={false} hideCopyButton />
     </Box>
-  )
+  );
 }
+
+export default CameraProperties;

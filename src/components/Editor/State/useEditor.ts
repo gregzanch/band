@@ -1,19 +1,12 @@
 import create, { SetState, GetState, Mutate, StoreApi } from "zustand"
 import { persist, subscribeWithSelector } from "zustand/middleware"
-import { ObjectType } from "../Objects/types"
-import { Source } from "../Objects/Source/Source"
-import { Receiver } from "../Objects/Receiver/Receiver"
-import { Group } from "../Objects/Group/Group"
-import { Mesh } from "../Objects/Mesh/Mesh"
-import { openFilePicker } from "@/helpers/dom/openFilePicker"
-import { GLTFLoader } from "@/components/Editor/Loaders/GLTFLoader"
+import { Source, Receiver, Group, Mesh } from "../Objects";
+import { openFilePicker } from "@/helpers/dom/openFilePicker";
+import { GLTFLoader } from "@/components/Editor/Loaders/GLTFLoader";
 import { Color, Box3, Scene, Material, MeshStandardMaterial, DoubleSide, Vector3, Matrix4 } from "three";
 import { stripExtension } from "@/helpers/string";
 import { darkTheme, lightTheme } from "@/styles/stitches.config";
 import { useTheme } from "@/state/theme";
-
-import { slateDark } from "@radix-ui/colors";
-import React from "react";
 import { Signal } from "./Signal";
 
 import { History } from "./History";

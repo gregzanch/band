@@ -9,11 +9,8 @@ import { BandObject } from "../Objects"
 import { intersection } from "@/helpers/set"
 import { Vector3Tuple } from "three"
 import { Schema, SpecialInputs } from "../Leva/types";
-import { Receiver } from "../Objects/Receiver/Receiver";
-import { Mesh } from "../Objects/Mesh/Mesh";
-import { Source } from "../Objects/Source/Source";
+import { Mesh } from "../Objects";
 import { button, buttonGroup } from "../Leva/helpers";
-import { Material as AcousticMaterial } from "@prisma/client";
 
 export const objectPropertiesStore = new Store();
 
@@ -270,7 +267,7 @@ function SelectedObjectSwitcher() {
   }, [inputs, selection, set]);
 
   useEffect(() => {
-    const a = useEditor.getState().signals.objectAcousticMaterialChanged.add((newMaterial: AcousticMaterial) => {
+    const a = useEditor.getState().signals.objectAcousticMaterialChanged.add((newMaterial: any) => {
       objectPropertiesStore.disposePaths(["material"]);
       //@ts-ignore
       objectPropertiesStore.addData(
@@ -301,7 +298,7 @@ function SelectedObjectSwitcher() {
   return null;
 }
 
-export default function ObjectProperties() {
+export function ObjectProperties() {
   useEffect(() => {
     Object.assign(window, { objectPropertiesStore, buttonGroup });
   }, []);
@@ -313,3 +310,5 @@ export default function ObjectProperties() {
     </Box>
   );
 }
+
+export default ObjectProperties;

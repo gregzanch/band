@@ -47,13 +47,13 @@ const StickyContainer = styled(Box, {
 
 function Landing() {
   return (
-    <Box css={{ background: "linear-gradient(120deg, $indigo4, $plum3)" }}>
+    <Box css={{ background: "linear-gradient(120deg, $indigo4, $plum3)", height: "100vh" }}>
       <StickyContainer>
         <NavDemo />
       </StickyContainer>
       <Box
         css={{
-          paddingTop: "calc(8 * $4)",
+          paddingTop: "calc(8 * $3)",
           overflow: "auto",
         }}
       >
@@ -66,6 +66,7 @@ function Landing() {
             ai: "center",
           }}
         >
+          <Logo />
           <Text
             size={9}
             css={{
@@ -93,11 +94,10 @@ function Landing() {
             a modern acoustic simulator
           </Text>
         </Container>
-        <Logo />
       </Box>
       <DarkThemeButton />
     </Box>
-  )
+  );
 }
 
 export default Landing

@@ -1,69 +1,33 @@
 import { Box } from "@/components/shared/Box";
 import { Flex } from "@/components/shared/Flex";
 import { Text } from "@/components/shared/Text";
-import { useDebounce } from "@/hooks/useDebounce";
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import { css, styled } from "@/styles/stitches.config";
-import { Fragment, memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import useSWRInfinite from "swr/infinite";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import debounce from "lodash.debounce";
 import * as MenuPrimitive from "@radix-ui/react-menu";
 
-import { baseItemCss, itemCss, labelCss, menuCss, MenuCheckboxItem } from "@/components/shared/Menu";
+import { baseItemCss, itemCss, menuCss } from "@/components/shared/Menu";
 
-import { Table, Thead, Tbody, Tr as StockTr, Td, Tfoot } from "@/components/shared/Table";
-import {
-  ScrollArea,
-  ScrollAreaCorner,
-  ScrollAreaScrollbar,
-  ScrollAreaThumb,
-  ScrollAreaViewport,
-} from "@/components/shared/ScrollArea";
+import { Table, Tbody, Tr as StockTr, Td } from "@/components/shared/Table";
+import { ScrollArea, ScrollAreaScrollbar, ScrollAreaThumb, ScrollAreaViewport } from "@/components/shared/ScrollArea";
 import { Button } from "@/components/shared/Button";
 import { panelStyles } from "@/components/shared/Panel";
 
-import { PersonIcon, GlobeIcon } from "@radix-ui/react-icons";
 import { Tag } from "@/components/shared/Tag";
+import { GlobeIcon } from "@radix-ui/react-icons";
 
-import create, { SetState } from "zustand";
-import createContext from "zustand/context";
-import { usePrevious } from "@/hooks/usePrevious";
 import { AbsorptionChart } from "./AbsorptionChart";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger, Separator } from "@/components/shared/Tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shared/Tabs";
 import { AbsorptionTable } from "./AbsorptionTable";
 import { useEventListener } from "@/hooks/useEventListener";
 import useEditor from "../State/useEditor";
 import { ObjectType } from "../Objects/types";
-import { Mesh } from "../Objects/Mesh/Mesh";
+import { Mesh } from "../Objects";
+import { useMaterialView } from "@/state/materials";
 
 // Best practice: You can move the below createContext() and createStore to a separate file(store.js) and import the Provider, useStore here/wherever you need.
-
-type MaterialViewStore = {
-  query: string;
-  setQuery: (newQuery: string) => void;
-  selectedMaterial: any;
-  setSelectedMaterial: (mat: any) => void;
-  materials: any[];
-  set: SetState<MaterialViewStore>;
-  searchResultsVisible: boolean;
-};
-
-const { Provider, useStore: useMaterialView } = createContext<MaterialViewStore>();
-
-const createStore = () =>
-  create<MaterialViewStore>(
-    (set) =>
-      ({
-        query: "",
-        setQuery: (newQuery: string) => set({ query: newQuery }),
-        selectedMaterial: null,
-        setSelectedMaterial: (mat: any) => set({ selectedMaterial: mat }),
-        materials: [],
-        set,
-        searchResultsVisible: false,
-      } as MaterialViewStore)
-  );
 
 const Tr = styled(StockTr, {
   "& > :first-child": {
@@ -153,6 +117,7 @@ const Form = styled("form", {
 
 function Search() {
   const setQuery = useMaterialView((state) => state.setQuery);
+  const query = useMaterialView((state) => state.query);
   const set = useMaterialView((state) => state.set);
   const searchResultsVisible = useMaterialView((state) => state.searchResultsVisible);
   const [value, setValue] = useState("");
@@ -193,6 +158,10 @@ function Search() {
               set({ searchResultsVisible: false });
               e.preventDefault();
               e.stopPropagation();
+            } else {
+              if (!searchResultsVisible) {
+                set({ searchResultsVisible: true });
+              }
             }
           }}
           onChange={(e) => {
@@ -200,7 +169,10 @@ function Search() {
             debouncedChangeHandler(e);
           }}
           onFocus={(e) => {
-            set((prev) => ({ searchResultsVisible: true }));
+            console.log("focus");
+            if (query) {
+              set((prev) => ({ searchResultsVisible: true }));
+            }
           }}
         />
       </Fieldset>
@@ -242,9 +214,6 @@ function MaterialItem({ material, query }) {
   );
   return <Text>{material.material}</Text>;
 }
-
-const fetcher = (url) => fetch(url).then((res) => res.json());
-const PAGE_SIZE = 10;
 
 const Menu = styled(MenuPrimitive.Root, menuCss, {
   height: "100%",
@@ -300,23 +269,25 @@ function MaterialResultTable() {
   return (
     <Table aria-label='Search results'>
       <Tbody role='listbox'>
-        {materials.map((material, index) => (
-          <Tr
-            role='option'
-            // role='row'
-            aria-selected={selectedMaterial && selectedMaterial.id === material.id}
-            selectable
-            key={material.id}
-            onClick={() => {
-              setSelectedMaterial(material);
-              console.log(material);
-            }}
-          >
-            <Td align='start'>
-              <MaterialItem material={material} query={query} />
-            </Td>
-          </Tr>
-        ))}
+        {materials.map((material, index) =>
+          material.material.toLowerCase().includes(query) ? (
+            <Tr
+              role='option'
+              // role='row'
+              aria-selected={selectedMaterial && selectedMaterial.uuid === material.uuid}
+              selectable
+              key={material.id}
+              onClick={() => {
+                setSelectedMaterial(material);
+                console.log(material);
+              }}
+            >
+              <Td align='start'>
+                <MaterialItem material={material} query={query} />
+              </Td>
+            </Tr>
+          ) : null
+        )}
       </Tbody>
     </Table>
   );
@@ -327,41 +298,8 @@ function MaterialList() {
   const set = useMaterialView((state) => state.set);
   const searchResultsVisible = useMaterialView((state) => state.searchResultsVisible);
 
-  const { data, error, mutate, size, setSize, isValidating } = useSWRInfinite(
-    (index) => `/api/materials/search?query=${query}&page=${index}&count=${PAGE_SIZE}`,
-    fetcher
-  );
-
-  const isLoadingInitialData = !data && !error;
-  const isLoadingMore = isLoadingInitialData || (size > 0 && data && typeof data[size - 1] === "undefined");
-  const isEmpty = data?.[0]?.length === 0;
-  const isReachingEnd = isEmpty || (data && data[data.length - 1]?.length < PAGE_SIZE);
-  // const isRefreshing = isValidating && data && data.length === size;
-
-  useEffect(() => {
-    if (!isLoadingMore && !error) {
-      set({ materials: data ? [].concat(...data) : [] });
-    }
-  }, [isLoadingMore, error, set, data]);
-
-  return searchResultsVisible && !isEmpty ? (
-    <StyledMaterialList
-      id='material-list'
-      direction='column'
-      justify='start'
-      align='start'
-      // onKeyDown={(e) => {
-      //   console.log(e);
-      // }}
-      // onKeyDownCapture={(e) => {
-      //   if (e.key === "Escape") {
-      //     console.log("bx");
-      //     set({ searchResultsVisible: false });
-      //     e.preventDefault();
-      //     e.stopPropagation();
-      //   }
-      // }}
-    >
+  return searchResultsVisible && query ? (
+    <StyledMaterialList id='material-list' direction='column' justify='start' align='start'>
       <ScrollArea
         css={{ width: "100%", height: "100%" }}
         onScroll={(e) => {
@@ -370,10 +308,6 @@ function MaterialList() {
         onWheel={(e) => {
           const container = e.currentTarget.querySelector("div");
           const scrollAmount = container.scrollTop / (container.scrollHeight - container.clientHeight);
-          if (!isLoadingMore && !isReachingEnd && scrollAmount > 0.75) {
-            setSize((prev) => prev + 1);
-            console.log(size);
-          }
         }}
       >
         <ScrollAreaViewport css={{ py: "$2" }}>
@@ -382,7 +316,6 @@ function MaterialList() {
         <ScrollAreaScrollbar orientation='vertical'>
           <ScrollAreaThumb />
         </ScrollAreaScrollbar>
-        {/* <ScrollAreaCorner /> */}
       </ScrollArea>
     </StyledMaterialList>
   ) : null;
@@ -413,7 +346,8 @@ function MaterialDetail() {
   const material = useMaterialView((state) => state.selectedMaterial);
   const absorptionData = useMemo(() => {
     if (material != null) {
-      return material.frequencies.map((frequency, index) => ({ frequency, absorption: material.absorption[index] }));
+      const frequencies = Object.keys(material.absorption).map(Number);
+      return frequencies.map((frequency, index) => ({ frequency, absorption: material.absorption[frequency] }));
     }
     return [];
   }, [material]);
@@ -459,6 +393,13 @@ function SearchComponent() {
   const set = useMaterialView((state) => state.set);
   const searchResultsVisible = useMaterialView((state) => state.searchResultsVisible);
   const selection = useEditor((state) => state.selection);
+
+  useEffect(() => {
+    fetch("db/material.json")
+      .then((res) => res.json())
+      .then((materials) => set({ materials }))
+      .catch(console.error);
+  }, [set]);
 
   const ref = useRef(null);
 
@@ -541,12 +482,10 @@ function DialogActions() {
 
 export function MaterialView() {
   return (
-    <Provider createStore={createStore}>
-      <Flex direction='column' justify='start' align='start' gap='2' css={{ width: "100%" }}>
-        <SearchComponent />
-        <MaterialDetail />
-        <DialogActions />
-      </Flex>
-    </Provider>
+    <Flex direction='column' justify='start' align='start' gap='2' css={{ width: "100%" }}>
+      <SearchComponent />
+      <MaterialDetail />
+      <DialogActions />
+    </Flex>
   );
 }
