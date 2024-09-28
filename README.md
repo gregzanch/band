@@ -7,6 +7,8 @@
 
 ⚠️ **This is a work in progress, many things are not working / not implemented yet** 
 
+v0.1.0
+
 ## About
 
 Band is an application that allows users to simulate and explore various acoustic properties of a modeled space. This is essentially a rewrite of [cram](https://github.com/gregzanch/cram)
