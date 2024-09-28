@@ -12,6 +12,9 @@
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@badrap/bar-of-progress": "^0.1.2",
+    "@mdx-js/loader": "^3.0.1",
+    "@mdx-js/react": "^3.0.1",
+    "@next/mdx": "^14.2.13",
     "@nivo/bar": "^0.79.1",
     "@nivo/core": "^0.79.0",
     "@radix-ui/colors": "^0.1.8",
@@ -69,6 +72,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^12.0.10",
+    "@types/mdx": "^2.0.13",
     "@types/node": "^17.0.21",
     "@types/react": "^17.0.40",
     "@types/react-dom": "^17.0.13",

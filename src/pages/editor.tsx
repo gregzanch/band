@@ -7,7 +7,7 @@ import { globalCss, darkTheme, lightTheme } from "@/styles/stitches.config"
 import useTheme from "@/state/theme"
 import { MaterialDialog } from "@/components/Editor/MaterialDialog/MaterialDialog";
 import { RaytracerSolverAlert } from "@/components/Editor/Alerts/RaytracerSolverAlert";
-import { MaterialProvider, createMaterialStore } from "@/state/materials";
+import { MaterialProvider, createMaterialStore } from "@/components/Editor/State/materials";
 
 const globalStyles = globalCss({
   html: { width: "100%", height: "100%", margin: 0, padding: 0 },

@@ -230,7 +230,6 @@ export const useEditor = create<
         uploadFileFromUrl: async (url: string) => {
           const buffer = await fetch(url).then((res) => res.arrayBuffer());
           const parsed = await new GLTFLoader().parseAsync(buffer, "");
-          console.log(parsed);
           const group = parsed.scene;
           group.name = stripExtension(url.split("/").slice(-1)[0]);
           group.addToDefaultScene(api as Editor);
@@ -245,9 +244,6 @@ export const useEditor = create<
         exportGLTF: async (filename: string = "scene.gltf") => {
           const exports = Object.values(get().objects);
           const animations = [];
-
-          // const { GLTFExporter } = await import( '../../examples/jsm/exporters/GLTFExporter.js' );
-
           const exporter = new GLTFExporter();
           exporter.register(function (writer) {
             return new BandObjectExportExtension(writer, api);
@@ -265,8 +261,6 @@ export const useEditor = create<
         exportRaya: async (rayaParameters: RayaParameters, filename: string = "scene.gltf") => {
           const exports = Object.values(get().objects);
           const animations = [];
-
-          // const { GLTFExporter } = await import( '../../examples/jsm/exporters/GLTFExporter.js' );
 
           const exporter = new GLTFExporter();
           exporter.register(function (writer) {

@@ -2,10 +2,12 @@ const plugins = require("next-compose-plugins")
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 })
+const createMDX = require("@next/mdx");
 
-const withOffline = require("next-offline")
+const withOffline = require("next-offline");
 
 const nextConfig = {
+  pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   webpack(config, { webpack, dev, isServer }) {
     // audio support
     config.module.rules.push({
@@ -24,24 +26,24 @@ const nextConfig = {
           },
         },
       ],
-    })
+    });
 
     config.module.rules.push({
       test: /\.(glsl|vs|fs|vert|frag)$/,
       exclude: /node_modules/,
       use: ["raw-loader", "glslify-loader"],
-    })
+    });
 
-    return config
+    return config;
   },
-}
+};
 
 // manage i18n
 if (process.env.EXPORT !== "true") {
   nextConfig.i18n = {
     locales: ["en-US"],
     defaultLocale: "en-US",
-  }
+  };
 }
 
 module.exports = plugins(
@@ -70,11 +72,11 @@ module.exports = plugins(
               source: "/service-worker.js",
               destination: "/_next/static/service-worker.js",
             },
-          ]
+          ];
         },
       },
     ],
     withBundleAnalyzer,
   ],
-  nextConfig
-)
+  createMDX({})(nextConfig)
+);

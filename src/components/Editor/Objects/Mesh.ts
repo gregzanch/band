@@ -45,7 +45,6 @@ export class Mesh extends ThreeMesh {
   acousticMaterial;
   constructor(name: string, geometry: BufferGeometry, material?: Material, acousticMaterial?: any) {
     super(geometry, material || defaultMaterial.clone());
-    console.log(material);
     this.originalMaterial = this.material;
 
     this.acousticMaterial = acousticMaterial || defaultAcousticMaterial();
@@ -137,15 +136,4 @@ export class Mesh extends ThreeMesh {
       this.edges.material.color.set(0x7a8082);
     }
   }
-
-  // dispose() {
-  //   this.geometry.dispose()
-  //   ensureArray(this.material).forEach((material) => material.dispose())
-  //   this.edges.geometry.dispose()
-  //   this.edges.material.dispose();
-  // }
-
-  // update() {
-
-  // }
 }

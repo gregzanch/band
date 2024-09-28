@@ -25,7 +25,7 @@ import { useEventListener } from "@/hooks/useEventListener";
 import useEditor from "../State/useEditor";
 import { ObjectType } from "../Objects/types";
 import { Mesh } from "../Objects";
-import { useMaterialView } from "@/state/materials";
+import { useMaterialView } from "@/components/Editor/State/materials";
 
 // Best practice: You can move the below createContext() and createStore to a separate file(store.js) and import the Provider, useStore here/wherever you need.
 
