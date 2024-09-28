@@ -1,13 +1,12 @@
 {
-  "name": "react-three-next",
-  "version": "2.0.0",
+  "name": "band",
+  "version": "0.1.0",
   "authors": [
-    "Renaud ROHLINGER <https://twitter.com/onirenaud>"
+    "Greg Zanchelli <https://gregzan.ch>"
   ],
   "license": "MIT",
-  "private": true,
   "engines": {
-    "node": ">=14"
+    "node": ">=20"
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.17.0",
