@@ -1,3 +1,4 @@
+import { Source, Receiver, BandObject } from "@/components/Editor/Objects";
 import { Solver } from "./solver";
 import type { SolverParams } from "./solver";
 
@@ -27,8 +28,33 @@ export const defaultRayTracerParams: RayTracerParams = {
   updateInterval: 5,
 };
 
+/**
+ * RayTracer solver
+ */
 export class RayTracer extends Solver {
+  /** Sources to use for raytracing */
+  sources: Set<Source>;
+  /** Receivers to collect data */
+  receivers: Set<Receiver>;
+  /** All objects that can be intersected */
+  intersectableObjects: Set<BandObject>;
+
+  /** Constructs a new RayTracer instance */
   constructor(name: string, params: Partial<RayTracerParams>) {
     super(name, { ...defaultRayTracerParams, ...params });
+  }
+
+  private castRaysForSource(source: Source) {
+    // random theta within the sources theta limits (0 to 180)
+    const theta = Math.random() * source.theta;
+
+    // random phi within the sources phi limits (0 to 360)
+    const phi = Math.random() * source.phi;
+  }
+
+  private step() {
+    // cast rays for each source
+    for (const source of this.sources) {
+    }
   }
 }
