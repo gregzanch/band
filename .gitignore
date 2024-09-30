@@ -47,3 +47,5 @@ report.*.json
 
 .env
 .env.local
+
+/test.ts

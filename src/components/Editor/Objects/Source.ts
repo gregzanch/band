@@ -7,6 +7,18 @@ export class Source extends Mesh<SphereGeometry, MeshPhongMaterial> {
   type: ObjectType.SOURCE;
   color: ColorRepresentation;
   material: MeshPhongMaterial;
+
+  /**
+   * Theta is an angle between 0 and 180 degrees.
+   * It represents the vertical spread of the rays.
+   */
+  theta: number;
+  /**
+   * Phi is an angle between 0 and 360 degrees.
+   * It represents the horizontal spread of the rays.
+   */
+  phi: number;
+
   constructor(name: string, position: [number, number, number] = [0, 0, 0], color: ColorRepresentation = 0x44a273) {
     const geometry = new SphereGeometry(0.5, 16, 16);
     const material = new MeshPhongMaterial({

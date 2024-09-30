@@ -98,6 +98,7 @@
     "export": "EXPORT=true next build && EXPORT=true next export",
     "analyze": "ANALYZE=true next build",
     "start": "next start",
-    "vercel-build": "next build"
+    "vercel-build": "next build",
+    "run-snippet": "deno run --unstable-sloppy-imports test.ts"
   }
 }
