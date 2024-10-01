@@ -16,6 +16,7 @@ import { BandObjectExportExtension, GLTFExporter } from "../Exporters/GLTFExport
 import { saveString } from "@/helpers/io";
 import { NODE_TYPE, RayaParameters } from "../Exporters/Raya";
 import { nanoid } from "nanoid";
+import { Solver } from "@/solvers";
 
 export type EditorColors = {
   canvasBackground: Color;
@@ -97,6 +98,8 @@ type EditorState = {
   receivers: Record<string, Receiver>; // TODO remove deprecated
   meshes: Record<string, Mesh | Group>; // TODO remove deprecated
   selectedObject: any; // TODO remove deprecated
+
+  solvers: Record<string, Solver>;
 };
 
 type EditorReducers = {
@@ -178,6 +181,8 @@ const initialState: EditorState = {
   sources: {}, // TODO remove deprecated
   receivers: {}, // TODO remove deprecated
   meshes: {}, // TODO remove deprecated
+
+  solvers: {},
 };
 
 function isNumber(val: any): val is number {

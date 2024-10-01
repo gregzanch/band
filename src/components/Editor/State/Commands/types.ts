@@ -3,4 +3,5 @@ export enum CommandType {
   SetPositionCommand = "SetPositionCommand",
   SetRotationCommand = "SetRotationCommand",
   SetScaleCommand = "SetScaleCommand",
+  AddSolverCommand = "AddSolverCommand",
 }

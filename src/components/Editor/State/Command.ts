@@ -1,21 +1,29 @@
-import { CommandType } from "./Commands/types"
-import type { Editor } from "./useEditor"
+import { nanoid } from "nanoid";
+import { CommandType } from "./Commands/types";
+import type { Editor } from "./useEditor";
 
+/**
+ * Commands to execute that get stored in history
+ */
 export class Command {
-  id: number
-  inMemory: boolean
-  updatable: boolean
-  type: string
-  name: string
-  editor: Editor
+  /** unique id */
+  id: string;
+  /** type of command */
+  type: CommandType;
+  /** the name of the command that will appear in the history */
+  name: string = "Untitled Command";
+  /** Editor state */
+  editor: Editor;
 
+  inMemory: boolean;
+  updatable: boolean;
+
+  /** constructs a new command object */
   constructor(editor: Editor) {
-    this.id = -1
-    this.inMemory = false
-    this.updatable = false
-    this.type = ""
-    this.name = ""
-    this.editor = editor
+    this.id = nanoid();
+    this.inMemory = false;
+    this.updatable = false;
+    this.editor = editor;
   }
 
   toJSON() {
@@ -23,15 +31,15 @@ export class Command {
       type: this.type,
       id: this.id,
       name: this.name,
-    }
+    } as Record<string, any>;
 
-    return output
+    return output;
   }
 
   fromJSON(json) {
-    this.inMemory = true
-    this.type = json.type
-    this.id = json.id
-    this.name = json.name
+    this.inMemory = true;
+    this.type = json.type;
+    this.id = json.id;
+    this.name = json.name;
   }
 }

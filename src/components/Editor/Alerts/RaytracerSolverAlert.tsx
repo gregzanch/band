@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { styled, keyframes } from "@/styles/stitches.config";
 import { violet, blackA, red, mauve } from "@radix-ui/colors";
 import { useEditor } from "@/components/Editor/State/useEditor";
-import { useSolver } from "@/components/Editor/State/useSolver";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +16,7 @@ import { Flex } from "@/components/shared/Flex";
 import { Button } from "@/components/shared/Button";
 import { Slider } from "@/components/shared/Slider";
 import { Box } from "@/components/shared/Box";
-import { RaytracerSolverParameters } from "@/components/Editor/State/Schema/Raytracer";
+
 import { Text } from "@/components/shared/Text";
 import { Tooltip } from "@/components/shared/Tooltip";
 import { QuestionMarkCircledIcon } from "@radix-ui/react-icons";
@@ -26,7 +26,7 @@ import { ValueInput } from "../Leva/components/ValueInput";
 
 import { LevaPanel, useControls } from "@/components/Editor/Leva";
 import { Store } from "../Leva/store";
-import { Job, JobStatus } from "../State/Schema/Job";
+
 import { SolutionType } from "../State/Procedure";
 
 export const raytracerSolverParameterStore = new Store();
@@ -66,8 +66,6 @@ const Input = styled("input", {
 
 export function RaytracerSolverAlert({}) {
   const raytracerSolverAlertOpen = useEditor((state) => state.raytracerSolverAlertOpen);
-  // const jobs = useSolver((state) => state.jobs);
-  // const jobs = useSolver((state) => state.createWebSocketWithId);
   const { maxOrder, rayCount, modelName, outputName } = useControls(
     {
       maxOrder: {
@@ -115,32 +113,7 @@ export function RaytracerSolverAlert({}) {
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction asChild>
-            <Button
-              variant='green'
-              onClick={async (e) => {
-                const { solve } = useSolver.getState();
-                const rayaModel = await useEditor.getState().getRayaModelFile(
-                  {
-                    max_order: maxOrder,
-                    ray_count: rayCount,
-                  },
-                  modelName
-                );
-
-                await solve(
-                  "raytrace-1",
-                  {
-                    max_order: maxOrder,
-                    ray_count: rayCount,
-                    model_path: modelName,
-                    output_path: outputName,
-                  },
-                  rayaModel
-                );
-              }}
-            >
-              Solve
-            </Button>
+            <Button variant='green'>Solve</Button>
           </AlertDialogAction>
         </Flex>
       </AlertDialogContent>
