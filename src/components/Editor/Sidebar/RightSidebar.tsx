@@ -15,6 +15,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/shared/Tabs"
 import { Button } from "@/components/shared/Button";
 import useEditor from "../State/useEditor";
+import { SolverProperties } from "../Properties";
 
 export function RightSidebar() {
   return (
@@ -38,11 +39,15 @@ export function RightSidebar() {
           <Tabs defaultValue='object'>
             <TabsList aria-label='Control panel'>
               <TabsTrigger value='object'>Object</TabsTrigger>
+              <TabsTrigger value='solvers'>Solvers</TabsTrigger>
               <TabsTrigger value='scene'>Scene</TabsTrigger>
               <TabsTrigger value='project'>Project</TabsTrigger>
             </TabsList>
             <TabsContent value='object'>
               <ObjectProperties />
+            </TabsContent>
+            <TabsContent value='solvers'>
+              <SolverProperties />
             </TabsContent>
             <TabsContent value='scene'>
               <CameraProperties />

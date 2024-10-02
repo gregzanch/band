@@ -16,7 +16,7 @@ import { BandObjectExportExtension, GLTFExporter } from "../Exporters/GLTFExport
 import { saveString } from "@/helpers/io";
 import { NODE_TYPE, RayaParameters } from "../Exporters/Raya";
 import { nanoid } from "nanoid";
-import { Solver } from "@/solvers";
+import { RayTracerUpdateKeyType, Solver, SolverUpdateKeys, SolverUpdateKeyType } from "@/solvers";
 
 export type EditorColors = {
   canvasBackground: Color;
@@ -85,6 +85,9 @@ type EditorState = {
     historyChanged: Signal;
     sceneGraphChanged: Signal;
     objectAcousticMaterialChanged: Signal;
+    solverAdded: Signal;
+    solverRemoved: Signal;
+    solverChanged: Signal;
   };
 
   debug: boolean;
@@ -100,6 +103,7 @@ type EditorState = {
   selectedObject: any; // TODO remove deprecated
 
   solvers: Record<string, Solver>;
+  selectedSolver: Solver | null;
 };
 
 type EditorReducers = {
@@ -171,6 +175,9 @@ const initialState: EditorState = {
     historyChanged: new Signal(),
     sceneGraphChanged: new Signal(),
     objectAcousticMaterialChanged: new Signal(),
+    solverAdded: new Signal(),
+    solverRemoved: new Signal(),
+    solverChanged: new Signal(),
   },
 
   debug: false,
@@ -183,6 +190,7 @@ const initialState: EditorState = {
   meshes: {}, // TODO remove deprecated
 
   solvers: {},
+  selectedSolver: null,
 };
 
 function isNumber(val: any): val is number {
@@ -374,14 +382,14 @@ export const useEditor = create<
     )
   )
 );
-export type Editor = typeof useEditor
-export default useEditor
+export type Editor = typeof useEditor;
+export default useEditor;
 
 useEditor.setState({
   history: new History(useEditor),
-})
+});
 
-export const getSignals = () => useEditor.getState().signals
+export const getSignals = () => useEditor.getState().signals;
 
 getSignals().objectAdded.add((object: BandObject) => {
   useEditor.setState((state) => ({
@@ -389,8 +397,35 @@ getSignals().objectAdded.add((object: BandObject) => {
       ...state.objects,
       [object.uuid]: object,
     },
-  }))
-})
+  }));
+});
+
+getSignals().solverAdded.add((solver: Solver) => {
+  useEditor.setState((state) => ({
+    solvers: {
+      ...state.solvers,
+      [solver.id]: solver,
+    },
+  }));
+});
+
+getSignals().solverRemoved.add((solver: Solver) => {
+  useEditor.setState((state) => ({
+    solvers: omit([solver.id], state.solvers),
+  }));
+});
+
+getSignals().solverChanged.add(
+  <T extends Solver, K extends RayTracerUpdateKeyType & SolverUpdateKeys>(
+    solver: T,
+    changes: Record<K, (RayTracerUpdateKeyType & SolverUpdateKeyType)[K]>
+  ) => {
+    const changeKeys = Object.keys(changes);
+    for (const key of changeKeys) {
+      solver.update(key as K, changes[key]);
+    }
+  }
+);
 
 getSignals().objectRemoved.add((object: BandObject) => {
   useEditor.setState((state) => ({

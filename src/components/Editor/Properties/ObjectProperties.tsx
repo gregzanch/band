@@ -1,8 +1,7 @@
 import useEditor from "@/components/Editor/State/useEditor"
 import { LevaPanel, useControls } from "@/components/Editor/Leva"
 import { Store } from "../Leva/store"
-import { useEffect, useMemo, useRef } from "react"
-import { Text } from "@/components/shared/Text"
+import { useEffect, useMemo, useRef } from "react";
 import { Box } from "@/components/shared/Box"
 import { ObjectType } from "@/components/Editor/Objects/types"
 import { BandObject } from "../Objects"
@@ -11,31 +10,9 @@ import { Vector3Tuple } from "three"
 import { Schema, SpecialInputs } from "../Leva/types";
 import { Mesh } from "../Objects";
 import { button, buttonGroup } from "../Leva/helpers";
+import { EmptySelection } from "./EmptySelection";
 
 export const objectPropertiesStore = new Store();
-
-function EmptySelection() {
-  return (
-    <Box
-      css={{
-        backgroundColor: "$slate2",
-        py: "0.5rem",
-      }}
-    >
-      <Text
-        size='1'
-        css={{
-          textAlign: "center",
-          // opacity: "0.25",
-          fontFamily: "$mono",
-          color: "$highlight1",
-        }}
-      >
-        Nothing Selected
-      </Text>
-    </Box>
-  );
-}
 
 enum ObjectInputs {
   TYPE = "type",
@@ -305,7 +282,7 @@ export function ObjectProperties() {
   const selection = useEditor((state) => state.selection);
   return (
     <Box id='object-properties'>
-      {selection.length > 0 ? <SelectedObjectSwitcher /> : <EmptySelection />}
+      {selection.length > 0 ? <SelectedObjectSwitcher /> : <EmptySelection text='Nothing Selected' />}
       <LevaPanel store={objectPropertiesStore} fill flat titleBar={false} hideCopyButton />
     </Box>
   );

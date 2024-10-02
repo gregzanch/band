@@ -1,6 +1,6 @@
 import { Source, Receiver, BandObject, ObjectType } from "@/components/Editor/Objects";
-import { Solver } from "./solver";
-import type { SolverParams } from "./solver";
+import { Solver, SolverUpdateKeys } from "./solver";
+import type { SolverParams, SolverUpdateKeyType } from "./solver";
 import {
   AlwaysDepth,
   BufferGeometry,
@@ -14,6 +14,7 @@ import {
 } from "three";
 import { deg2rad, random } from "@/helpers/math";
 import { SolverTypes } from "./types";
+import { Editor } from "@/components/Editor/State/useEditor";
 
 export type Ray = {
   origin: Vector3;
@@ -59,6 +60,14 @@ export type RayTracerParams = {
   updateInterval: number;
 } & SolverParams;
 
+export enum RayTracerUpdateKeys {
+  SOURCES = "sources",
+}
+
+export type RayTracerUpdateKeyType = SolverUpdateKeyType & {
+  [RayTracerUpdateKeys.SOURCES]: Set<Source>;
+};
+
 /** Default parameters for the RayTracer solver */
 export const defaultRayTracerParams: RayTracerParams = {
   passes: 100,
@@ -73,7 +82,7 @@ export class RayTracer extends Solver<RayTracerParams> {
   /** RayTracer type */
   type: SolverTypes = SolverTypes.RAYTRACER;
   /** Sources to use for raytracing */
-  sources: Set<Source>;
+  sources: RayTracerUpdateKeyType[RayTracerUpdateKeys.SOURCES];
   /** Receivers to collect data */
   receivers: Set<Receiver>;
   /** All objects that can be intersected */
@@ -86,6 +95,8 @@ export class RayTracer extends Solver<RayTracerParams> {
   rayPathBuffers: RayPathBuffers;
 
   intervalId: number | null = null;
+  rayPositionIndexDidOverflow = false;
+  rayPositionIndex: number = 0;
 
   /** Constructs a new RayTracer instance */
   constructor(name: string, params: Partial<RayTracerParams> = {}) {
@@ -119,7 +130,7 @@ export class RayTracer extends Solver<RayTracerParams> {
         fog: false,
         color: 0x282929,
         transparent: true,
-        opacity: 0.2,
+        opacity: 0.5,
         premultipliedAlpha: true,
         blending: NormalBlending,
         depthFunc: AlwaysDepth,
@@ -223,12 +234,55 @@ export class RayTracer extends Solver<RayTracerParams> {
     for (const source of this.sources) {
       const rayPath = this.getRayPath(source);
       if (rayPath === null) return;
+      this.drawRayPath(rayPath);
       if (rayPaths.has(source)) {
         rayPaths.set(source, rayPaths.get(source).concat(rayPath));
       } else {
         rayPaths.set(source, [rayPath]);
       }
     }
+  }
+
+  incrementRayPositionIndex() {
+    if (this.rayPositionIndex < this.rayPathBuffers.maxRays) {
+      return this.rayPositionIndex++;
+    } else {
+      this.rayPositionIndex = 0;
+      this.rayPositionIndexDidOverflow = true;
+      return this.rayPositionIndex;
+    }
+  }
+
+  drawRayPath(rayPath: RayPath) {
+    // TODO handle direct hit case
+    if (rayPath.path.length === 0) {
+      this.appendRay(rayPath.source.position.toArray(), rayPath.intersectedReceiver.position.toArray());
+    } else {
+      this.appendRay(rayPath.source.position.toArray(), rayPath.path[0].origin.toArray());
+    }
+    for (let i = 1; i < rayPath.path.length; i++) {
+      this.appendRay(rayPath.path[i - 1].origin.toArray(), rayPath.path[i].origin.toArray());
+    }
+  }
+
+  appendRay(p1: [number, number, number], p2: [number, number, number]) {
+    // set p1
+    this.rayPathBuffers.bufferAttribute.setXYZ(this.incrementRayPositionIndex(), p1[0], p1[1], p1[2]);
+
+    // set p2
+    this.rayPathBuffers.bufferAttribute.setXYZ(this.incrementRayPositionIndex(), p2[0], p2[1], p2[2]);
+
+    //update the draw range
+    this.rayPathBuffers.bufferGeometry.setDrawRange(
+      0,
+      this.rayPositionIndexDidOverflow ? this.rayPathBuffers.maxRays : this.rayPositionIndex
+    );
+
+    // update three.js
+    this.rayPathBuffers.bufferAttribute.needsUpdate = true;
+
+    //update version
+    this.rayPathBuffers.bufferAttribute.version++;
   }
 
   start() {
@@ -243,5 +297,23 @@ export class RayTracer extends Solver<RayTracerParams> {
 
   clearRays() {
     // TODO
+    this.rayPositionIndex = 0;
+    this.rayPositionIndexDidOverflow = false;
+  }
+
+  addToDefaultScene(editor: Editor) {
+    const { scene } = editor.getState();
+    scene && scene.add(this.rayPathBuffers.rays);
+    return this;
+  }
+
+  update<T extends RayTracerUpdateKeys & SolverUpdateKeys>(key: T, value: RayTracerUpdateKeyType[T]) {
+    super.update(key, value);
+    switch (key) {
+      case RayTracerUpdateKeys.SOURCES:
+        this.sources = value;
+      default:
+        break;
+    }
   }
 }

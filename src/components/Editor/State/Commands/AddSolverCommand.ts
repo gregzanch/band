@@ -16,15 +16,16 @@ export class AddSolverCommand extends Command {
   }
 
   execute() {
-    // this.editor.getState().signals.objectAdded.dispatch(this.object);
+    this.editor.getState().signals.solverAdded.dispatch(this.solver);
   }
 
   undo() {
-    // this.editor.getState().signals.objectRemoved.dispatch(this.object);
+    this.editor.getState().signals.solverRemoved.dispatch(this.solver);
   }
 
   toJSON() {
     const output = super.toJSON();
+    // TODO implement solver to json
     // output.solver = this.solver.toJSON();
     return output;
   }

@@ -16,9 +16,10 @@ import useTheme from "@/state/theme";
 
 import { AddObjectCommand } from "@/components/Editor/State/Commands/AddObjectCommand";
 import { Source, Receiver, RenderObjects, BandObject } from "@/components/Editor/Objects";
-import { RayTracer } from "@/solvers";
+import { RayTracer, RayTracerParams } from "@/solvers";
 import { RayTracerResults } from "./Solutions";
 import { RenderSolutions } from "./Solutions/RenderSolutions";
+import { AddSolverCommand } from "./State/Commands";
 
 function useThemeSubscription() {
   useEffect(() => {
@@ -92,20 +93,25 @@ function useEditorDebug() {
         )
       );
       const rec = new Receiver("New Receiver", [7.4, 2.87, -10.2], 0xe5732a).addToDefaultScene(useEditor);
-      rec.scale.set(2.5, 2.5, 2.5);
+      rec.scale.set(1, 1, 1);
       history.execute(new AddObjectCommand(useEditor, rec));
     }, 500);
     setTimeout(() => {
-      const rt = new RayTracer("name");
-      const [src, receiver, group] = useEditor.getState().scene.children.slice(-3);
-      rt.sources.add(src as Source);
-      rt.receivers.add(receiver as Receiver);
-      rt.intersectableObjects.push(...(group.children as BandObject[]));
-      rt.intersectableObjects.push(receiver as Receiver);
-      Object.assign(window, { rt });
-      useEditor.setState({ solvers: { [rt.id]: rt } });
       const { history } = useEditor.getState();
-      // history.execute()
+      const [src, receiver, group] = useEditor.getState().scene.children.slice(-4, -1);
+      const genRT = (name: string, params: RayTracerParams) => {
+        const rt = new RayTracer(name, params).addToDefaultScene(useEditor);
+        rt.sources.add(src as Source);
+        rt.receivers.add(receiver as Receiver);
+        rt.intersectableObjects.push(...(group.children as BandObject[]));
+        rt.intersectableObjects.push(receiver as Receiver);
+        history.execute(new AddSolverCommand(useEditor, rt));
+        return rt;
+      };
+      const rt1 = genRT("rt 1", { passes: 100, reflectionOrder: 10, updateInterval: 50 });
+      const rt2 = genRT("rt 2", { passes: 212, reflectionOrder: 89, updateInterval: 25 });
+      Object.assign(window, { rt1, rt2 });
+      console.clear();
     }, 1500);
   }, []);
 }

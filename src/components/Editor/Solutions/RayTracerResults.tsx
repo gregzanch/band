@@ -5,5 +5,6 @@ export type RayTracerResultsProps = {
 };
 
 export function RayTracerResults({ raytracer }: RayTracerResultsProps) {
+  return <></>;
   return <primitive object={raytracer.rayPathBuffers.bufferAttribute} />;
 }
