@@ -32,7 +32,7 @@ const slideLeftAndFade = keyframes({
 export const DropdownMenu = DropdownMenuPrimitive.Root
 export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
 export const DropdownMenuContent = styled(DropdownMenuPrimitive.Content, menuCss, panelStyles, {
-  minWidth: 220,
+  minWidth: "default",
   "@media (prefers-reduced-motion: no-preference)": {
     animationDuration: "400ms",
     animationTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
@@ -45,7 +45,7 @@ export const DropdownMenuContent = styled(DropdownMenuPrimitive.Content, menuCss
       '&[data-side="left"]': { animationName: slideRightAndFade },
     },
   },
-})
+});
 export const DropdownMenuSeparator = styled(DropdownMenuPrimitive.Separator, separatorCss)
 export const DropdownMenuItem = styled(DropdownMenuPrimitive.Item, itemCss)
 

@@ -10,6 +10,17 @@ export const Separator = styled(SeparatorPrimitive.Root, {
 
   variants: {
     size: {
+      false: {
+        '&[data-orientation="horizontal"]': {
+          height: "1px",
+          // width: "$3",
+        },
+
+        '&[data-orientation="vertical"]': {
+          width: "1px",
+          // height: "$3",
+        },
+      },
       "1": {
         '&[data-orientation="horizontal"]': {
           height: "1px",
@@ -35,6 +46,6 @@ export const Separator = styled(SeparatorPrimitive.Root, {
     },
   },
   defaultVariants: {
-    size: "1",
+    size: false,
   },
-})
+});

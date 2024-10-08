@@ -60,6 +60,10 @@ const StyledAvatar = styled(AvatarPrimitive.Root, {
         width: "$9",
         height: "$9",
       },
+      "7": {
+        width: "192px",
+        height: "192px",
+      },
     },
     variant: {
       hiContrast: {
@@ -184,7 +188,7 @@ const StyledAvatar = styled(AvatarPrimitive.Root, {
     variant: "gray",
     shape: "circle",
   },
-})
+});
 
 const StyledAvatarImage = styled(AvatarPrimitive.Image, {
   display: "flex",
@@ -193,7 +197,7 @@ const StyledAvatarImage = styled(AvatarPrimitive.Image, {
   height: "100%",
   verticalAlign: "middle",
   width: "100%",
-})
+});
 
 const StyledAvatarFallback = styled(AvatarPrimitive.Fallback, {
   textTransform: "uppercase",
@@ -208,7 +212,7 @@ const StyledAvatarFallback = styled(AvatarPrimitive.Fallback, {
         fontSize: "$3",
       },
       "3": {
-        fontSize: "$6",
+        fontSize: "$4",
       },
       "4": {
         fontSize: "$7",
@@ -219,17 +223,20 @@ const StyledAvatarFallback = styled(AvatarPrimitive.Fallback, {
       "6": {
         fontSize: "$9",
       },
+      "7": {
+        fontSize: "96px",
+      },
     },
   },
   defaultVariants: {
     size: "2",
   },
-})
+});
 
 export const AvatarNestedItem = styled("div", {
   boxShadow: "0 0 0 2px $colors$loContrast",
   borderRadius: "50%",
-})
+});
 
 export const AvatarGroup = styled("div", {
   display: "flex",
@@ -237,21 +244,21 @@ export const AvatarGroup = styled("div", {
   [`& ${AvatarNestedItem}:nth-child(n+2)`]: {
     marginRight: "-$1",
   },
-})
+});
 
-type StatusVariants = React.ComponentProps<typeof Status>
-type StatusColors = Pick<StatusVariants, "variant">
+type StatusVariants = React.ComponentProps<typeof Status>;
+type StatusColors = Pick<StatusVariants, "variant">;
 
-type AvatarVariants = VariantProps<typeof StyledAvatar>
-type AvatarPrimitiveProps = React.ComponentProps<typeof AvatarPrimitive.Root>
+type AvatarVariants = VariantProps<typeof StyledAvatar>;
+type AvatarPrimitiveProps = React.ComponentProps<typeof AvatarPrimitive.Root>;
 type AvatarOwnProps = AvatarPrimitiveProps &
   AvatarVariants & {
-    css?: CSS
-    alt?: string
-    src?: string
-    fallback?: React.ReactNode
-    status?: StatusColors["variant"]
-  }
+    css?: CSS;
+    alt?: string;
+    src?: string;
+    fallback?: React.ReactNode;
+    status?: StatusColors["variant"];
+  };
 
 export const Avatar = React.forwardRef<React.ElementRef<typeof StyledAvatar>, AvatarOwnProps>(
   ({ alt, src, fallback, size, variant, shape, css, status, ...props }, forwardedRef) => {
@@ -280,10 +287,10 @@ export const Avatar = React.forwardRef<React.ElementRef<typeof StyledAvatar>, Av
               mb: "-3px",
             }}
           >
-            <Status size={size && size > 2 ? "2" : "1"} variant={status} />
+            <Status size={size && Number(size) > 2 ? "2" : "1"} variant={status} />
           </Box>
         )}
       </Box>
-    )
+    );
   }
-)
+);
