@@ -6,8 +6,9 @@
   ],
   "license": "MIT",
   "engines": {
-    "node": ">=20"
+    "node": ">=18 <21"
   },
+  "engineStrict": true,
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@badrap/bar-of-progress": "^0.1.2",
