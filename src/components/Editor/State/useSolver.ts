@@ -33,6 +33,7 @@ export const useSolver = create<
     set,
     createRayTracerSolver: (location: SolutionLocation, params: RayTracerSolverConfig, objects: Record<string, BandObject>) => {
       const rts = new RayTracerSolver(location).setConfig(params).setObjects(objects);
+      set({ solvers: [...get().solvers, rts]});
       return rts;
     },
 

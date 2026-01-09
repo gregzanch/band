@@ -17,7 +17,7 @@ interface ProgressPayload {
   progress: {
     type: "progress";
     time: number;
-    percent: number;
+    progress: number;
   };
   end: {
     type: "end";
@@ -45,6 +45,7 @@ export type SolutionLocation = "worker" | "local" | "cloud";
 export interface SolverConfig {}
 
 export class Solver<T extends SolverConfig> {
+  type = "Solver"
   constructor(location: SolutionLocation = "worker") {
     this._location = location;
   }

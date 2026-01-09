@@ -22,7 +22,7 @@ export const raytracerSolverParameterStore = new Store();
 
 export function RaytracerSolverAlert({}) {
   const raytracerSolverAlertOpen = useEditor((state) => state.raytracerSolverAlertOpen);
-  const { maxOrder, rayCount, location, outputName } = useControls(
+  const { maxOrder, rayCount, location, outputName, stepsPerIteration } = useControls(
     {
       location: {
         value: "local" as SolutionLocation,
@@ -39,6 +39,11 @@ export function RaytracerSolverAlert({}) {
         label: "Total Rays",
         value: 250000,
       },
+      stepsPerIteration: {
+        value: 2500,
+        label: "Steps per Iteration",
+        min: 1,
+      },
       outputName: {
         value: "raytraced-ir.wav",
         label: "Output Filename",
@@ -47,9 +52,10 @@ export function RaytracerSolverAlert({}) {
     { store: raytracerSolverParameterStore }
   );
 
-  const rayTracerParams: RayTracerSolverConfig = { maxOrder, rayCount, outputName };
+  const rayTracerParams: RayTracerSolverConfig = { maxOrder, rayCount, outputName, stepsPerIteration };
   const objects = useEditor((store) => store.objects);
   const onSolve = async (e) => {
+
     const rayTracerSolver = useSolver
       .getState()
       .createRayTracerSolver(location, rayTracerParams, objects)

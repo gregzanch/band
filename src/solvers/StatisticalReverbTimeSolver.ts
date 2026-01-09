@@ -5,5 +5,5 @@ export interface StatisticalReverbTimeSolverConfig extends SolverConfig {
 }
 
 export class StatisticalReverbTimeSolver extends Solver<StatisticalReverbTimeSolverConfig> {
-
+  type="StatisticalReverbTimeSolver"
 }

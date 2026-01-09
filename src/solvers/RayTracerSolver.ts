@@ -1,7 +1,24 @@
+import { Mesh, Source, Receiver } from "@/components/Editor/Objects";
 import { NotImplementedError, Solver, SolverConfig } from "@/solvers/Solver";
 import { Effect, Data } from "effect";
 
-class RayTracerError extends Data.TaggedError("RayTracerError")<{
+
+export type Intersection = {
+  // need to know the surface properties like absorption and diffusion
+  surface: Mesh;
+  // need the incident angle to calculate adjusted absorption
+  incidentAngle: number;
+}
+
+export type Path = {
+  // who shot the ray
+  source: Source;
+  // who caught it
+  receiver: Receiver;
+  // who did it hit along the way
+  intersections: Intersection[];
+};
+export class RayTracerError extends Data.TaggedError("RayTracerError")<{
   message: string;
 }> {}
 
@@ -9,19 +26,39 @@ export interface RayTracerSolverConfig extends SolverConfig {
   maxOrder: number;
   rayCount: number;
   outputName: string;
+  stepsPerIteration: number;
 }
 
 export class RayTracerSolver extends Solver<RayTracerSolverConfig> {
-
+  type = "RayTracerSolver"
+  private localSolveStep() {
+    // iterate over all sources
+    // get random direction for ray within in theta, phi limit
+    // apply sources rotation to the ray direction
+    // trace ray against our scene, with maxOrder, return path of intersected objects or null
+    // if not null, add path to valid paths list
+  }
 
   private localSolve() {
     const self = this;
     return Effect.gen(function* () {
       // For now, simulate progress
-      const progressSteps = 10;
-      for (let i = 1; i <= progressSteps; i++) {
-        const percent = (i / progressSteps) * 100;
-        self.progressCallbacks.progress.forEach((cb) => cb({ type: "progress", time: Date.now(), percent }));
+      const { rayCount, stepsPerIteration } = self.config;
+      const totalPasses = Math.ceil(rayCount / stepsPerIteration);
+      const stepCountRemainder = rayCount % stepsPerIteration;
+
+      for (let i = 0; i < totalPasses; i++) {
+        // how far done are we?
+        const progress = (i + 1) / totalPasses;
+        const isLastIteration = i === totalPasses - 1;
+        const stepCount = isLastIteration && stepCountRemainder !== 0 ? stepCountRemainder : stepsPerIteration;
+
+        // do this passes steps
+        for (let j = 0; j < stepCount; j++) {
+          self.localSolveStep();
+        }
+
+        self.progressCallbacks.progress.forEach((cb) => cb({ type: "progress", time: Date.now(), progress }));
 
         // Simulate work
         yield* Effect.sleep(100);
@@ -31,12 +68,14 @@ export class RayTracerSolver extends Solver<RayTracerSolverConfig> {
 
   private workerSolve() {
     return Effect.gen(function* () {
+      // for this we will link our progress callbacks with the incomming data from worker
       yield* Effect.fail(new NotImplementedError({ message: "need to implement workerSolve()" }));
     });
   }
 
   private cloudSolve() {
     return Effect.gen(function* () {
+      // for this we will link our progress callbacks with the incomming websocket data
       yield* Effect.fail(new NotImplementedError({ message: "need to implement cloudSolve()" }));
     });
   }
