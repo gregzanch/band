@@ -1,6 +1,7 @@
 import { Mesh, Source, Receiver } from "@/components/Editor/Objects";
 import { NotImplementedError, Solver, SolverConfig } from "@/solvers/Solver";
 import { Effect, Data } from "effect";
+import { Raycaster, Vector3 } from "three";
 
 
 export type Intersection = {
@@ -31,12 +32,101 @@ export interface RayTracerSolverConfig extends SolverConfig {
 
 export class RayTracerSolver extends Solver<RayTracerSolverConfig> {
   type = "RayTracerSolver"
+  private raycaster = new Raycaster();
+  private validPaths: Path[] = [];
+
   private localSolveStep() {
     // iterate over all sources
-    // get random direction for ray within in theta, phi limit
-    // apply sources rotation to the ray direction
-    // trace ray against our scene, with maxOrder, return path of intersected objects or null
-    // if not null, add path to valid paths list
+    const sources = Object.values(this.objects).filter((obj): obj is Source => obj.type === "SOURCE");
+    const receivers = Object.values(this.objects).filter((obj): obj is Receiver => obj.type === "RECEIVER");
+    const meshes = Object.values(this.objects).filter((obj): obj is Mesh => obj.type === "MESH");
+
+    for (const source of sources) {
+      // get random direction for ray within theta, phi limit
+      const theta = Math.random() * Math.PI * 2; // 0 to 2π (full azimuthal range)
+      const phi = Math.random() * Math.PI; // 0 to π (full polar range)
+
+      // convert spherical to cartesian
+      const direction = new Vector3(
+        Math.sin(phi) * Math.cos(theta),
+        Math.sin(phi) * Math.sin(theta),
+        Math.cos(phi)
+      );
+
+      // apply sources rotation to the ray direction
+      direction.applyQuaternion(source.quaternion);
+      direction.normalize();
+
+      // trace ray against our scene, with maxOrder, return path of intersected objects or null
+      const path = this.traceRay(source, direction, meshes, receivers, this.config.maxOrder);
+
+      // if not null, add path to valid paths list
+      if (path) {
+        this.validPaths.push(path);
+      }
+    }
+  }
+
+  private traceRay(
+    source: Source,
+    direction: Vector3,
+    meshes: Mesh[],
+    receivers: Receiver[],
+    maxOrder: number
+  ): Path | null {
+    const intersections: Intersection[] = [];
+    let currentPosition = source.position.clone();
+    let currentDirection = direction.clone();
+
+    for (let order = 0; order < maxOrder; order++) {
+      this.raycaster.set(currentPosition, currentDirection);
+
+      // check for receiver intersection first
+      const receiverIntersects = this.raycaster.intersectObjects(receivers, false);
+
+      // check for mesh intersections
+      const meshIntersects = this.raycaster.intersectObjects(meshes, false);
+
+      // if we hit a receiver, we have a valid path
+      if (receiverIntersects.length > 0 &&
+          (meshIntersects.length === 0 || receiverIntersects[0].distance < meshIntersects[0].distance)) {
+        return {
+          source,
+          receiver: receiverIntersects[0].object as Receiver,
+          intersections
+        };
+      }
+
+      // if we hit a mesh, continue tracing
+      if (meshIntersects.length > 0) {
+        const intersection = meshIntersects[0];
+        const mesh = intersection.object as Mesh;
+
+        // calculate incident angle
+        const normal = intersection.face?.normal.clone().applyQuaternion(mesh.quaternion).normalize();
+        const incidentAngle = normal ? Math.acos(Math.abs(currentDirection.dot(normal))) : 0;
+
+        intersections.push({
+          surface: mesh,
+          incidentAngle
+        });
+
+        // reflect the ray for the next iteration
+        if (normal) {
+          currentDirection.reflect(normal).normalize();
+        }
+        currentPosition = intersection.point.clone();
+
+        // offset slightly to avoid self-intersection
+        currentPosition.addScaledVector(currentDirection, 0.001);
+      } else {
+        // ray escaped the scene without hitting a receiver
+        return null;
+      }
+    }
+
+    // exceeded max order without hitting a receiver
+    return null;
   }
 
   private localSolve() {
